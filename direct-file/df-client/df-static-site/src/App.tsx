@@ -18,7 +18,7 @@ import {
   State,
 } from './pages/index.js';
 
-import '@trussworks/react-uswds/lib/index.css';
+import '@trussworks/react-uswds/uswds.css';
 
 function App() {
   const { t, i18n } = useTranslation(`translation`);
