@@ -2,7 +2,7 @@ import { it, describe, expect } from 'vitest';
 import { Path } from '../../flow/Path.js';
 import { createCollectionWrapper, createEnumWrapper, createTinWrapper } from '../persistenceWrappers.js';
 import { baseFilerData, primaryFilerId, spouseId, singleFilerData } from '../testData.js';
-import { scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { scalaListToJsArray } from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 
 const twoFilers = {

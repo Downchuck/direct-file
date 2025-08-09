@@ -3,7 +3,7 @@ import { useFactGraph } from '../factgraph/FactGraphContext.js';
 import { Condition } from '../flow/Condition.js';
 import { ItemConfig } from '../components/ConditionalList/ConditionalList.js';
 import { useFilterContentContext } from '../context/FilterContentContext.js';
-import { ConcretePath, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { ConcretePath, scalaListToJsArray } from 'js-factgraph';
 
 export function useConditionalListItems<Item extends ItemConfig>(
   items: Item[],

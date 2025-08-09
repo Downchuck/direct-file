@@ -1,6 +1,5 @@
-import { JSeither } from '@irs/js-factgraph-scala';
+import { JSeither, EitherL, EitherR } from 'js-factgraph';
 import { useFactControl, UseFactControlParameters } from './useFactControl.js';
-import { EitherL, EitherR } from '@irs/js-factgraph-scala/src/typings/utils/JSEither.js';
 import { Dispatch, SetStateAction } from 'react';
 import { renderHook } from '@testing-library/react';
 

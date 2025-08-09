@@ -1,6 +1,6 @@
 import { describe, expect } from 'vitest';
 import { createStringWrapper } from '../persistenceWrappers.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { baseFilerData, makeW2Data } from '../testData.js';
 import { setupFactGraph } from '../setupFactGraph.js';
 

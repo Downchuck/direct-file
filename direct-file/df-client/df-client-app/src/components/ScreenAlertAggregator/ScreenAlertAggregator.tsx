@@ -1,6 +1,6 @@
 import SummaryErrorAlert from '../SummaryAlert/index.js';
 import { MutableRefObject, useEffect } from 'react';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { AggregatedAlertConfig } from '../../flow/ContentDeclarations.js';
 import MefAlert from '../Alert/MefAlert.js';
 import TaxReturnAlert from '../Alert/TaxReturnAlert.js';

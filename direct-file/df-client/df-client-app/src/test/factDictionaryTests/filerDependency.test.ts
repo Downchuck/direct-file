@@ -8,7 +8,7 @@ import {
   createTinWrapper,
   createDollarWrapper,
 } from '../persistenceWrappers.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { baseFilerData } from '../testData.js';
 import { Path } from '../../flow/Path.js';
 import { setupFactGraph } from '../setupFactGraph.js';

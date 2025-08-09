@@ -8,7 +8,7 @@ import {
   createStringWrapper,
   createTinWrapper,
 } from '../persistenceWrappers.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { mfjFilerData, mfsFilerData, singleFilerData, uuid } from '../testData.js';
 import { setupFactGraph } from '../setupFactGraph.js';
 import { CURRENT_TAX_YEAR } from '../../constants/taxConstants.js';

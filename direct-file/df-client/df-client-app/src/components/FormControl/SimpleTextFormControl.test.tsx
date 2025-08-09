@@ -1,5 +1,5 @@
 import { SimpleTextFormControl } from './TextFormControl.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { i18n, renderWithTranslationProvider as render } from '../../test/test-utils.js';
 import { Path } from '../../fact-dictionary/Path.js';
 

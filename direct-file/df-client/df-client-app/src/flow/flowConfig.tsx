@@ -12,7 +12,7 @@ import {
 } from './flowDeclarations.js';
 import { assertNever } from 'assert-never';
 import { Children, FC, ReactNode, createContext, useContext, useMemo } from 'react';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { RawCondition } from './Condition.js';
 import { Path } from './Path.js';
 import { ScreenConfig } from './ScreenConfig.js';

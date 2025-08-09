@@ -1,4 +1,4 @@
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { Fieldset, FormGroup, Label } from '@trussworks/react-uswds';
 import classNames from 'classnames';
 import Translation from '../Translation/index.js';

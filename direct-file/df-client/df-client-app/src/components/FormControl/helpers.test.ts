@@ -1,6 +1,6 @@
 import { Path } from '../../fact-dictionary/Path.js';
 import { buildControlErrorId, buildFormControlId, buildHintId, buildHintKey, buildReadonlyHintKey } from './helpers.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 
 const testConcretePath = `/test/concretePath` as ConcretePath;
 const testSubfield = `testSubfield`;

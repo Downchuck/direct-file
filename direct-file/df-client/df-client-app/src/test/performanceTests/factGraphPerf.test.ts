@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { describe, it } from 'vitest';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 import { createBooleanWrapper } from '../persistenceWrappers.js';
 

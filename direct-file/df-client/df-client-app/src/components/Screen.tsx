@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, FC, useReducer, MutableRefObject } from 'react';
 import { useFactGraph } from '../factgraph/FactGraphContext.js';
 import { Path } from '../flow/Path.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import {
   ScreenContentConfig,
   contentConfigIsFactConfig,

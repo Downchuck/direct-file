@@ -138,7 +138,7 @@ const prettyPathsString = prettier.format(pathsString, {
 fs.writeFileSync(pathsFileName, prettyPathsString);
 
 const interfaces = `
-import { WrappedFact } from "@irs/js-factgraph-scala";
+import { WrappedFact } from "js-factgraph";
 // @ts-ignore: Union type is too complex for CI to represent
 `;
 

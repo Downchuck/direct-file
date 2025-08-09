@@ -4,7 +4,7 @@ import {
   ScalaList,
   convertCollectionToArray,
   scalaListToJsArray,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { ScreenConfig } from '../flow/ScreenConfig.js';
 import { TaxReturnAlertDeclaration, MefAlertDeclaration, ScreenContentConfig } from '../flow/ContentDeclarations.js';
 import { conditionsPass } from '../utils/condition.js';

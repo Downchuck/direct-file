@@ -8,7 +8,7 @@ import {
   createDayWrapper,
   createTinWrapper,
 } from '../persistenceWrappers.js';
-import { ConcretePath, ScalaList, convertCollectionToArray } from '@irs/js-factgraph-scala';
+import { ConcretePath, ScalaList, convertCollectionToArray } from 'js-factgraph';
 import { describe, it, expect } from 'vitest';
 import { baseFilerData, makeW2Data } from '../testData.js';
 import { setupFactGraphDeprecated } from '../setupFactGraph.js';

@@ -1,4 +1,4 @@
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { assertNever } from 'assert-never';
 import { Dispatch, SetStateAction, DispatchWithoutAction, createElement, useContext } from 'react';
 import {

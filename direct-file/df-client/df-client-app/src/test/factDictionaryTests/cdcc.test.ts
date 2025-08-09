@@ -38,7 +38,7 @@ import {
   jsSetToScalaSet,
   MultiEnumFactory,
   TinFactory,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 import { CdccDisqualifyingItems } from '../../flow/flow-chunks/credits-and-deductions/CdccSubSubcategory.js';
 import { Condition } from '../../flow/Condition.js';

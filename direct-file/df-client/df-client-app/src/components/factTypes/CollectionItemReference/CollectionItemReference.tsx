@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { Radio } from '@trussworks/react-uswds';
 
-import { CollectionItem as CollectionItemValue, CollectionItemReferenceFactory } from '@irs/js-factgraph-scala';
+import { CollectionItem as CollectionItemValue, CollectionItemReferenceFactory } from 'js-factgraph';
 import { FactProps } from '../../../types/core.js';
 import useFact from '../../../hooks/useFact.js';
 import { useFactControl } from '../../../hooks/useFactControl.js';

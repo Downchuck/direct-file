@@ -13,7 +13,7 @@ const mockFactGraph = vi.hoisted(() => {
 vi.mock(`../factgraph/FactGraphContext`, () => ({
   useFactGraph: () => ({ factGraph: mockFactGraph }),
 }));
-vi.mock(`@irs/js-factgraph-scala`, () => {
+vi.mock(`js-factgraph`, () => {
   const fakeConvert = (val: unknown) => val;
   return { unwrapScalaOptional: fakeConvert, scalaListToJsArray: fakeConvert };
 });

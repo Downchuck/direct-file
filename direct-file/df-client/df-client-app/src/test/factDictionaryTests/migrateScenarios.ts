@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import fs from 'fs';
 import { format } from 'prettier';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { wrappedFacts } from '../../fact-dictionary/generated/wrappedFacts.js';
 import { CURRENT_TAX_YEAR } from '../../constants/taxConstants.js';
 

@@ -1,5 +1,5 @@
 import { useState, forwardRef } from 'react';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { FactProps } from '../../../types/core.js';
 import { useTranslation } from 'react-i18next';
 import { stripNonNumeric } from '../../../misc/misc.js';

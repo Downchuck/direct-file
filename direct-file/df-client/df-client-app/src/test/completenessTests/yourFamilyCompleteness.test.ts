@@ -1,4 +1,4 @@
-import { DayFactory, EnumFactory } from '@irs/js-factgraph-scala';
+import { DayFactory, EnumFactory } from 'js-factgraph';
 import flowNodes from '../../flow/flow.js';
 import { createFlowConfig } from '../../flow/flowConfig.js';
 import {

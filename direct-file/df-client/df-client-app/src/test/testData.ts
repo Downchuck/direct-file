@@ -17,7 +17,7 @@ import { Path } from '../flow/Path.js';
 import { AbsolutePath } from '../fact-dictionary/Path.js';
 import { CURRENT_TAX_YEAR } from '../constants/taxConstants.js';
 import { setupFactGraph } from './setupFactGraph.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 const CURRENT_TAX_YEAR_AS_NUMBER = Number.parseInt(CURRENT_TAX_YEAR);
 
 export const uuid = `959c03d1-af4a-447f-96aa-d19397048a44`;

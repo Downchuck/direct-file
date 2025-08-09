@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { TextFormControl } from './TextFormControl.js';
-import { ConcretePath, JSEitherL, JSEitherR, JSeither } from '@irs/js-factgraph-scala';
+import { ConcretePath, JSEitherL, JSEitherR, JSeither } from 'js-factgraph';
 import { Path } from '../../fact-dictionary/Path.js';
 
 const mocks = vi.hoisted(() => {

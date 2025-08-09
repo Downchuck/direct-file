@@ -1,7 +1,7 @@
 import { Alert } from '@trussworks/react-uswds';
 import { useTranslation } from 'react-i18next';
 import { Path } from '../../flow/Path.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js';
 import Translation from '../Translation/index.js';
 import { useEffect, useMemo } from 'react';

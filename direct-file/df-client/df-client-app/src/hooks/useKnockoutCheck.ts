@@ -1,5 +1,5 @@
 import { useFactGraph } from '../factgraph/FactGraphContext.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { useFlow } from '../flow/flowConfig.js';
 import { useNavigate } from 'react-router-dom';
 import getNextScreen from '../screens/getNextScreen.js';

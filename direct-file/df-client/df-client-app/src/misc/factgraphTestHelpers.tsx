@@ -1,4 +1,4 @@
-import { ConcretePath, Fact, FactGraph, SaveReturnValue, ScalaList, PersisterSyncIssue } from '@irs/js-factgraph-scala';
+import { ConcretePath, Fact, FactGraph, SaveReturnValue, ScalaList, PersisterSyncIssue } from 'js-factgraph';
 
 class FakeResult<T> {
   private _value: T;

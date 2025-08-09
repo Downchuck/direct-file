@@ -8,7 +8,7 @@ import { mockUseTranslation } from '../../../test/mocks/mockFunctions.js';
 import GenericString from './GenericString.js';
 import { FactGraphContextProvider } from '../../../factgraph/FactGraphContext.js';
 import { setupStore } from '../../../redux/store.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { Path } from '../../../flow/Path.js';
 
 // This mock allows for testing of any component that is rendered using the

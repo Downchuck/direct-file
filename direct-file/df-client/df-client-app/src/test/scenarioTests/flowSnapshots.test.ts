@@ -2,7 +2,7 @@ import { describe, it, Mock } from 'vitest';
 import fs from 'fs';
 import { createFlowConfig } from '../../flow/flowConfig.js';
 import flowNodes from '../../flow/flow.js';
-import { ConcretePath, FactGraph, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { ConcretePath, FactGraph, scalaListToJsArray } from 'js-factgraph';
 import getNextScreen, { Routable } from '../../screens/getNextScreen.js';
 import { ScreenConfig } from '../../flow/ScreenConfig.js';
 import { Condition } from '../../flow/Condition.js';

@@ -15,7 +15,7 @@ import {
 } from '../aliases.js';
 import { Path } from '../Path.js';
 import { wrappedFacts } from '../generated/wrappedFacts.js';
-import { CompNodeConfigDigestWrapper } from '@irs/js-factgraph-scala';
+import { CompNodeConfigDigestWrapper } from 'js-factgraph';
 import { assertNever } from 'assert-never';
 import { tinSubfields } from './subfields.js';
 

@@ -1,6 +1,6 @@
 import { TaxReturn, TaxReturnSubmissionStatus } from '../types/core.js';
 import { FlowCollectionLoop, FlowConfig, useFlow } from './flowConfig.js';
-import { FactGraph } from '@irs/js-factgraph-scala';
+import { FactGraph } from 'js-factgraph';
 import { Condition } from './Condition.js';
 import { useFactGraph } from '../factgraph/FactGraphContext.js';
 import {

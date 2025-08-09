@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CURRENT_TAX_YEAR, FEDERAL_RETURN_STATUS } from '../../constants/taxConstants.js';
 import { FetchStateProfileHookResponse } from '../../hooks/useFetchStateProfile.js';
 import { StateProfile } from '../../types/StateProfile.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 
 const { mockUseFetchStateProfile } = vi.hoisted(() => {
   return {

@@ -17,7 +17,7 @@ import Translation from '../Translation/Translation.js';
 import { useFactGraph } from '../../factgraph/FactGraphContext.js';
 import { TaxReturnsContext } from '../../context/TaxReturnsContext.js';
 import { save } from '../../hooks/useApiHook.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import {
   SetSystemAlertConfig,
   SystemAlertKey,

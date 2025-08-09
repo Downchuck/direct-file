@@ -14,7 +14,7 @@ import {
   IpPinFactory,
   PinFactory,
   BankAccountFactory,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { assertNever } from 'assert-never';
 import { expect } from 'vitest';
 import { FactConfig } from '../../flow/ContentDeclarations.js';

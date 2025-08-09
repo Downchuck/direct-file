@@ -1,5 +1,5 @@
-import * as sfg from '@irs/js-factgraph-scala';
-import { AddressValidationFailure } from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
+import { AddressValidationFailure } from 'js-factgraph';
 import { CharacterCount, Select, TextInput } from '@trussworks/react-uswds';
 import { ReactElement, forwardRef, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import { CollectionFactory, ConcretePath, EmailAddress, TinFactory } from '@irs/js-factgraph-scala';
+import { CollectionFactory, ConcretePath, EmailAddress, TinFactory } from 'js-factgraph';
 import { InterceptingFactGraph } from '../factgraph/InterceptingFactGraph.js';
 import { Path } from '../flow/Path.js';
 import { v4 as uuidv4 } from 'uuid';

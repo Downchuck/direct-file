@@ -7,7 +7,7 @@ import {
   FactGraph,
   scalaListToJsArray,
   TinFactory,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { Path } from '../../flow/Path.js';
 import { AbsolutePath } from '../../fact-dictionary/Path.js';
 

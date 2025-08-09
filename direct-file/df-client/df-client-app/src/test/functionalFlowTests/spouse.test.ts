@@ -12,7 +12,7 @@ import { Path } from '../../flow/Path.js';
 import { createFlowConfig } from '../../flow/flowConfig.js';
 import flowNodes from '../../flow/flow.js';
 import makeGivenFacts from './functionalFlowUtils.js';
-import { EnumFactory } from '@irs/js-factgraph-scala';
+import { EnumFactory } from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 
 const flow = createFlowConfig(flowNodes);

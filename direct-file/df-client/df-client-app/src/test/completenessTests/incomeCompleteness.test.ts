@@ -1,4 +1,4 @@
-import { DollarFactory } from '@irs/js-factgraph-scala';
+import { DollarFactory } from 'js-factgraph';
 import flowNodes from '../../flow/flow.js';
 import { createFlowConfig } from '../../flow/flowConfig.js';
 import {

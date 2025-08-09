@@ -10,7 +10,7 @@ import { Path } from '../../flow/Path.js';
 import { createFlowConfig } from '../../flow/flowConfig.js';
 import flowNodes from '../../flow/flow.js';
 import makeGivenFacts from './functionalFlowUtils.js';
-import { CollectionItemReferenceFactory } from '@irs/js-factgraph-scala';
+import { CollectionItemReferenceFactory } from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 
 const flow = createFlowConfig(flowNodes);
