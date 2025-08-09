@@ -1,0 +1,9 @@
+{
+  "name": "direct-file-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
+  "packageManager": "yarn@4.9.2"
+}
