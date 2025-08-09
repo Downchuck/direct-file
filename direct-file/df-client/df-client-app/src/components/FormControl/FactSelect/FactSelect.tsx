@@ -11,7 +11,7 @@ import {
   MutableRefObject,
   LegacyRef,
 } from 'react';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { useTranslation } from 'react-i18next';
 import { DollarImplementation } from '../../factTypes/Dollar.js';
 import { FactProps } from '../../../types/core.js';

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { ComplexFormControl } from './ComplexFormControl.js';
 import { PAGE_HEADING_ID } from '../PageTitle/index.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { Path } from '../../fact-dictionary/Path.js';
 
 const mocks = vi.hoisted(() => {

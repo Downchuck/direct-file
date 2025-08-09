@@ -1,5 +1,5 @@
 import { TFunction, i18n as i18nType } from 'i18next';
-import { ConcretePath, FactGraph } from '@irs/js-factgraph-scala';
+import { ConcretePath, FactGraph } from 'js-factgraph';
 import { useTranslation } from 'react-i18next';
 import useTranslateWithFacts from '../../../hooks/useTranslateWithFacts.js';
 import { Fragment } from 'react';

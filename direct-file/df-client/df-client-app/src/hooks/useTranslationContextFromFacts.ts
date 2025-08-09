@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { useMemo } from 'react';
 import { Path } from '../flow/Path.js';
 import { Path as FGPath } from '../fact-dictionary/Path.js';

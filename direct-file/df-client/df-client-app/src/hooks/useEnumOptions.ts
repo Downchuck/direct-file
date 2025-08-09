@@ -1,4 +1,4 @@
-import { unwrapScalaOptional, scalaListToJsArray, ScalaList, FactGraph } from '@irs/js-factgraph-scala';
+import { unwrapScalaOptional, scalaListToJsArray, ScalaList, FactGraph } from 'js-factgraph';
 import { useFactGraph } from '../factgraph/FactGraphContext.js';
 import { Path } from '../flow/Path.js';
 import { AbsolutePath, Path as FGPath } from '../fact-dictionary/Path.js';

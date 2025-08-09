@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import Boolean from './Boolean.js';
 import { FactGraphContextProvider } from '../../../factgraph/FactGraphContext.js';
 import { setupStore } from '../../../redux/store.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { test, expect } from 'vitest';
 import { AbsolutePath } from '../../../fact-dictionary/Path.js';
 

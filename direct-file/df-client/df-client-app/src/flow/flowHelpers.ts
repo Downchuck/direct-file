@@ -1,4 +1,4 @@
-import { FactGraph, ScalaList, convertCollectionToArray, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { FactGraph, ScalaList, convertCollectionToArray, scalaListToJsArray } from 'js-factgraph';
 import { FlowCollectionLoop, FlowSubcategory, FlowSubSubcategory } from './flowConfig.js';
 import { FactConfig, ScreenContentConfig, contentConfigIsFactConfig } from './ContentDeclarations.js';
 import { Path } from './Path.js';

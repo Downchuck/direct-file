@@ -37,7 +37,7 @@ import { Path } from '../fact-dictionary/Path.js';
 
 // We use this reference object to ensure we check all the relevant keys
 // Importing the blank object from `BankAccount.tsx` causes import errors because of `scss` modules in the file
-import type { BankAccount } from '@irs/js-factgraph-scala';
+import type { BankAccount } from 'js-factgraph';
 import { buildScreenContentFromConfigNode } from '../flow/ScreenConfig.js';
 const BLANK_BANK_ACCOUNT: BankAccount = {
   accountNumber: ``,

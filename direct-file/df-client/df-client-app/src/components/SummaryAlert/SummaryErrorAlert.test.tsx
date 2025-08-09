@@ -7,7 +7,7 @@ import mockEnYaml from '../../locales/en.yaml';
 
 import SummaryErrorAlert from './SummaryErrorAlert.js';
 import { FactGraphContextProvider } from '../../factgraph/FactGraphContext.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { MutableRefObject } from 'react';
 import { setupStore } from '../../redux/store.js';
 

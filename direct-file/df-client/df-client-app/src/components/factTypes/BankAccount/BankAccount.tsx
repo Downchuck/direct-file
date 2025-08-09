@@ -14,7 +14,7 @@ import {
   type BankAccountValidationFailure,
   BankAccountFactory,
   scalaMapToJsMap,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { useFactControl } from '../../../hooks/useFactControl.js';
 import { Fieldset, Radio, TextInput } from '@trussworks/react-uswds';
 import { useTranslation } from 'react-i18next';

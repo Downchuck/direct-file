@@ -9,7 +9,7 @@ import { setSmoothScroll } from '../../misc/misc.js';
 import { checkAllFormControlValidity } from '../../misc/constraintsApi.js';
 import { useSaveAndPersistIfPossible } from '../../hooks/useSaveAndPersistIfPossible.js';
 import { useIsReturnEditable } from '../../hooks/useIsReturnEditable.js';
-import { ConcretePath, FactGraph, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { ConcretePath, FactGraph, scalaListToJsArray } from 'js-factgraph';
 import { routeToScreenWithItemId } from '../../screens/navUtils.js';
 
 // Adds a Collection ID and context to a route so we can

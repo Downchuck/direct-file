@@ -5,7 +5,7 @@ import { useFactGraph } from '../../factgraph/FactGraphContext.js';
 import { useFlow } from '../../flow/flowConfig.js';
 import { contentConfigIsFactConfig } from '../../flow/ContentDeclarations.js';
 import { saveImportedFacts } from '../../redux/slices/data-import/saveImportedFacts.js';
-import { CollectionFactory, ConcretePath, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { CollectionFactory, ConcretePath, scalaListToJsArray } from 'js-factgraph';
 import { useSaveAndPersist } from '../../hooks/useSaveAndPersist.js';
 import { setFactsFromFactActionPaths } from '../screenUtils.js';
 import Translation from '../Translation/Translation.js';

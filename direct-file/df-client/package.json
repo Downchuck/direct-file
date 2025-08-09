@@ -3,7 +3,7 @@
   "workspaces": [
     "df-client-app",
     "df-common",
-    "js-factgraph-scala",
+    "js-factgraph",
     "df-static-site",
     "eslint-plugin-df-rules",
     "packages/*"

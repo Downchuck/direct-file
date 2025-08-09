@@ -19,7 +19,7 @@ import {
 } from '../../utils/dateUtils.js';
 import { areAnyRejectionsNotFixable } from '../../utils/submissionStatusUtils.js';
 import StateTaxesCard from '../StateTaxesCard/StateTaxesCard.js';
-import { Enum as EnumValue } from '@irs/js-factgraph-scala';
+import { Enum as EnumValue } from 'js-factgraph';
 import { StateOrProvince } from '../../types/StateOrProvince.js';
 import FederalReturnStatusAlert from '../FederalReturnStatusAlert/FederalReturnStatusAlert.js';
 import PaperPathStatusAlert from '../PaperPathStatusAlert/PaperPathStatusAlert.js';

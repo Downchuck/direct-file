@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
 import { assertNever } from 'assert-never';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { Path } from './Path.js';
 import { Path as FDPath } from '../fact-dictionary/Path.js';
 import { submissionBlockingFacts } from '../fact-dictionary/submissionBlockingFacts.js';

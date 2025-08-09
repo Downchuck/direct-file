@@ -1,4 +1,4 @@
-import { JSeither } from '@irs/js-factgraph-scala';
+import { JSeither } from 'js-factgraph';
 import { useCallback, useState, Dispatch, SetStateAction } from 'react';
 
 export type UseFactControlParameters<FactValue, FactError, RawValue> = {

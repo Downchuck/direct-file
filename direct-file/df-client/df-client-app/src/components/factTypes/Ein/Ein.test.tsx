@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect';
 import { mockUseTranslation } from '../../../test/mocks/mockFunctions.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { createRef } from 'react';
 import { Path } from '../../../flow/Path.js';
 import { customRender } from '../../../utils/test-utils.js';

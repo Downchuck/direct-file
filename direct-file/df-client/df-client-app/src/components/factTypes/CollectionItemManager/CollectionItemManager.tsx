@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Translation from '../../../components/Translation/index.js';
 import { Button, Icon } from '@trussworks/react-uswds';
 import { useFactGraph } from '../../../factgraph/FactGraphContext.js';
-import { CollectionFactory, ConcretePath, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { CollectionFactory, ConcretePath, scalaListToJsArray } from 'js-factgraph';
 import { useCallback, FC, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Path } from '../../../flow/Path.js';

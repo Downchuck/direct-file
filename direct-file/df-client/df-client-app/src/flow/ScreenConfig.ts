@@ -1,4 +1,4 @@
-import { ConcretePath, FactGraph, convertCollectionToArray } from '@irs/js-factgraph-scala';
+import { ConcretePath, FactGraph, convertCollectionToArray } from 'js-factgraph';
 import { Children } from 'react';
 import { RawCondition, Condition } from './Condition.js';
 import {

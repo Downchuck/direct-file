@@ -9,7 +9,7 @@ import { CURRENT_TAX_YEAR, FEDERAL_RETURN_STATUS } from '../../constants/taxCons
 import StateTaxReminderAlertWrapper from './StateTaxReminderAlertWrapper.js';
 import { StateProfile } from '../../types/StateProfile.js';
 import { FetchStateProfileHookResponse } from '../../hooks/useFetchStateProfile.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 
 const { mockUseFetchStateProfile } = vi.hoisted(() => {
   return {

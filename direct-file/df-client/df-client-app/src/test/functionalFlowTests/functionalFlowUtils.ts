@@ -2,7 +2,7 @@ import { Task, expect } from 'vitest';
 import { FlowConfig } from '../../flow/flowConfig.js';
 import getNextScreen, { GetNextScreenOpts } from '../../screens/getNextScreen.js';
 
-import type { FactGraph } from '@irs/js-factgraph-scala';
+import type { FactGraph } from 'js-factgraph';
 import { ScreenConfig } from '../../flow/ScreenConfig.js';
 
 export type FunctionalGiven = {

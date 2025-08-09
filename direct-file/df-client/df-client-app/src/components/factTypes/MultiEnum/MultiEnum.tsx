@@ -8,7 +8,7 @@ import {
   MultiEnumFactory,
   scalaSetToJsSet,
   jsSetToScalaSet,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { useFactControl } from '../../../hooks/useFactControl.js';
 import { ComplexFormControl } from '../../FormControl/index.js';
 import Translation from '../../Translation/index.js';

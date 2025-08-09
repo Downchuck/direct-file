@@ -12,7 +12,7 @@ import {
   ScalaList,
   convertCollectionToArray,
   scalaListToJsArray,
-} from '@irs/js-factgraph-scala';
+} from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 
 const uuid1 = `0b1e355e-3d19-415d-8470-fbafd9f58361`;

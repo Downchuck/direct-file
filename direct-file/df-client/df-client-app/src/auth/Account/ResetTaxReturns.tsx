@@ -3,7 +3,7 @@ import { save } from '../../hooks/useApiHook.js';
 import { useCallback, useContext, useState } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal.js';
 import { useFactGraph } from '../../factgraph/FactGraphContext.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import Heading from '../../components/Heading.js';
 import { BackButton } from '../../screens/ScreenHeader.js';
 import ContentDisplay from '../../components/ContentDisplay/ContentDisplay.js';

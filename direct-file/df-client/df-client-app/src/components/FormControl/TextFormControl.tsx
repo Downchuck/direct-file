@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useId } from 'react';
-import { ConcretePath, JSeither } from '@irs/js-factgraph-scala';
+import { ConcretePath, JSeither } from 'js-factgraph';
 import { FormGroup, InputGroup, InputPrefix, TextInput, InputSuffix } from '@trussworks/react-uswds';
 import type { TextInputProps } from '@trussworks/react-uswds/lib/components/forms/TextInput/TextInput.js';
 import { useFactControl } from '../../hooks/useFactControl.js';

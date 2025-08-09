@@ -1,4 +1,4 @@
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { useFactGraph } from '../../factgraph/FactGraphContext.js';
 import { useEffectOnce } from '../../hooks/useEffectOnce.js';
 import { useNavigate } from 'react-router-dom';

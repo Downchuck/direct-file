@@ -2,7 +2,7 @@
 // I wish this were more typed and readable, but the XML produces some heavily nested structures
 // that are not worth writing interfaces for. The best way to understand this is to look
 
-import { WrappedFact } from '@irs/js-factgraph-scala';
+import { WrappedFact } from 'js-factgraph';
 
 // at the generated input (facts.ts) and generated output (wrappedFacts.ts)
 export default function processFactsToDigestWrapper(rawFacts: any[]): WrappedFact[] {

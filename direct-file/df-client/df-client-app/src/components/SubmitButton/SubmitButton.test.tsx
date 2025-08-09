@@ -1,4 +1,4 @@
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { renderWithTranslationProvider as render } from '../../test/test-utils.js';
 import { ScreenButtonProps, TaxReturn } from '../../types/core.js';
 import { screen } from '@testing-library/react';

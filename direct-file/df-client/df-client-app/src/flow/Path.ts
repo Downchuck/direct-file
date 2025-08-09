@@ -1,5 +1,5 @@
 import { AbstractPath, Path as FDPath } from '../fact-dictionary/Path.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 
 export class Path {
   static isAbstract(path: FDPath) {

@@ -1,4 +1,4 @@
-import { ConcretePath, ScalaList, scalaListToJsArray } from '@irs/js-factgraph-scala';
+import { ConcretePath, ScalaList, scalaListToJsArray } from 'js-factgraph';
 import { Path } from '../../flow/Path.js';
 import { createEnumWrapper, createCollectionWrapper } from '../persistenceWrappers.js';
 import { describe, it, expect } from 'vitest';

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createBooleanWrapper, createEnumWrapper } from '../persistenceWrappers.js';
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { setupFactGraph } from '../setupFactGraph.js';
 
 describe(`Qualified surviving spouse`, () => {

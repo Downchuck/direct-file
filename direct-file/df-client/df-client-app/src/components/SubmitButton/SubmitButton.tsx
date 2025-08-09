@@ -12,7 +12,7 @@ import { TaxReturnsContext } from '../../context/TaxReturnsContext.js';
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator.js';
 import { useSubmit } from '../../hooks/useSubmit.js';
 import { SubmissionStatusContext } from '../../context/SubmissionStatusContext/SubmissionStatusContext.js';
-import { CompleteFactGraphResult } from '@irs/js-factgraph-scala/src/typings/FactGraph.js';
+import { CompleteFactGraphResult } from 'js-factgraph/src/types/FactGraph.js';
 import { useFactGraph } from '../../factgraph/FactGraphContext.js';
 import { Path } from '../../flow/Path.js';
 

@@ -10,7 +10,7 @@ import {
   SetSystemAlertConfig,
   useSystemAlertContext,
 } from '../context/SystemAlertContext/SystemAlertContext.js';
-import { FactGraph } from '@irs/js-factgraph-scala';
+import { FactGraph } from 'js-factgraph';
 import { TaxReturnsContext } from '../context/TaxReturnsContext.js';
 import { Condition } from '../flow/Condition.js';
 

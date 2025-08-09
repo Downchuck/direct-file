@@ -1,4 +1,4 @@
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import { Path } from '../../fact-dictionary/Path.js';
 
 export function buildFormControlId<Subfield extends string>(concretePath: ConcretePath, subfield?: Subfield) {

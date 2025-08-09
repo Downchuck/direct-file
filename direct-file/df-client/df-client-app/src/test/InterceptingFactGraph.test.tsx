@@ -1,6 +1,6 @@
 import { filerWithZeroBalanceData } from './testData.js';
 import { Path } from '../flow/Path.js';
-import { DollarFactory } from '@irs/js-factgraph-scala';
+import { DollarFactory } from 'js-factgraph';
 import { setupFactGraph } from './setupFactGraph.js';
 
 export const uuid = `959c03d1-af4a-447f-96aa-d19397048a44`;

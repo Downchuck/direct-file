@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import useTranslationContextFromFacts from './useTranslationContextFromFacts.js';
 import { I18nKey } from '../components/Translation/Translation.js';
 

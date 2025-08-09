@@ -1,4 +1,4 @@
-import { ConcretePath } from '@irs/js-factgraph-scala';
+import { ConcretePath } from 'js-factgraph';
 import {
   CollectionControlDeclaration,
   FactDeclaration,

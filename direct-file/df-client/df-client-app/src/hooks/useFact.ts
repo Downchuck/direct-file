@@ -1,4 +1,4 @@
-import { ConcretePath, FactGraph, FactGraphResult } from '@irs/js-factgraph-scala';
+import { ConcretePath, FactGraph, FactGraphResult } from 'js-factgraph';
 import { useFactGraph } from '../factgraph/FactGraphContext.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FACT_PATH_TYPES } from '../factgraph/factGraphTypeHelpers.js';

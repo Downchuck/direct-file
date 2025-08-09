@@ -1,6 +1,6 @@
 import { Path } from '../fact-dictionary/Path.js';
 import useTranslationContextFromFacts from './useTranslationContextFromFacts.js';
-import { Day, FactGraph } from '@irs/js-factgraph-scala';
+import { Day, FactGraph } from 'js-factgraph';
 
 const mocks = vi.hoisted(() => {
   // translation

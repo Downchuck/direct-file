@@ -16,7 +16,7 @@ import {
 
 import { scrollToRef } from '../misc/misc.js';
 import { ERROR_SUMMARY_ID } from './ScreenAlertAggregator/ScreenAlertAggregator.js';
-import { CollectionFactory, ConcretePath, FactGraph } from '@irs/js-factgraph-scala';
+import { CollectionFactory, ConcretePath, FactGraph } from 'js-factgraph';
 import { MutableRefObject, createRef, useCallback, useContext, useMemo } from 'react';
 import { useFilterContentContext } from '../context/FilterContentContext.js';
 import { SubmissionStatusContext } from '../context/SubmissionStatusContext/SubmissionStatusContext.js';

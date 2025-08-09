@@ -1,5 +1,5 @@
 import { it, describe, expect } from 'vitest';
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { baseFilerData, primaryFilerId } from '../testData.js';
 import {
   createBooleanWrapper,

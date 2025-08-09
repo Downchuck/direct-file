@@ -1,7 +1,7 @@
-import * as sfg from '@irs/js-factgraph-scala';
+import * as sfg from 'js-factgraph';
 import { forwardRef, useState, useCallback, useRef, useEffect } from 'react';
 
-import { type Dollar, type DollarValidationFailure } from '@irs/js-factgraph-scala';
+import { type Dollar, type DollarValidationFailure } from 'js-factgraph';
 
 import { type FactProps } from '../../types/core.js';
 import { LabelConfig, TextFormControl } from '../FormControl/index.js';

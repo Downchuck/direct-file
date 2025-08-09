@@ -1,4 +1,4 @@
-import { ConcretePath, DayFactory } from '@irs/js-factgraph-scala';
+import { ConcretePath, DayFactory } from 'js-factgraph';
 import { describe, it, expect } from 'vitest';
 import {
   createCollectionWrapper,

@@ -1,4 +1,4 @@
-import { FactGraph } from '@irs/js-factgraph-scala';
+import { FactGraph } from 'js-factgraph';
 import { FlowConfig } from '../flow/flowConfig.js';
 import getNextScreen, { NextScreenData } from '../screens/getNextScreen.js';
 import { ScreenConfig } from '../flow/ScreenConfig.js';
