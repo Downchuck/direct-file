@@ -80,5 +80,13 @@ export class StateApiService {
     return authorizationCode;
   }
 
+  async getStateProfile(stateCode: string): Promise<StateProfile> {
+    const stateProfile = await this.cachedDS.getStateProfileByStateCode(stateCode);
+    if (!stateProfile) {
+      throw new Error(`State profile not found for state code: ${stateCode}`);
+    }
+    return stateProfile;
+  }
+
   // TODO: Implement other methods
 }
