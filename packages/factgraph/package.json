@@ -7,9 +7,9 @@
     "test": "vitest --config ./vitest.config.ts"
   },
   "dependencies": {
-    "zod": "^3.22.4",
+    "date-fns": "^2.30.0",
     "decimal.js": "^10.4.3",
-    "date-fns": "^2.30.0"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/decimal.js": "^7.4.0",
