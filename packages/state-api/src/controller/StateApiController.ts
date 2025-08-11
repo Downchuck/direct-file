@@ -36,7 +36,19 @@ export class StateApiController {
   };
 
   private getStateProfile = async (req: Request, res: Response) => {
-    // TODO: Implement this
-    res.status(501).send({ message: 'Not implemented' });
+    try {
+      const stateCode = req.query.stateCode as string;
+      if (!stateCode) {
+        return res.status(400).send({ error: 'stateCode is required' });
+      }
+      const stateProfile = await this.stateApiService.getStateProfile(stateCode);
+      res.status(200).send(stateProfile);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).send({ error: error.message });
+      } else {
+        res.status(500).send({ error: 'An unknown error occurred' });
+      }
+    }
   };
 }

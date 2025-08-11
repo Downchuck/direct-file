@@ -59,4 +59,49 @@ describe('StateApiController', () => {
       expect(response.body).toEqual({ error: errorMessage });
     });
   });
+
+  describe('GET /state-profile', () => {
+    it('should return a 200 status and a state profile on success', async () => {
+      const stateCode = 'CA';
+      const mockStateProfile = {
+        id: 1,
+        stateCode: 'CA',
+        taxSystemName: 'California Franchise Tax Board',
+        landingUrl: 'https://www.ftb.ca.gov/',
+        acceptedOnly: false,
+        archived: false,
+      };
+
+      (stateApiService.getStateProfile as jest.Mock).mockResolvedValue(mockStateProfile);
+
+      const response = await request(app)
+        .get('/state-api/state-profile')
+        .query({ stateCode });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockStateProfile);
+    });
+
+    it('should return a 400 status if stateCode is missing', async () => {
+      const response = await request(app)
+        .get('/state-api/state-profile');
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'stateCode is required' });
+    });
+
+    it('should return a 500 status on failure', async () => {
+      const stateCode = 'CA';
+      const errorMessage = 'Internal server error';
+
+      (stateApiService.getStateProfile as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+      const response = await request(app)
+        .get('/state-api/state-profile')
+        .query({ stateCode });
+
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({ error: errorMessage });
+    });
+  });
 });
