@@ -64,3 +64,34 @@ The original `direct-file` project is a mix of Java, Scala, and TypeScript. The 
 
 *   **Source:** `direct-file/boms`
 *   **Description:** This is a Maven concept. It will be replaced by standard `package.json` dependency management in the monorepo. This directory can be removed after all Java projects are migrated.
+
+## Recent Progress and Next Steps (as of 2025-08-12)
+
+This section documents the latest migration progress and outlines the immediate next steps.
+
+### Progress Made
+
+*   **Begun `factgraph` migration:**
+    *   Migrated the `Equal` compnode from Scala to TypeScript (`packages/factgraph/src/compnodes/Equal.ts`).
+    *   Identified that the `Expression` system in TypeScript was incomplete. Created the base structure for `Expression` subclasses by adding `packages/factgraph/src/expressions/BinaryExpression.ts` and `ReduceExpression.ts`.
+    *   Refactored the existing (and incomplete) `Add.ts` and `Subtract.ts` compnodes to use the new `Expression` classes.
+*   **Dependency and Environment Debugging:**
+    *   Corrected the dependency in `packages/df-client-app/package.json` from the legacy `js-factgraph` to the new `factgraph` workspace package.
+    *   Fixed the `vitest` configuration in `packages/factgraph/vitest.config.ts` to use `jsdom` and the correct `mergeConfig` import.
+
+### Blockers and Next Steps
+
+The primary blocker is an issue with the development environment that prevents `yarn` commands from running successfully (they consistently time out). The following steps need to be taken once the environment is fixed:
+
+1.  **Stabilize the Yarn Environment:**
+    *   Successfully run `corepack enable`.
+    *   Successfully run `yarn set version stable`. This is a critical step that has been failing.
+2.  **Install Dependencies:**
+    *   Run `yarn install` to ensure all project dependencies are correctly installed using the stable Yarn version.
+3.  **Continue `factgraph` Test Debugging:**
+    *   Run `yarn workspace factgraph test`.
+    *   The next expected error is `Not implemented` from the `get()` methods in `BinaryExpression.ts` and `ReduceExpression.ts`.
+4.  **Implement Expression Logic:**
+    *   Translate the core evaluation logic from `Expression.scala` into the `get()`, `getThunk()`, and `explain()` methods of the new TypeScript `Expression` subclasses. This is the next major piece of the migration.
+5.  **Continue Migration:**
+    *   Continue migrating the remaining `compnodes` and other parts of the `fact-graph-scala` project.

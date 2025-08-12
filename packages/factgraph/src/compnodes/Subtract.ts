@@ -8,8 +8,9 @@ import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
 import { Day } from '../types/Day';
 import { Days } from '../types/Days';
-import { Expression } from '../Expression';
 import { BinaryOperator } from '../operators/BinaryOperator';
+import { BinaryExpression } from '../expressions/BinaryExpression';
+import { ReduceExpression } from '../expressions/ReduceExpression';
 import { ReduceOperator } from '../operators/ReduceOperator';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
@@ -93,18 +94,19 @@ class SubtractFactory implements CompNodeFactory {
 
   create(nodes: CompNode[]): CompNode {
     if (nodes.every((n) => n instanceof IntNode)) {
-      return new IntNode(
-        new Expression() // TODO: new ReduceExpression
-      );
+      const expressions = nodes.map((n) => n.expression);
+      return new IntNode(new ReduceExpression(expressions, intReduceOperator));
     }
     if (nodes.every((n) => n instanceof DollarNode)) {
+      const expressions = nodes.map((n) => n.expression);
       return new DollarNode(
-        new Expression() // TODO: new ReduceExpression
+        new ReduceExpression(expressions, dollarReduceOperator)
       );
     }
     if (nodes.every((n) => n instanceof RationalNode)) {
+      const expressions = nodes.map((n) => n.expression);
       return new RationalNode(
-        new Expression() // TODO: new ReduceExpression
+        new ReduceExpression(expressions, rationalReduceOperator)
       );
     }
     return nodes.reduce((lhs, rhs) => this.binarySubtract(lhs, rhs));
@@ -112,34 +114,90 @@ class SubtractFactory implements CompNodeFactory {
 
   private binarySubtract(lhs: CompNode, rhs: CompNode): CompNode {
     if (lhs instanceof IntNode && rhs instanceof IntNode) {
-      return new IntNode(new Expression()); // TODO: new BinaryExpression
+      return new IntNode(
+        new BinaryExpression(lhs.expression, rhs.expression, intIntBinaryOperator)
+      );
     }
     if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
-      return new DollarNode(new Expression()); // TODO: new BinaryExpression
+      return new DollarNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          dollarDollarBinaryOperator
+        )
+      );
     }
     if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
-      return new RationalNode(new Expression()); // TODO: new BinaryExpression
+      return new RationalNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          rationalRationalBinaryOperator
+        )
+      );
     }
     if (lhs instanceof DayNode && rhs instanceof DaysNode) {
-      return new DayNode(new Expression()); // TODO: new BinaryExpression
+      return new DayNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          dayDaysBinaryOperator
+        )
+      );
     }
     if (lhs instanceof IntNode && rhs instanceof DollarNode) {
-      return new DollarNode(new Expression()); // TODO: new BinaryExpression
+      return new DollarNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          intDollarBinaryOperator
+        )
+      );
     }
     if (lhs instanceof DollarNode && rhs instanceof IntNode) {
-      return new DollarNode(new Expression()); // TODO: new BinaryExpression
+      return new DollarNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          dollarIntBinaryOperator
+        )
+      );
     }
     if (lhs instanceof IntNode && rhs instanceof RationalNode) {
-      return new RationalNode(new Expression()); // TODO: new BinaryExpression
+      return new RationalNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          intRationalBinaryOperator
+        )
+      );
     }
     if (lhs instanceof RationalNode && rhs instanceof IntNode) {
-      return new RationalNode(new Expression()); // TODO: new BinaryExpression
+      return new RationalNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          rationalIntBinaryOperator
+        )
+      );
     }
     if (lhs instanceof RationalNode && rhs instanceof DollarNode) {
-      return new DollarNode(new Expression()); // TODO: new BinaryExpression
+      return new DollarNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          rationalDollarBinaryOperator
+        )
+      );
     }
     if (lhs instanceof DollarNode && rhs instanceof RationalNode) {
-      return new DollarNode(new Expression()); // TODO: new BinaryExpression
+      return new DollarNode(
+        new BinaryExpression(
+          lhs.expression,
+          rhs.expression,
+          dollarRationalBinaryOperator
+        )
+      );
     }
     throw new Error(
       `cannot subtract a ${rhs.constructor.name} from a ${lhs.constructor.name}`
