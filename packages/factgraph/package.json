@@ -4,7 +4,7 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "test": "vitest --config ./vitest.config.ts"
+    "test": "vitest --config ./vitest.config.ts --logHeapUsage --verbose"
   },
   "dependencies": {
     "date-fns": "^2.30.0",

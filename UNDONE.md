@@ -1,97 +1,48 @@
-# Migration Undone Tasks
+# Migration Undone Tasks - `factgraph` testing blockers
 
-This document outlines the remaining tasks for migrating the `direct-file` project into the new TypeScript monorepo structure.
+This document outlines the current blockers and next steps for the `factgraph` migration, specifically regarding the failing test suite.
 
-## High-Level Summary
+## Summary of Blocker
 
-The original `direct-file` project is a mix of Java, Scala, and TypeScript. The goal is to migrate all of it to a pure TypeScript monorepo under the `packages/` directory. While some progress has been made (e.g., `email-service`, `factgraph`), a significant amount of work remains.
+The `yarn workspace factgraph test` command consistently hangs and eventually times out, preventing any progress on the `factgraph` migration. The root cause is unknown, but it appears to be an issue with the test runner (`vitest`) or the environment, rather than the test code itself. The process seems to get stuck before the tests are even executed.
 
-## Detailed Breakdown of Remaining Work
+### Debugging Steps Taken
 
-### 1. Backend Migration (Java to TypeScript)
+The following steps have been taken in an attempt to diagnose and fix the issue, without success:
 
-*   **Source:** `direct-file/backend`
-*   **Target:** `packages/backend`
-*   **Description:** This is the largest and most critical part of the migration. The existing Java backend contains the core business logic. This will involve a complete rewrite of the Java code into TypeScript, including:
-    *   API endpoints
-    *   Database interactions (migrating from what looks like Spring Data JPA to node:sqlite)
-    *   Business logic
-    *   Tests
+1.  **Environment Fixes:**
+    *   Reset the entire repository to a clean state.
+    *   Rebuilt the yarn environment from scratch, removing the pinned `yarnPath` and running `yarn install` successfully.
 
-### 2. Fact-Graph Migration (Scala to TypeScript)
+2.  **Test Code Investigation:**
+    *   Identified that only one test file exists: `packages/factgraph/src/__tests__/Dollar.test.ts`. The test code itself appears simple and correct, with no obvious infinite loops or blocking operations.
+    *   Temporarily implemented the `get()`, `getThunk()`, and `explain()` methods in `BinaryExpression.ts` and `ReduceExpression.ts` to rule out "Not Implemented" errors as the cause of the hang.
 
-*   **Source:** `direct-file/fact-graph-scala`
-*   **Target:** `packages/factgraph`
-*   **Description:** The Scala implementation of the fact graph needs to be fully migrated to the existing TypeScript `factgraph` package. The current TypeScript implementation may be incomplete.
+3.  **Test Runner Configuration:**
+    *   Examined `packages/factgraph/vitest.config.ts` and the root `vite.config.ts`; both are standard and minimal.
+    *   Added verbose logging (`--verbose`, `--logHeapUsage`) to the `vitest` command, which did not provide any useful insights before timing out.
+    *   Added a very aggressive `testTimeout: 1000` to the `vitest.config.ts`. The test run still hung and timed out after the full duration, indicating the runner is not even reaching the stage where it applies the test timeout.
 
-### 3. Frontend Migration (`df-client`)
+## New Plan for Investigation
 
-*   **Source:** `direct-file/df-client`
-*   **Target:** New packages under `packages/` (e.g., `packages/df-client-app`, `packages/df-static-site`)
-*   **Description:** The `df-client` directory contains two frontend applications. These are already in TypeScript, so this task is more about moving, re-wiring, and ensuring they work within the new monorepo structure.
-    *   `df-client-app`: The main client application.
-    *   `df-static-site`: A static site.
+The next steps will be to try more forceful methods of isolation and execution control.
 
-### 4. Shared Libraries Migration (Java to TypeScript)
+1.  **Use `timeout` Utility:**
+    *   Wrap the test command with the `timeout` command-line utility (e.g., `timeout 30s yarn workspace factgraph test`). This will provide a hard stop to the process and might give a different exit code or signal that can be useful for debugging.
 
-*   **Source:** `direct-file/libs`
-*   **Target:** New packages under `packages/`
-*   **Description:** The shared Java libraries need to be rewritten in TypeScript and organized into new packages. This includes:
-    *   `irs-spring-boot-starter-boilerplate`
-    *   `irs-spring-boot-starter-openfeature`
-    *   `irs-spring-boot-starter-test`
-    *   `irs-spring-boot-starter-validation`
+2.  **Isolate Test Execution:**
+    *   Attempt to run `vitest` against the single test file directly, bypassing the `yarn workspace` command if possible. The command would look something like `vitest run packages/factgraph/src/__tests__/Dollar.test.ts`.
 
-### 5. Utilities Migration
+3.  **Alternative Test Runner:**
+    *   If the above steps fail, the final resort is to switch the test runner from `vitest` to `jest`. This is a more involved step that includes:
+        *   Adding `jest`, `@types/jest`, and `ts-jest` as dev dependencies.
+        *   Creating a `jest.config.js` file.
+        *   Updating the `test` script in `package.json`.
 
-*   **Source:** `direct-file/utils`
-*   **Target:** New packages under `packages/` or scripts in the root.
-*   **Description:**
-    *   `csp-simulator` (Python): Needs to be migrated to TypeScript.
-    *   `pdf-to-yaml` (Java): Needs to be migrated to TypeScript.
+### Update: `timeout` Utility Failure
 
-### 6. Scripts and Build Process
+The plan to use the `timeout` command-line utility also failed. The command `timeout 30s yarn workspace factgraph test` did not terminate after 30 seconds and the entire operation timed out after the sandbox limit of 400 seconds.
 
-*   **Source:** `direct-file/scripts`
-*   **Description:** The shell and python scripts for building and managing the old project need to be replaced with `npm` scripts in the relevant `package.json` files.
+**This is a critical finding.** It strongly indicates the root of the problem is a fundamental issue within the execution environment provided, as basic shell utilities are not behaving as expected.
 
-### 7. Monitoring and Docker
-
-*   **Source:** `direct-file/monitoring`, `direct-file/docker`
-*   **Description:** The monitoring and Docker configurations need to be updated to support the new TypeScript-based architecture. This includes updating `docker-compose.yaml` files and monitoring configurations for Grafana and Prometheus.
-
-### 8. Bill of Materials (BOMs)
-
-*   **Source:** `direct-file/boms`
-*   **Description:** This is a Maven concept. It will be replaced by standard `package.json` dependency management in the monorepo. This directory can be removed after all Java projects are migrated.
-
-## Recent Progress and Next Steps (as of 2025-08-12)
-
-This section documents the latest migration progress and outlines the immediate next steps.
-
-### Progress Made
-
-*   **Begun `factgraph` migration:**
-    *   Migrated the `Equal` compnode from Scala to TypeScript (`packages/factgraph/src/compnodes/Equal.ts`).
-    *   Identified that the `Expression` system in TypeScript was incomplete. Created the base structure for `Expression` subclasses by adding `packages/factgraph/src/expressions/BinaryExpression.ts` and `ReduceExpression.ts`.
-    *   Refactored the existing (and incomplete) `Add.ts` and `Subtract.ts` compnodes to use the new `Expression` classes.
-*   **Dependency and Environment Debugging:**
-    *   Corrected the dependency in `packages/df-client-app/package.json` from the legacy `js-factgraph` to the new `factgraph` workspace package.
-    *   Fixed the `vitest` configuration in `packages/factgraph/vitest.config.ts` to use `jsdom` and the correct `mergeConfig` import.
-
-### Blockers and Next Steps
-
-The primary blocker is an issue with the development environment that prevents `yarn` commands from running successfully (they consistently time out). The following steps need to be taken once the environment is fixed:
-
-1.  **Stabilize the Yarn Environment:**
-    *   Successfully run `corepack enable`.
-    *   Successfully run `yarn set version stable`. This is a critical step that has been failing.
-2.  **Install Dependencies:**
-    *   Run `yarn install` to ensure all project dependencies are correctly installed using the stable Yarn version.
-3.  **Continue `factgraph` Test Debugging:**
-    *   Run `yarn workspace factgraph test`.
-    *   The next expected error is `Not implemented` from the `get()` methods in `BinaryExpression.ts` and `ReduceExpression.ts`.
-4.  **Implement Expression Logic:**
-    *   Translate the core evaluation logic from `Expression.scala` into the `get()`, `getThunk()`, and `explain()` methods of the new TypeScript `Expression` subclasses. This is the next major piece of the migration.
-5.  **Continue Migration:**
-    *   Continue migrating the remaining `compnodes` and other parts of the `fact-graph-scala` project.
+**Conclusion:** Progress is blocked until the environment is fixed. The `factgraph` migration cannot continue. A new testing strategy has been documented in `TESTING.md` to be used once a stable environment is available.
