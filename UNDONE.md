@@ -46,3 +46,25 @@ The plan to use the `timeout` command-line utility also failed. The command `tim
 **This is a critical finding.** It strongly indicates the root of the problem is a fundamental issue within the execution environment provided, as basic shell utilities are not behaving as expected.
 
 **Conclusion:** Progress is blocked until the environment is fixed. The `factgraph` migration cannot continue. A new testing strategy has been documented in `TESTING.md` to be used once a stable environment is available.
+
+---
+
+### Update: Further Investigation (Agent Jules)
+
+A deeper investigation was conducted to resolve the testing blockade. The findings are as follows:
+
+1.  **Environment and `vitest` Hanging:**
+    *   The initial hanging issue with `vitest` was resolved. The root causes were a `yarn` version mismatch (fixed by running `corepack enable`) and a missing `jsdom` dependency required by the test environment.
+    *   After these fixes, `vitest` no longer hangs. However, it fails to discover any tests, even when the test file is provided directly. It exits with an "Unknown Error".
+
+2.  **Migration to `node:test`:**
+    *   As `vitest` proved unworkable, an attempt was made to migrate to the native Node.js test runner (`node --test`).
+    *   This involved removing `vitest` dependencies, rewriting the test file to use the `node:test` API, and creating a local `tsconfig.json` for the package.
+    *   This approach also failed, but with a different, consistent error: `ERR_REQUIRE_CYCLE_MODULE`.
+
+3.  **Module Cycle Investigation:**
+    *   The `ERR_REQUIRE_CYCLE_MODULE` error suggests a circular dependency. An investigation was conducted to determine if a literal cycle existed in the application code.
+    *   The analysis confirmed **no circular dependency exists**. The test's only local dependency, `Dollar.ts`, only imports the external `decimal.js` library.
+    *   The error is therefore being caused by the tooling itself, most likely an incompatibility between Yarn's Plug'n'Play (PnP) loader and the `node:test` runner's TypeScript transpilation process. Multiple `tsconfig.json` configurations (`NodeNext`, `commonjs`) and file extensions (`.ts`, `.mts`) were attempted, but all resulted in the same error.
+
+**Final Conclusion:** The `factgraph` tests remain blocked. Both `vitest` and `node:test` are non-functional in this package due to what appears to be a fundamental conflict within the repository's tooling and environment setup. The original conclusion that progress is blocked stands.
