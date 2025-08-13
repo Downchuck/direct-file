@@ -20,11 +20,11 @@ export abstract class Expression<T> {
 
   public abstract explain(factual: Factual): Explanation;
 
-  public set(value: any, allowCollectionItemDelete: boolean = false): void {
+  public set(factual: Factual, value: any, allowCollectionItemDelete: boolean = false): void {
     throw new Error('Not implemented');
   }
 
-  public delete(): void {
+  public delete(factual: Factual): void {
     throw new Error('Not implemented');
   }
 

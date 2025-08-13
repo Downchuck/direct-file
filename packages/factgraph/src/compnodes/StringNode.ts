@@ -1,8 +1,10 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, compNodeRegistry } from './CompNode';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
 import { WritableNodeFactory } from './WritableNodeFactory';
+import { WritableExpression } from '../expressions/WritableExpression';
+import { Result } from '../types';
+import { Path } from '../Path';
 
 export class StringNode extends CompNode {
   public readonly expr: Expression<string>;
@@ -17,25 +19,22 @@ export class StringNode extends CompNode {
   }
 }
 
-class StringNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class StringNodeFactory extends WritableNodeFactory {
   readonly typeName = 'String';
 
-  fromWritableConfig(
-    e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
-  ): CompNode {
-    return new StringNode(new Expression<string>());
+  create(path: Path, factual: Factual): CompNode {
+    return new StringNode(new WritableExpression<string>(path));
   }
 
   fromDerivedConfig(
     e: any,
     factual: Factual,
-    factDictionary: FactDictionary
   ): CompNode {
-    // TODO: getOptionValue
-    const value = e.getOptionValue('value') || '';
-    return new StringNode(new Expression<string>());
+    const value = e.config?.value;
+    if (value) {
+      return new StringNode(Expression.literal(Result.complete(value)));
+    }
+    return super.fromDerivedConfig(e, factual);
   }
 }
 

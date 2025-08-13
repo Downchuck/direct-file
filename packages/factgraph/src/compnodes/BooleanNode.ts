@@ -1,29 +1,20 @@
+import { CompNode } from './CompNode';
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { Result } from '../types';
+import { Result } from '../types/Result';
 
 export class BooleanNode extends CompNode {
   constructor(public readonly expr: Expression<boolean>) {
     super();
   }
 
-  protected fromExpression(expr: Expression<boolean>): CompNode {
+  get get() {
+    return (factual: Factual): Result<boolean> => {
+      return this.expr.get(factual);
+    }
+  }
+
+  fromExpression(expr: Expression<any>): CompNode {
     return new BooleanNode(expr);
   }
 }
-
-class BooleanNodeFactory implements CompNodeFactory {
-  readonly typeName = 'Boolean';
-
-  fromDerivedConfig(
-    e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
-  ): CompNode {
-    return new BooleanNode(Expression.literal(Result.complete(e.value)));
-  }
-}
-
-compNodeRegistry.register(new BooleanNodeFactory());
