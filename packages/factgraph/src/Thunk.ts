@@ -2,6 +2,10 @@ export class Thunk<A> {
   private value: A | undefined;
   constructor(private f: () => A) {}
 
+  static of<A>(value: A): Thunk<A> {
+    return new Thunk(() => value);
+  }
+
   public get get(): A {
     if (this.value === undefined) {
       this.value = this.f();

@@ -7,27 +7,8 @@ import { Operator } from './Operator';
 
 export interface ReduceOperator<A> extends Operator {
   reduce(x: A, y: A): A;
-}
-
-export function applyReduce<A>(
-  op: ReduceOperator<A>,
-  head: Result<A>,
-  tail: Thunk<Result<A>>[]
-): Result<A> {
-  if (!head.hasValue) {
-    return Result.incomplete();
-  }
-
-  const lazyTail = tail.map((t) => t.get);
-  if (lazyTail.some((r) => !r.hasValue)) {
-    return Result.incomplete();
-  }
-
-  const values = [head, ...lazyTail].map((r) => r.get);
-  const value = values.reduce(op.reduce);
-  const complete = [head, ...lazyTail].every((r) => r.isComplete);
-
-  return new Result(value, complete);
+  apply(head: Result<A>, tail: Thunk<Result<A>>[]): Result<A>;
+  explain(xs: Expression<A>[], factual: Factual): Explanation;
 }
 
 export function applyReduceVector<A>(
@@ -36,7 +17,7 @@ export function applyReduceVector<A>(
   tail: MaybeVector<Thunk<Result<A>>>[]
 ): MaybeVector<Result<A>> {
   return MaybeVector.vectorizeList(
-    (h, t) => applyReduce(op, h, t),
+    (h, t) => op.apply(h, t),
     head,
     tail
   );
@@ -47,7 +28,7 @@ export function thunkReduce<A>(
   head: Thunk<Result<A>>,
   tail: Thunk<Result<A>>[]
 ): Thunk<Result<A>> {
-  return head.map((result) => applyReduce(op, result, tail));
+  return head.map((result) => op.apply(result, tail));
 }
 
 export function thunkReduceVector<A>(

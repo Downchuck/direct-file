@@ -1,6 +1,8 @@
 import { Expression } from '../Expression';
 import { ReduceOperator } from '../operators/ReduceOperator';
-import { MaybeVector, Result } from '../types';
+import { Result } from '../types';
+import { Factual } from '../Factual';
+import { Explanation, ConstantExplanation } from '../Explanation';
 
 export class ReduceExpression<A> extends Expression<A> {
   constructor(
@@ -8,19 +10,26 @@ export class ReduceExpression<A> extends Expression<A> {
     public readonly op: ReduceOperator<A>
   ) {
     super();
+    this.get = this.get.bind(this);
+    this.explain = this.explain.bind(this);
   }
 
-  override get(): MaybeVector<Result<A>> {
-    // This logic needs to be translated from the Scala `get` method
-    // op(xs.head.get, xs.tail.map(_.getThunk))
-    throw new Error('Not implemented');
+  override get(factual: Factual): Result<A> {
+    if (this.expressions.length === 0) {
+      return Result.incomplete();
+    }
+    const head = this.expressions[0];
+    const tail = this.expressions.slice(1);
+    return this.op.apply(
+      head.get(factual),
+      tail.map((e) => e.getThunk(factual))
+    );
   }
 
-  override getThunk(): MaybeVector<Result<A>> {
-    throw new Error('Not implemented');
-  }
-
-  override explain(): MaybeVector<any> {
-    throw new Error('Not implemented');
+  override explain(factual: Factual): Explanation {
+    if (!this.op) {
+      return new ConstantExplanation();
+    }
+    return this.op.explain(this.expressions, factual);
   }
 }
