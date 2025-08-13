@@ -1,9 +1,10 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, compNodeRegistry } from './CompNode';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
 import { WritableNodeFactory } from './WritableNodeFactory';
-import { Result } from '../types/Result';
+import { WritableExpression } from '../expressions/WritableExpression';
+import { Result } from '../types';
+import { Path } from '../Path';
 
 export class IntNode extends CompNode {
   public readonly expr: Expression<number>;
@@ -18,25 +19,22 @@ export class IntNode extends CompNode {
   }
 }
 
-class IntNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class IntNodeFactory extends WritableNodeFactory {
   readonly typeName = 'Int';
 
-  fromWritableConfig(
-    e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
-  ): CompNode {
-    return new IntNode(Expression.literal(Result.incomplete()));
+  create(path: Path, factual: Factual): CompNode {
+    return new IntNode(new WritableExpression<number>(path));
   }
 
   fromDerivedConfig(
     e: any,
     factual: Factual,
-    factDictionary: FactDictionary
   ): CompNode {
-    // TODO: getOptionValue
-    const value = parseInt(e.value, 10);
-    return new IntNode(Expression.literal(Result.complete(value)));
+    const value = e.config?.value;
+    if (value) {
+      return new IntNode(Expression.literal(Result.complete(parseInt(value, 10))));
+    }
+    return super.fromDerivedConfig(e, factual);
   }
 }
 
