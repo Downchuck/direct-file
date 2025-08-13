@@ -17,6 +17,10 @@ export class Result<A> {
     return new Result<A>(undefined, false, false);
   }
 
+  public get isIncomplete(): boolean {
+    return !this.isComplete && !this.isPlaceholder;
+  }
+
   public get hasValue(): boolean {
     return this.value !== undefined;
   }

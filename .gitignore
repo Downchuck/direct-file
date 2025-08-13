@@ -65,4 +65,4 @@ direct-file/scripts/*.csv
 
 # files created when building sbom.json files
 sbom.json
-
+.yarn/install-state.gz

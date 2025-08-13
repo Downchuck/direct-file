@@ -74,10 +74,10 @@ export class MaybeVector<A> {
     return this;
   }
 
-  public static vectorizeList<A, B, X>(
-    f: (h: A, t: B[]) => X,
+  public static vectorizeList<A, X>(
+    f: (h: A, t: any[]) => X,
     head: MaybeVector<A>,
-    tail: MaybeVector<B>[]
+    tail: MaybeVector<any>[]
   ): MaybeVector<X> {
     const all = [head, ...tail];
     const uniqueSizes = [...new Set(all.map((mv) => mv.length).filter((l) => l !== undefined))]
