@@ -4,6 +4,7 @@ import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { WritableNodeFactory } from './WritableNodeFactory';
 import { Dollar } from '../types/Dollar';
+import { Result } from '../types/Result';
 
 export class DollarNode extends CompNode {
   public readonly expr: Expression<Dollar>;
@@ -26,7 +27,7 @@ class DollarNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    return new DollarNode(new Expression<Dollar>());
+    return new DollarNode(Expression.literal(Result.incomplete()));
   }
 
   fromDerivedConfig(
@@ -35,8 +36,10 @@ class DollarNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factDictionary: FactDictionary
   ): CompNode {
     // TODO: getOptionValue
-    const value = e.getOptionValue('value') || '0';
-    return new DollarNode(new Expression<Dollar>());
+    const value = e.value || '0';
+    return new DollarNode(
+      Expression.literal(Result.complete(Dollar.fromString(value)))
+    );
   }
 }
 
