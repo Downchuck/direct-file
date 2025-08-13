@@ -3,6 +3,7 @@ import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { WritableNodeFactory } from './WritableNodeFactory';
+import { Result } from '../types/Result';
 
 export class IntNode extends CompNode {
   public readonly expr: Expression<number>;
@@ -25,7 +26,7 @@ class IntNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    return new IntNode(new Expression<number>());
+    return new IntNode(Expression.literal(Result.incomplete()));
   }
 
   fromDerivedConfig(
@@ -34,8 +35,8 @@ class IntNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factDictionary: FactDictionary
   ): CompNode {
     // TODO: getOptionValue
-    const value = parseInt(e.getOptionValue('value'), 10);
-    return new IntNode(new Expression<number>());
+    const value = parseInt(e.value, 10);
+    return new IntNode(Expression.literal(Result.complete(value)));
   }
 }
 

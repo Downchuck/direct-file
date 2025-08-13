@@ -4,6 +4,7 @@ import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { WritableNodeFactory } from './WritableNodeFactory';
 import { Rational } from '../types/Rational';
+import { Result } from '../types/Result';
 
 export class RationalNode extends CompNode {
   public readonly expr: Expression<Rational>;
@@ -26,7 +27,7 @@ class RationalNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    return new RationalNode(new Expression<Rational>());
+    return new RationalNode(Expression.literal(Result.incomplete()));
   }
 
   fromDerivedConfig(
@@ -35,8 +36,10 @@ class RationalNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factDictionary: FactDictionary
   ): CompNode {
     // TODO: getOptionValue
-    const value = e.getOptionValue('value') || '0/1';
-    return new RationalNode(new Expression<Rational>());
+    const value = e.value || '0/1';
+    return new RationalNode(
+      Expression.literal(Result.complete(Rational.fromString(value)))
+    );
   }
 }
 
