@@ -1,5 +1,5 @@
 import { Dollar, DollarFailureReason, DollarValidationFailure } from '../types/Dollar';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@jest/globals';
 
 const assertThrowsWithReason = (
   op: () => any,
@@ -7,7 +7,7 @@ const assertThrowsWithReason = (
 ) => {
   try {
     op();
-    expect.fail('Expected an error to be thrown');
+    throw new Error('Expected an error to be thrown');
   } catch (e) {
     expect(e).toBeInstanceOf(DollarValidationFailure);
     expect((e as DollarValidationFailure).validationMessage).toBe(reason);
@@ -182,7 +182,7 @@ describe('Dollar', () => {
     });
   });
 
-  describe('gte', () => {.
+  describe('gte', () => {
     it('returns true if the left hand side is greater than or equal to the right', () => {
       expect(Dollar.fromString('1.23').gte(Dollar.fromString('2.34'))).toBe(false);
       expect(Dollar.fromString('1.23').gte(Dollar.fromString('1.23'))).toBe(true);
