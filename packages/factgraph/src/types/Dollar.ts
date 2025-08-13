@@ -44,6 +44,12 @@ export class Dollar {
     let normalizedString = s;
 
     if (s.startsWith('(') && s.endsWith(')')) {
+      if (s === '()') {
+        throw new DollarValidationFailure(
+          'Empty parentheses are not allowed',
+          DollarFailureReason.InvalidParentheses
+        );
+      }
       if (hyphenCount > 0) {
         throw new DollarValidationFailure(
           'Cannot combine parentheses and hyphens',
