@@ -4691,6 +4691,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@types/uuid", [\
+      ["npm:10.0.0", {\
+        "packageLocation": "../home/jules/.yarn/berry/cache/@types-uuid-npm-10.0.0-9ac1066765-10c0.zip/node_modules/@types/uuid/",\
+        "packageDependencies": [\
+          ["@types/uuid", "npm:10.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:9.0.8", {\
         "packageLocation": "../home/jules/.yarn/berry/cache/@types-uuid-npm-9.0.8-3eeeaa5abb-10c0.zip/node_modules/@types/uuid/",\
         "packageDependencies": [\
@@ -7558,6 +7565,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/globals", "npm:29.7.0"],\
           ["@types/decimal.js", "npm:7.4.3"],\
           ["@types/jest", "npm:29.5.14"],\
+          ["@types/uuid", "npm:10.0.0"],\
           ["date-fns", "npm:2.30.0"],\
           ["decimal.js", "npm:10.6.0"],\
           ["factgraph", "workspace:packages/factgraph"],\
@@ -7565,6 +7573,7 @@ const RAW_RUNTIME_STATE =
           ["jest-util", "npm:29.7.0"],\
           ["ts-jest", "virtual:2f2a8eab03f883b3acf14472a34f7e8c4d07e8f5042835df6a62163919aacda5fdb66f968bb05fb0c9c85bdeed5eb5a60500573f4a03455c8b3bbfe602624aad#npm:29.4.1"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
+          ["uuid", "npm:11.1.0"],\
           ["zod", "npm:3.25.76"]\
         ],\
         "linkType": "SOFT"\
