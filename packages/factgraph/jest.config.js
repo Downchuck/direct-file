@@ -7,6 +7,12 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  roots: [
+    "<rootDir>/src"
+  ],
+  modulePaths: [
+    "<rootDir>/src"
+  ],
   moduleFileExtensions: [
     'ts',
     'tsx',

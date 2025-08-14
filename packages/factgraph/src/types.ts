@@ -1,6 +1,8 @@
 import { MaybeVector } from './types/MaybeVector';
 import { Result } from './types/Result';
 import { Address } from './types/Address';
+import { Dollar } from './types/Dollar';
+import { Rational } from './types/Rational';
 
 export { MaybeVector, Result };
 
@@ -9,4 +11,6 @@ export type WritableType =
   | boolean
   | number
   | string
-  | Address;
+  | Address
+  | Dollar
+  | Rational;

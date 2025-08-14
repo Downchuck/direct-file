@@ -3605,6 +3605,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@types/uuid@npm:10.0.0"
+  checksum: 10c0/9a1404bf287164481cb9b97f6bb638f78f955be57c40c6513b7655160beb29df6f84c915aaf4089a1559c216557dc4d2f79b48d978742d3ae10b937420ddac60
+  languageName: node
+  linkType: hard
+
 "@types/uuid@npm:^9.0.1, @types/uuid@npm:^9.0.2":
   version: 9.0.8
   resolution: "@types/uuid@npm:9.0.8"
@@ -6036,12 +6043,14 @@ __metadata:
     "@jest/globals": "npm:^29.7.0"
     "@types/decimal.js": "npm:^7.4.0"
     "@types/jest": "npm:^29.5.12"
+    "@types/uuid": "npm:^10.0.0"
     date-fns: "npm:^2.30.0"
     decimal.js: "npm:^10.4.3"
     jest: "npm:^29.7.0"
     jest-util: "npm:^29.7.0"
     ts-jest: "npm:^29.1.2"
     typescript: "npm:^5.6.3"
+    uuid: "npm:^11.1.0"
     zod: "npm:^3.22.4"
   languageName: unknown
   linkType: soft
