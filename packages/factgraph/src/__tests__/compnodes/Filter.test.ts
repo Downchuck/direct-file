@@ -1,13 +1,13 @@
-import { FactDictionary } from 'FactDictionary';
-import { Graph } from 'Graph';
-import { Collection } from 'types/Collection';
-import { InMemoryPersister } from 'persisters/InMemoryPersister';
+import { FactDictionary } from '../../FactDictionary';
+import { Graph } from '../../Graph';
+import { Collection } from '../../types/Collection';
+import { InMemoryPersister } from '../../persisters';
 
 // This is a workaround for the fact that the test environment is broken
 // and we can't import the compnodes directly.
-import 'compnodes/Filter';
-import 'compnodes/Dependency';
-import 'compnodes/True';
+import '../../compnodes/Filter';
+import '../../compnodes/Dependency';
+import '../../compnodes/True';
 
 describe('Filter', () => {
   const dictionary = new FactDictionary();
