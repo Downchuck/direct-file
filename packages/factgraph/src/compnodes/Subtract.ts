@@ -2,72 +2,61 @@ import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
-import { DayNode } from './DayNode';
-import { DaysNode } from './DaysNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import { Day } from '../types/Day';
-import { Days } from '../types/Days';
-import { BinaryOperator } from '../operators/BinaryOperator';
-import { BinaryExpression } from '../expressions/BinaryExpression';
-import { ReduceExpression } from '../expressions/ReduceExpression';
-import { ReduceOperator } from '../operators/ReduceOperator';
+import { Expression } from '../Expression';
+import {
+  BinaryOperator,
+  applyBinary,
+  explainBinary,
+} from '../operators/BinaryOperator';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-
-class SubtractReduceOperator<A> implements ReduceOperator<A> {
-  constructor(private readonly minus: (x: A, y: A) => A) {}
-  reduce(x: A, y: A): A {
-    return this.minus(x, y);
-  }
-}
-
-const intMinus = (x: number, y: number) => x - y;
-const dollarMinus = (x: Dollar, y: Dollar) => x.sub(y);
-const rationalMinus = (x: Rational, y: Rational) => x.sub(y);
-
-const intReduceOperator = new SubtractReduceOperator(intMinus);
-const dollarReduceOperator = new SubtractReduceOperator(dollarMinus);
-const rationalReduceOperator = new SubtractReduceOperator(rationalMinus);
+import { BinaryExpression } from '../expressions/BinaryExpression';
+import { Result } from '../types';
+import { Explanation } from '../Explanation';
 
 class SubtractBinaryOperator<A, L, R> implements BinaryOperator<A, L, R> {
   constructor(private readonly op: (lhs: L, rhs: R) => A) {}
   operation(lhs: L, rhs: R): A {
     return this.op(lhs, rhs);
   }
+  apply(lhs: Result<L>, rhs: Result<R>): Result<A> {
+    return applyBinary(this, lhs, rhs);
+  }
+  explain(
+    lhs: Expression<L>,
+    rhs: Expression<R>,
+    factual: Factual
+  ): Explanation {
+    return explainBinary(lhs, rhs, factual);
+  }
 }
 
-const dayDaysMinus = (lhs: Day, rhs: Days) => lhs.sub(rhs);
-const dollarIntMinus = (lhs: Dollar, rhs: number) => lhs.sub(Dollar.fromNumber(rhs));
-const intDollarMinus = (lhs: number, rhs: Dollar) => Dollar.fromNumber(lhs).sub(rhs);
-const rationalIntMinus = (lhs: Rational, rhs: number) =>
-  lhs.sub(Rational.fromNumber(rhs));
-const intRationalMinus = (lhs: number, rhs: Rational) =>
-  Rational.fromNumber(lhs).sub(rhs);
-const dollarRationalMinus = (lhs: Dollar, rhs: Rational) => {
-  // This is a bit of a hack. We should probably use a proper decimal to rational conversion.
-  return lhs.sub(Dollar.fromNumber(rhs.n / rhs.d));
-};
-const rationalDollarMinus = (lhs: Rational, rhs: Dollar) => {
-  // This is a bit of a hack. We should probably use a proper decimal to rational conversion.
-  return Dollar.fromNumber(lhs.n / lhs.d).sub(rhs);
-};
+const intSub = (x: number, y: number) => x - y;
+const dollarSub = (x: Dollar, y: Dollar) => x.sub(y);
+const rationalSub = (x: Rational, y: Rational) => x.sub(y);
 
-const intIntBinaryOperator = new SubtractBinaryOperator(intMinus);
-const dollarDollarBinaryOperator = new SubtractBinaryOperator(dollarMinus);
-const rationalRationalBinaryOperator = new SubtractBinaryOperator(
-  rationalMinus
+const intIntBinaryOperator = new SubtractBinaryOperator(intSub);
+const dollarDollarBinaryOperator = new SubtractBinaryOperator(dollarSub);
+const rationalRationalBinaryOperator = new SubtractBinaryOperator(rationalSub);
+const intDollarBinaryOperator = new SubtractBinaryOperator(
+  (lhs: number, rhs: Dollar) => Dollar.fromNumber(lhs).sub(rhs)
 );
-const dayDaysBinaryOperator = new SubtractBinaryOperator(dayDaysMinus);
-const dollarIntBinaryOperator = new SubtractBinaryOperator(dollarIntMinus);
-const intDollarBinaryOperator = new SubtractBinaryOperator(intDollarMinus);
-const rationalIntBinaryOperator = new SubtractBinaryOperator(rationalIntMinus);
-const intRationalBinaryOperator = new SubtractBinaryOperator(intRationalMinus);
+const dollarIntBinaryOperator = new SubtractBinaryOperator(
+  (lhs: Dollar, rhs: number) => lhs.sub(Dollar.fromNumber(rhs))
+);
+const intRationalBinaryOperator = new SubtractBinaryOperator(
+  (lhs: number, rhs: Rational) => Rational.fromNumber(lhs).sub(rhs)
+);
+const rationalIntBinaryOperator = new SubtractBinaryOperator(
+  (lhs: Rational, rhs: number) => lhs.sub(Rational.fromNumber(rhs))
+);
 const dollarRationalBinaryOperator = new SubtractBinaryOperator(
-  dollarRationalMinus
+  (lhs: Dollar, rhs: Rational) => lhs.sub(Dollar.fromNumber(rhs.n / rhs.d))
 );
 const rationalDollarBinaryOperator = new SubtractBinaryOperator(
-  rationalDollarMinus
+  (lhs: Rational, rhs: Dollar) => Dollar.fromNumber(lhs.n / lhs.d).sub(rhs)
 );
 
 class SubtractFactory implements CompNodeFactory {
@@ -79,50 +68,30 @@ class SubtractFactory implements CompNodeFactory {
     factDictionary: FactDictionary
   ): CompNode {
     const minuend = compNodeRegistry.fromDerivedConfig(
-      e.children.find((c: any) => c.typeName === 'Minuend').children[0],
+      e.children.find((c: any) => c.key === 'Minuend').children[0],
       factual,
       factDictionary
     );
-    const subtrahends = e.children
-      .find((c: any) => c.typeName === 'Subtrahends')
-      .children.map((child: any) =>
-        compNodeRegistry.fromDerivedConfig(child, factual, factDictionary)
-      );
+    const subtrahend = compNodeRegistry.fromDerivedConfig(
+      e.children.find((c: any) => c.key === 'Subtrahend').children[0],
+      factual,
+      factDictionary
+    );
 
-    return this.create([minuend, ...subtrahends]);
+    return this.create(minuend, subtrahend);
   }
 
-  create(nodes: CompNode[]): CompNode {
-    if (nodes.every((n) => n instanceof IntNode)) {
-      const expressions = nodes.map((n) => n.expression);
-      return new IntNode(new ReduceExpression(expressions, intReduceOperator));
-    }
-    if (nodes.every((n) => n instanceof DollarNode)) {
-      const expressions = nodes.map((n) => n.expression);
-      return new DollarNode(
-        new ReduceExpression(expressions, dollarReduceOperator)
-      );
-    }
-    if (nodes.every((n) => n instanceof RationalNode)) {
-      const expressions = nodes.map((n) => n.expression);
-      return new RationalNode(
-        new ReduceExpression(expressions, rationalReduceOperator)
-      );
-    }
-    return nodes.reduce((lhs, rhs) => this.binarySubtract(lhs, rhs));
-  }
-
-  private binarySubtract(lhs: CompNode, rhs: CompNode): CompNode {
+  create(lhs: CompNode, rhs: CompNode): CompNode {
     if (lhs instanceof IntNode && rhs instanceof IntNode) {
       return new IntNode(
-        new BinaryExpression(lhs.expression, rhs.expression, intIntBinaryOperator)
+        new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
       );
     }
     if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           dollarDollarBinaryOperator
         )
       );
@@ -130,35 +99,22 @@ class SubtractFactory implements CompNodeFactory {
     if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
       return new RationalNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           rationalRationalBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof DayNode && rhs instanceof DaysNode) {
-      return new DayNode(
-        new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
-          dayDaysBinaryOperator
         )
       );
     }
     if (lhs instanceof IntNode && rhs instanceof DollarNode) {
       return new DollarNode(
-        new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
-          intDollarBinaryOperator
-        )
+        new BinaryExpression(lhs.expr, rhs.expr, intDollarBinaryOperator)
       );
     }
     if (lhs instanceof DollarNode && rhs instanceof IntNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           dollarIntBinaryOperator
         )
       );
@@ -166,8 +122,8 @@ class SubtractFactory implements CompNodeFactory {
     if (lhs instanceof IntNode && rhs instanceof RationalNode) {
       return new RationalNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           intRationalBinaryOperator
         )
       );
@@ -175,8 +131,8 @@ class SubtractFactory implements CompNodeFactory {
     if (lhs instanceof RationalNode && rhs instanceof IntNode) {
       return new RationalNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           rationalIntBinaryOperator
         )
       );
@@ -184,8 +140,8 @@ class SubtractFactory implements CompNodeFactory {
     if (lhs instanceof RationalNode && rhs instanceof DollarNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           rationalDollarBinaryOperator
         )
       );
@@ -193,8 +149,8 @@ class SubtractFactory implements CompNodeFactory {
     if (lhs instanceof DollarNode && rhs instanceof RationalNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           dollarRationalBinaryOperator
         )
       );

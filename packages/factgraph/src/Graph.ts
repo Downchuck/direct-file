@@ -3,6 +3,7 @@ import { FactDictionary } from './FactDictionary';
 import { Path } from './Path';
 import { Persister } from './persisters/Persister';
 import { MaybeVector, Result, WritableType } from './types';
+import { Factual } from './Factual';
 
 export class Graph {
   public readonly root: Fact;
@@ -35,15 +36,16 @@ export class Graph {
 
   public getVect(path: string | Path): MaybeVector<Result<any>> {
     const pathObj = typeof path === 'string' ? Path.fromString(path) : path;
+    const factual = new Factual(this.dictionary);
 
     const factResults = this.root.apply(pathObj);
 
-    return factResults.flatMap((factResult) => {
+    return factResults.flatMap((factResult: Result<Fact>) => {
       if (!factResult.isComplete || !factResult.value) {
         // In Scala, this would return a placeholder. For now, we'll just return an incomplete result.
-        return MaybeVector.single(new Result(undefined, false));
+        return MaybeVector.single(Result.incomplete());
       }
-      return factResult.value.get();
+      return factResult.value.get(factual);
     });
   }
 
@@ -55,7 +57,7 @@ export class Graph {
     const pathObj = typeof path === 'string' ? Path.fromString(path) : path;
     const factResults = this.root.apply(pathObj);
 
-    factResults.forEach((factResult) => {
+    factResults.foreach((factResult: Result<Fact>) => {
       if (factResult.isComplete && factResult.value) {
         factResult.value.set(value);
       }

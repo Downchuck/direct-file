@@ -17,22 +17,22 @@ export interface CompNodeFactory {
 export abstract class CompNode {
   abstract readonly expr: Expression<any>;
 
-  public get get() {
-    return this.expr.get;
+  public get(factual: Factual) {
+    return this.expr.get(factual);
   }
-  public get getThunk() {
-    return this.expr.getThunk;
+  public getThunk(factual: Factual) {
+    return this.expr.getThunk(factual);
   }
-  public get explain() {
-    return this.expr.explain;
+  public explain(factual: Factual) {
+    return this.expr.explain(factual);
   }
-  public get set() {
-    return this.expr.set;
+  public set(value: any, allowCollectionItemDelete: boolean = false) {
+    return this.expr.set(value, allowCollectionItemDelete);
   }
-  public get delete() {
-    return this.expr.delete;
+  public delete() {
+    return this.expr.delete();
   }
-  public get isWritable() {
+  public isWritable(): boolean {
     return this.expr.isWritable;
   }
 
@@ -42,10 +42,12 @@ export abstract class CompNode {
     // TODO: Add type checking
     const newCases = cases.map(
       ([booleanNode, compNode]) =>
-        [booleanNode.expr, compNode.expr] as [Expression<any>, Expression<any>]
+        [booleanNode.expr, compNode.expr] as [
+          Expression<boolean>,
+          Expression<any>
+        ]
     );
-    // return this.fromExpression(Expression.switch(newCases));
-    throw new Error('Not implemented');
+    return this.fromExpression(Expression.switch(newCases));
   }
 
   public dependency(path: Path): CompNode {
@@ -66,6 +68,7 @@ class CompNodeRegistry {
   private factories = new Map<string, CompNodeFactory>();
 
   public register(factory: CompNodeFactory) {
+    console.log('registering', factory.typeName);
     this.factories.set(factory.typeName, factory);
   }
 

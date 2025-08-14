@@ -4,6 +4,8 @@ import { PathItem } from './PathItem';
 import { Limit } from './limits/Limit';
 import { Graph } from './Graph';
 import { MaybeVector, Result, WritableType } from './types';
+import { Factual } from './Factual';
+import { Explanation } from './Explanation';
 
 // In Scala, Factual.Meta was a class. Here, we can use an interface.
 export interface FactualMeta {
@@ -21,29 +23,29 @@ export class Fact {
   ) {}
 
   public get root(): Fact {
-    let current = this;
+    let current: Fact = this;
     while (current.parent) {
       current = current.parent;
     }
     return current;
   }
 
-  public get(): MaybeVector<Result<any>> {
-    // TODO: Implement caching
-    // return this.graph.resultCache.getOrElseUpdate(this.path, () => this.value.get());
-    throw new Error('Not implemented');
+  public get(factual: Factual): MaybeVector<Result<any>> {
+    const result = MaybeVector.single(this.value.get(factual));
+    console.log('fact.get', result);
+    return result;
   }
 
-  public getThunk(): MaybeVector<Result<any>> {
-    throw new Error('Not implemented');
+  public getThunk(factual: Factual): MaybeVector<Result<any>> {
+    return MaybeVector.single(this.value.getThunk(factual).get);
   }
 
-  public explain(): MaybeVector<any> {
-    throw new Error('Not implemented');
+  public explain(factual: Factual): MaybeVector<Explanation> {
+    return MaybeVector.single(this.value.explain(factual));
   }
 
   public set(value: WritableType, allowCollectionItemDelete: boolean = false): void {
-    throw new Error('Not implemented');
+    this.value.set(value, allowCollectionItemDelete);
   }
 
   public validate(): any[] {
@@ -51,7 +53,7 @@ export class Fact {
   }
 
   public delete(): void {
-    throw new Error('Not implemented');
+    this.value.delete();
   }
 
   public apply(path: Path): MaybeVector<Result<Fact>> {
@@ -59,12 +61,17 @@ export class Fact {
       return this.root.apply(path);
     }
 
-    let current: MaybeVector<Result<Fact>> = MaybeVector.single(new Result(this, true));
+    let current: MaybeVector<Result<Fact>> = MaybeVector.single(
+      Result.complete(this)
+    );
 
     for (const item of path.items) {
       current = current.flatMap((result) => {
         if (!result.isComplete) {
-          return MaybeVector.single(new Result(undefined, false));
+          return MaybeVector.single(Result.incomplete());
+        }
+        if (!result.value) {
+          return MaybeVector.empty();
         }
         return result.value.applyItem(item);
       });
@@ -74,9 +81,9 @@ export class Fact {
   }
 
   private applyItem(item: PathItem): MaybeVector<Result<Fact>> {
-    if (item.isParent) {
+    if (item.type === 'parent') {
       if (this.parent) {
-        return MaybeVector.single(new Result(this.parent, true));
+        return MaybeVector.single(Result.complete(this.parent));
       } else {
         return MaybeVector.empty();
       }

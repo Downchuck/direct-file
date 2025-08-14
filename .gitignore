@@ -4,6 +4,7 @@ maven-wrapper.jar
 *.log.*
 .DS_Store
 audit_log.txt
+.yarn/install-state.gz
 
 # Local maven properties
 **/application-local.*
@@ -65,4 +66,3 @@ direct-file/scripts/*.csv
 
 # files created when building sbom.json files
 sbom.json
-.yarn/install-state.gz

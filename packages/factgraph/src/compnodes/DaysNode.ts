@@ -4,6 +4,7 @@ import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { WritableNodeFactory } from './WritableNodeFactory';
 import { Days } from '../types/Days';
+import { Result } from '../types/Result';
 
 export class DaysNode extends CompNode {
   public readonly expr: Expression<Days>;
@@ -26,7 +27,7 @@ class DaysNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    return new DaysNode(new Expression<Days>());
+    return new DaysNode(Expression.literal(Result.incomplete()));
   }
 
   fromDerivedConfig(
@@ -35,8 +36,10 @@ class DaysNodeFactory implements WritableNodeFactory, CompNodeFactory {
     factDictionary: FactDictionary
   ): CompNode {
     // TODO: getOptionValue
-    const value = e.getOptionValue('value') || '0';
-    return new DaysNode(new Expression<Days>());
+    const value = e.value || '0';
+    return new DaysNode(
+      Expression.literal(Result.complete(new Days(parseInt(value, 10))))
+    );
   }
 }
 
