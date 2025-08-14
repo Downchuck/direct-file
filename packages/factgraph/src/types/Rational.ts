@@ -74,6 +74,15 @@ export class Rational {
     return this.n * that.d >= that.n * this.d;
   }
 
+  public equals(that: Rational): boolean {
+    const simplifiedThis = this.simplify();
+    const simplifiedThat = that.simplify();
+    return (
+      simplifiedThis.n === simplifiedThat.n &&
+      simplifiedThis.d === simplifiedThat.d
+    );
+  }
+
   public toString(): string {
     return `${this.n}/${this.d}`;
   }

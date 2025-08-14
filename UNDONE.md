@@ -69,15 +69,19 @@ A deeper investigation was conducted to resolve the testing blockade. The findin
 
 **Final Conclusion:** The `factgraph` tests remain blocked. Both `vitest` and `node:test` are non-functional in this package due to what appears to be a fundamental conflict within the repository's tooling and environment setup. The original conclusion that progress is blocked stands.
 
+## Blocked `compnodes`
+- `Maximum`: Blocked by unimplemented `CollectionNode`.
+- `Minimum`: Blocked by unimplemented `CollectionNode`.
+- `AsString`: Blocked by unimplemented `EnumNode`, `EmailAddressNode`, `EinNode`, and `TinNode`.
+- `Count`: The operator is tested, but full integration requires `CollectionNode`.
+
 ## Remaining `compnodes` to migrate:
-- AsDecimalString
 - AsString
 - BankAccountNode
 - CollectionItemNode
 - CollectionNode
 - CollectionSize
 - CollectionSum
-- Count
 - Dependency
 - EinNode
 - EmailAddressNode
@@ -88,28 +92,17 @@ A deeper investigation was conducted to resolve the testing blockade. The findin
 - Filter
 - Find
 - FirstNCollectionItems
-- GreaterThan
-- GreaterThanOrEqual
 - IndexOf
 - IpPinNode
 - IsComplete
-- Length
-- LessThan
-- LessThanOrEqual
-- Maximum
-- Minimum
 - MultiEnumNode
-- NotEqual
 - Paste
 - PhoneNumberNode
 - PinNode
 - Placeholder
 - Regex
 - RootNode
-- Round
-- RoundToInt
 - StepwiseMultiply
 - TinNode
 - TodayNode
 - ZipCodeNode
-- Subtract
