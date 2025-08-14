@@ -137,6 +137,10 @@ export class Dollar {
     return this.value.gte(other.value);
   }
 
+  public equals(other: Dollar): boolean {
+    return this.value.equals(other.value);
+  }
+
   public round(): Dollar {
     return new Dollar(this.value.toDecimalPlaces(0, Decimal.ROUND_HALF_UP));
   }

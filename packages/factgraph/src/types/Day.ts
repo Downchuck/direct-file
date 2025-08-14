@@ -39,4 +39,8 @@ export class Day {
   public toDate(): Date {
     return this.date;
   }
+
+  public equals(other: Day): boolean {
+    return this.date.getTime() === other.date.getTime();
+  }
 }
