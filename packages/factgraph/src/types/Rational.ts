@@ -98,4 +98,6 @@ export class Rational {
   public static fromNumber(n: number): Rational {
     return new Rational(n, 1);
   }
+
+  public static readonly zero = new Rational(0, 1);
 }

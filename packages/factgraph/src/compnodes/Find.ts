@@ -5,29 +5,25 @@ import {
 } from './CompNode';
 import { CollectionItemNode } from './CollectionItemNode';
 import { BooleanNode } from './BooleanNode';
-import {
-  CollectOperator,
-  applyCollect,
-  explainCollect,
-} from '../operators/CollectOperator';
+import { CollectOperator } from '../operators/CollectOperator';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { CollectExpression } from '../expressions/CollectExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
-import { Explanation } from '../Explanation';
+import { Explanation, ConstantExplanation } from '../Explanation';
 import { Expression } from '../Expression';
 import { Path } from '../Path';
 import { CollectionItem } from '../types/CollectionItem';
 
-class FindOperator implements CollectOperator<CollectionItem, boolean> {
+class FindOperator implements CollectOperator<CollectionItem<any>, boolean> {
   apply(
-    vect: [CollectionItem, Thunk<Result<boolean>>][]
-  ): Result<CollectionItem> {
+    vect: [CollectionItem<any>, Thunk<Result<boolean>>][]
+  ): Result<CollectionItem<any>> {
     const item = vect.find(([_item, thunk]) =>
-      thunk.get().getOrElse(false)
+      thunk.get.getOrElse(false)
     );
-    return new Result(item ? item[0] : undefined);
+    return item ? Result.complete(item[0]) : Result.incomplete();
   }
 
   explain(
@@ -35,7 +31,7 @@ class FindOperator implements CollectOperator<CollectionItem, boolean> {
     child: Expression<boolean>,
     factual: Factual
   ): Explanation {
-    return explainCollect(path, child, factual);
+    return new ConstantExplanation();
   }
 }
 
@@ -49,7 +45,7 @@ export class FindFactory implements CompNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    const path = new Path(e.options.path);
+    const path = Path.fromString(e.options.path);
     const child = compNodeRegistry.fromDerivedConfig(
       e.children[0],
       factual,
@@ -58,13 +54,6 @@ export class FindFactory implements CompNodeFactory {
 
     if (!(child instanceof BooleanNode)) {
       throw new Error('Find child must be a BooleanNode');
-    }
-
-    const collectionItem = factual.get(path.wildcard(), 0);
-    if (!collectionItem.isComplete()) {
-      throw new Error(
-        `cannot find fact at path '${path}' from '${factual.path}'`
-      );
     }
 
     const cnBuilder = (item: Factual) =>
@@ -80,7 +69,7 @@ export class FindFactory implements CompNodeFactory {
       findOperator
     );
 
-    return new CollectionItemNode(expression, new Path(e.options.path));
+    return new CollectionItemNode(expression);
   }
 }
 

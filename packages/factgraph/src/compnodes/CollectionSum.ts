@@ -4,18 +4,15 @@ import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import {
-  AggregateOperator,
-  applyAggregate,
-  explainAggregate,
-} from '../operators/AggregateOperator';
+import { AggregateOperator } from '../operators/AggregateOperator';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { AggregateExpression } from '../expressions/AggregateExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
-import { Explanation } from '../Explanation';
+import { Explanation, ConstantExplanation } from '../Explanation';
 import { Expression } from '../Expression';
+import { MaybeVector } from '../types/MaybeVector';
 
 // Sum is used across a collection. If you're trying to add
 // a number of dependencies, use the `Add` node.
@@ -26,12 +23,22 @@ class SumOperator<A> implements AggregateOperator<A, A> {
     private readonly zero: A
   ) {}
 
-  apply(vect: Thunk<Result<A>>[]): Result<A> {
-    return applyAggregate(this, vect, this.zero);
+  apply(vect: MaybeVector<Thunk<Result<A>>>): Result<A> {
+    let total: A = this.zero;
+    let allComplete = true;
+    for (const thunk of vect.values) {
+        const result = thunk.get;
+        if (result.isComplete) {
+            total = this.plus(total, result.get);
+        } else {
+            allComplete = false;
+        }
+    }
+    return allComplete ? Result.complete(total) : Result.incomplete();
   }
 
   explain(x: Expression<A>, factual: Factual): Explanation {
-    return explainAggregate(x, factual);
+    return new ConstantExplanation();
   }
 }
 

@@ -152,4 +152,6 @@ export class Dollar {
   public toString(): string {
     return this.value.toFixed(Dollar.SCALE);
   }
+
+  public static readonly zero = Dollar.fromNumber(0);
 }

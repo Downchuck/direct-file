@@ -1,5 +1,5 @@
-export default {
-  preset: 'ts-jest',
+module.exports = {
+  preset: '/app/node_modules/ts-jest/jest-preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': ['ts-jest', { useESM: true }],
@@ -8,10 +8,10 @@ export default {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   roots: [
-    "<rootDir>/src"
+    "<rootDir>/packages/factgraph/src"
   ],
   modulePaths: [
-    "<rootDir>/src"
+    "<rootDir>/packages/factgraph/src"
   ],
   moduleFileExtensions: [
     'ts',
@@ -21,4 +21,5 @@ export default {
     'json',
     'node',
   ],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 };

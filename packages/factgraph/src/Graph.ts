@@ -7,7 +7,7 @@ import { Factual } from './Factual';
 
 export class Graph {
   public readonly root: Fact;
-  private readonly factCache = new Map<Path, Fact | undefined>();
+  public readonly factCache = new Map<Path, Fact | undefined>();
   private readonly resultCache = new Map<Path, MaybeVector<Result<any>>>();
 
   constructor(

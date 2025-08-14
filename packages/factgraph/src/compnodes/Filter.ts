@@ -5,35 +5,33 @@ import {
 } from './CompNode';
 import { CollectionNode } from './CollectionNode';
 import { BooleanNode } from './BooleanNode';
-import {
-  CollectOperator,
-  applyCollect,
-  explainCollect,
-} from '../operators/CollectOperator';
+import { CollectOperator } from '../operators/CollectOperator';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { CollectExpression } from '../expressions/CollectExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
-import { Explanation } from '../Explanation';
+import { Explanation, ConstantExplanation } from '../Explanation';
 import { Expression } from '../Expression';
 import { Path } from '../Path';
 import { Collection } from '../types/Collection';
 import { CollectionItem } from '../types/CollectionItem';
 
-class FilterOperator implements CollectOperator<Collection, boolean> {
+class FilterOperator implements CollectOperator<Collection<any>, boolean> {
   apply(
-    vect: [CollectionItem, Thunk<Result<boolean>>][]
-  ): Result<Collection> {
-    const results = vect.map(([_, thunk]) => thunk.get());
+    vect: [CollectionItem<any>, Thunk<Result<boolean>>][]
+  ): Result<Collection<any>> {
+    const results = vect.map(([_, thunk]) => thunk.get);
     const bools = results.map((r) => r.getOrElse(false));
     const filteredIds = vect
       .filter((_, i) => bools[i])
       .map(([item, _]) => item.id);
 
-    const complete = results.every((r) => r.complete);
+    const complete = results.every((r) => r.isComplete);
 
-    return new Result(new Collection(filteredIds), complete);
+    return complete
+      ? Result.complete(new Collection(filteredIds))
+      : Result.incomplete();
   }
 
   explain(
@@ -41,7 +39,7 @@ class FilterOperator implements CollectOperator<Collection, boolean> {
     child: Expression<boolean>,
     factual: Factual
   ): Explanation {
-    return explainCollect(path, child, factual);
+    return new ConstantExplanation();
   }
 }
 
@@ -55,7 +53,7 @@ export class FilterFactory implements CompNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    const path = new Path(e.options.path);
+    const path = Path.fromString(e.options.path);
     const child = compNodeRegistry.fromDerivedConfig(
       e.children[0],
       factual,
@@ -64,13 +62,6 @@ export class FilterFactory implements CompNodeFactory {
 
     if (!(child instanceof BooleanNode)) {
       throw new Error('Filter child must be a BooleanNode');
-    }
-
-    const collectionItem = factual.get(path.wildcard(), 0);
-    if (!collectionItem.isComplete()) {
-      throw new Error(
-        `cannot find fact at path '${path}' from '${factual.path}'`
-      );
     }
 
     const cnBuilder = (item: Factual) =>
@@ -86,7 +77,7 @@ export class FilterFactory implements CompNodeFactory {
       filterOperator
     );
 
-    return new CollectionNode(expression, new Path(e.options.path));
+    return new CollectionNode(expression);
   }
 }
 

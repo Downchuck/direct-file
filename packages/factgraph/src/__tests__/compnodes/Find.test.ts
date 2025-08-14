@@ -1,13 +1,13 @@
-import { FactDictionary } from 'FactDictionary';
-import { Graph } from 'Graph';
-import { Collection } from 'types/Collection';
-import { CollectionItem } from 'types/CollectionItem';
-import { InMemoryPersister } from 'persisters/InMemoryPersister';
+import { FactDictionary } from '../../FactDictionary';
+import { Graph } from '../../Graph';
+import { Collection } from '../../types/Collection';
+import { CollectionItem } from '../../types/CollectionItem';
+import { InMemoryPersister } from '../../persisters';
 
 // This is a workaround for the fact that the test environment is broken
 // and we can't import the compnodes directly.
-import 'compnodes/Find';
-import 'compnodes/Dependency';
+import '../../compnodes/Find';
+import '../../compnodes/Dependency';
 
 describe('Find', () => {
   const dictionary = new FactDictionary();
@@ -63,7 +63,7 @@ describe('Find', () => {
     graph.set(`/collection/#${uuid2}/bool`, false);
 
     expect(graph.get('/test').isComplete).toBe(true);
-    expect(graph.get('/test').value).toEqual(new CollectionItem(uuid1));
+    expect(graph.get('/test').value).toEqual(new CollectionItem(uuid1, undefined));
   });
 
   it('finds the first in the collection with the truthy value', () => {
@@ -74,7 +74,7 @@ describe('Find', () => {
     graph.set(`/collection/#${uuid2}/bool`, true);
 
     expect(graph.get('/test').isComplete).toBe(true);
-    expect(graph.get('/test').value).toEqual(new CollectionItem(uuid1));
+    expect(graph.get('/test').value).toEqual(new CollectionItem(uuid1, undefined));
   });
 
   it("throws an error if the collection doesn't exist", () => {

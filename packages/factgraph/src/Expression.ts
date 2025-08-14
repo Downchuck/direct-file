@@ -1,4 +1,5 @@
 import { Factual } from './Factual';
+import { MaybeVector } from './types/MaybeVector';
 import { Thunk } from './Thunk';
 import { Result } from './types';
 import { Explanation, ConstantExplanation } from './Explanation';
@@ -17,6 +18,10 @@ export abstract class Expression<T> {
 
   public getThunk(factual: Factual): Thunk<Result<T>> {
     return new Thunk(() => this.get(factual));
+  }
+
+  public getVector(factual: Factual): MaybeVector<Thunk<Result<T>>> {
+    return MaybeVector.single(this.getThunk(factual));
   }
 
   public abstract explain(factual: Factual): Explanation;
