@@ -29,7 +29,7 @@ export class Rational {
 
   public add(that: Rational): Rational {
     if (this.d === that.d) {
-      return new Rational(this.n + that.n, this.d);
+      return new Rational(this.n + that.n, this.d).simplify();
     }
     return new Rational(
       this.n * that.d + that.n * this.d,
@@ -39,7 +39,7 @@ export class Rational {
 
   public sub(that: Rational): Rational {
     if (this.d === that.d) {
-      return new Rational(this.n - that.n, this.d);
+      return new Rational(this.n - that.n, this.d).simplify();
     }
     return new Rational(
       this.n * that.d - that.n * this.d,
