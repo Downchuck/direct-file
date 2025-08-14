@@ -68,3 +68,48 @@ A deeper investigation was conducted to resolve the testing blockade. The findin
     *   The error is therefore being caused by the tooling itself, most likely an incompatibility between Yarn's Plug'n'Play (PnP) loader and the `node:test` runner's TypeScript transpilation process. Multiple `tsconfig.json` configurations (`NodeNext`, `commonjs`) and file extensions (`.ts`, `.mts`) were attempted, but all resulted in the same error.
 
 **Final Conclusion:** The `factgraph` tests remain blocked. Both `vitest` and `node:test` are non-functional in this package due to what appears to be a fundamental conflict within the repository's tooling and environment setup. The original conclusion that progress is blocked stands.
+
+## Remaining `compnodes` to migrate:
+- AsDecimalString
+- AsString
+- BankAccountNode
+- CollectionItemNode
+- CollectionNode
+- CollectionSize
+- CollectionSum
+- Count
+- Dependency
+- EinNode
+- EmailAddressNode
+- EnumNode
+- EnumOptionsContains
+- EnumOptionsNode
+- EnumOptionsSize
+- Filter
+- Find
+- FirstNCollectionItems
+- GreaterThan
+- GreaterThanOrEqual
+- IndexOf
+- IpPinNode
+- IsComplete
+- Length
+- LessThan
+- LessThanOrEqual
+- Maximum
+- Minimum
+- MultiEnumNode
+- NotEqual
+- Paste
+- PhoneNumberNode
+- PinNode
+- Placeholder
+- Regex
+- RootNode
+- Round
+- RoundToInt
+- StepwiseMultiply
+- TinNode
+- TodayNode
+- ZipCodeNode
+- Subtract

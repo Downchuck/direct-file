@@ -1,37 +1,36 @@
 export class PathItem {
-  constructor(public readonly value: string) {}
-
-  public static readonly Parent = new PathItem('..');
-  public static readonly Wildcard = new PathItem('*');
-  public static readonly Unknown = new PathItem('?');
+  constructor(public readonly key: string, public readonly type: 'child' | 'parent' | 'wildcard' | 'unknown' | 'collection-member') {}
 
   public static fromString(value: string): PathItem {
-    switch (value) {
-      case '..':
-        return PathItem.Parent;
-      case '*':
-        return PathItem.Wildcard;
-      case '?':
-        return PathItem.Unknown;
-      default:
-        return new PathItem(value);
+    if (value === '..') {
+      return new PathItem(value, 'parent');
     }
+    if (value === '*') {
+      return new PathItem(value, 'wildcard');
+    }
+    if (value === '?') {
+      return new PathItem(value, 'unknown');
+    }
+    if (value.startsWith('#')) {
+      return new PathItem(value, 'collection-member');
+    }
+    return new PathItem(value, 'child');
   }
 
   public get isParent(): boolean {
-    return this === PathItem.Parent;
+    return this.type === 'parent';
   }
 
   public get isWildcard(): boolean {
-    return this === PathItem.Wildcard;
+    return this.type === 'wildcard';
   }
 
   public get isUnknown(): boolean {
-    return this === PathItem.Unknown;
+    return this.type === 'unknown';
   }
 
   public get isCollectionMember(): boolean {
-    return this.value.startsWith('#');
+    return this.type === 'collection-member';
   }
 
   public get isAbstract(): boolean {
@@ -42,7 +41,15 @@ export class PathItem {
     return !this.isUnknown;
   }
 
-  public toString(): string {
-    return this.value;
+  public get value(): string {
+    return this.key;
   }
+
+  public toString(): string {
+    return this.key;
+  }
+
+  public static readonly Parent = new PathItem('..', 'parent');
+  public static readonly Wildcard = new PathItem('*', 'wildcard');
+  public static readonly Unknown = new PathItem('?', 'unknown');
 }

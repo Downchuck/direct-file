@@ -1,6 +1,8 @@
 import { Expression } from '../Expression';
-import { BinaryOperator } from '../operators/BinaryOperator';
-import { MaybeVector, Result } from '../types';
+import { BinaryOperator, thunkBinary } from '../operators/BinaryOperator';
+import { Result } from '../types';
+import { Factual } from '../Factual';
+import { Explanation } from '../Explanation';
 
 export class BinaryExpression<A, L, R> extends Expression<A> {
   constructor(
@@ -11,17 +13,16 @@ export class BinaryExpression<A, L, R> extends Expression<A> {
     super();
   }
 
-  override get(): MaybeVector<Result<A>> {
-    // This logic needs to be translated from the Scala `get` method
-    // op(lhs.get, rhs.getThunk)
-    return this.op.operation(this.lhs.get(), this.rhs.getThunk());
+  override get(factual: Factual): Result<A> {
+    const thunk = thunkBinary(
+      this.op,
+      this.lhs.getThunk(factual),
+      this.rhs.getThunk(factual)
+    );
+    return thunk.get;
   }
 
-  override getThunk(): MaybeVector<Result<A>> {
-    throw new Error('Not implemented');
-  }
-
-  override explain(): MaybeVector<any> {
-    throw new Error('Not implemented');
+  override explain(factual: Factual): Explanation {
+    return this.op.explain(this.lhs, this.rhs, factual);
   }
 }

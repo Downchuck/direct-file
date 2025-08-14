@@ -4,17 +4,35 @@ import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import { BinaryOperator } from '../operators/BinaryOperator';
-import { BinaryExpression } from '../expressions/BinaryExpression';
-import { ReduceExpression } from '../expressions/ReduceExpression';
-import { ReduceOperator } from '../operators/ReduceOperator';
+import {
+  BinaryOperator,
+  applyBinary,
+  explainBinary,
+} from '../operators/BinaryOperator';
+import {
+  ReduceOperator,
+  applyReduce,
+  explainReduce,
+} from '../operators/ReduceOperator';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
+import { BinaryExpression } from '../expressions/BinaryExpression';
+import { ReduceExpression } from '../expressions/ReduceExpression';
+import { Result } from '../types';
+import { Thunk } from '../Thunk';
+import { Explanation } from '../Explanation';
+import { Expression } from '../Expression';
 
 class AddReduceOperator<A> implements ReduceOperator<A> {
   constructor(private readonly plus: (x: A, y: A) => A) {}
   reduce(x: A, y: A): A {
     return this.plus(x, y);
+  }
+  apply(head: Result<A>, tail: Thunk<Result<A>>[]): Result<A> {
+    return applyReduce(this, head, tail);
+  }
+  explain(xs: Expression<A>[], factual: Factual): Explanation {
+    return explainReduce(xs, factual);
   }
 }
 
@@ -31,20 +49,30 @@ class AddBinaryOperator<A, L, R> implements BinaryOperator<A, L, R> {
   operation(lhs: L, rhs: R): A {
     return this.op(lhs, rhs);
   }
+  apply(lhs: Result<L>, rhs: Result<R>): Result<A> {
+    return applyBinary(this, lhs, rhs);
+  }
+  explain(
+    lhs: Expression<L>,
+    rhs: Expression<R>,
+    factual: Factual
+  ): Explanation {
+    return explainBinary(lhs, rhs, factual);
+  }
 }
 
-const dollarIntPlus = (lhs: Dollar, rhs: number) => lhs.add(Dollar.fromNumber(rhs));
-const intDollarPlus = (lhs: number, rhs: Dollar) => Dollar.fromNumber(lhs).add(rhs);
+const dollarIntPlus = (lhs: Dollar, rhs: number) =>
+  lhs.add(Dollar.fromNumber(rhs));
+const intDollarPlus = (lhs: number, rhs: Dollar) =>
+  Dollar.fromNumber(lhs).add(rhs);
 const rationalIntPlus = (lhs: Rational, rhs: number) =>
   lhs.add(Rational.fromNumber(rhs));
 const intRationalPlus = (lhs: number, rhs: Rational) =>
   Rational.fromNumber(lhs).add(rhs);
 const dollarRationalPlus = (lhs: Dollar, rhs: Rational) => {
-  // This is a bit of a hack. We should probably use a proper decimal to rational conversion.
   return lhs.add(Dollar.fromNumber(rhs.n / rhs.d));
 };
 const rationalDollarPlus = (lhs: Rational, rhs: Dollar) => {
-  // This is a bit of a hack. We should probably use a proper decimal to rational conversion.
   return Dollar.fromNumber(lhs.n / lhs.d).add(rhs);
 };
 
@@ -58,7 +86,7 @@ const intRationalBinaryOperator = new AddBinaryOperator(intRationalPlus);
 const dollarRationalBinaryOperator = new AddBinaryOperator(dollarRationalPlus);
 const rationalDollarBinaryOperator = new AddBinaryOperator(rationalDollarPlus);
 
-class AddFactory implements CompNodeFactory {
+export class AddFactory implements CompNodeFactory {
   readonly typeName = 'Add';
 
   fromDerivedConfig(
@@ -74,17 +102,17 @@ class AddFactory implements CompNodeFactory {
 
   create(nodes: CompNode[]): CompNode {
     if (nodes.every((n) => n instanceof IntNode)) {
-      const expressions = nodes.map((n) => n.expression);
+      const expressions = nodes.map((n) => (n as IntNode).expr);
       return new IntNode(new ReduceExpression(expressions, intReduceOperator));
     }
     if (nodes.every((n) => n instanceof DollarNode)) {
-      const expressions = nodes.map((n) => n.expression);
+      const expressions = nodes.map((n) => (n as DollarNode).expr);
       return new DollarNode(
         new ReduceExpression(expressions, dollarReduceOperator)
       );
     }
     if (nodes.every((n) => n instanceof RationalNode)) {
-      const expressions = nodes.map((n) => n.expression);
+      const expressions = nodes.map((n) => (n as RationalNode).expr);
       return new RationalNode(
         new ReduceExpression(expressions, rationalReduceOperator)
       );
@@ -95,14 +123,14 @@ class AddFactory implements CompNodeFactory {
   private binaryAdd(lhs: CompNode, rhs: CompNode): CompNode {
     if (lhs instanceof IntNode && rhs instanceof IntNode) {
       return new IntNode(
-        new BinaryExpression(lhs.expression, rhs.expression, intIntBinaryOperator)
+        new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
       );
     }
     if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           dollarDollarBinaryOperator
         )
       );
@@ -110,26 +138,22 @@ class AddFactory implements CompNodeFactory {
     if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
       return new RationalNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           rationalRationalBinaryOperator
         )
       );
     }
     if (lhs instanceof IntNode && rhs instanceof DollarNode) {
       return new DollarNode(
-        new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
-          intDollarBinaryOperator
-        )
+        new BinaryExpression(lhs.expr, rhs.expr, intDollarBinaryOperator)
       );
     }
     if (lhs instanceof DollarNode && rhs instanceof IntNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           dollarIntBinaryOperator
         )
       );
@@ -137,8 +161,8 @@ class AddFactory implements CompNodeFactory {
     if (lhs instanceof IntNode && rhs instanceof RationalNode) {
       return new RationalNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           intRationalBinaryOperator
         )
       );
@@ -146,8 +170,8 @@ class AddFactory implements CompNodeFactory {
     if (lhs instanceof RationalNode && rhs instanceof IntNode) {
       return new RationalNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           rationalIntBinaryOperator
         )
       );
@@ -155,8 +179,8 @@ class AddFactory implements CompNodeFactory {
     if (lhs instanceof RationalNode && rhs instanceof DollarNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           rationalDollarBinaryOperator
         )
       );
@@ -164,8 +188,8 @@ class AddFactory implements CompNodeFactory {
     if (lhs instanceof DollarNode && rhs instanceof RationalNode) {
       return new DollarNode(
         new BinaryExpression(
-          lhs.expression,
-          rhs.expression,
+          lhs.expr,
+          rhs.expr,
           dollarRationalBinaryOperator
         )
       );
