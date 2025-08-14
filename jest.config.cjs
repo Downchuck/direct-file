@@ -1,9 +1,6 @@
 module.exports = {
-  preset: '/app/node_modules/ts-jest/jest-preset.js',
+  preset: 'ts-jest/presets/js-with-ts-esm',
   testEnvironment: 'node',
-  transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true }],
-  },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
@@ -21,5 +18,4 @@ module.exports = {
     'json',
     'node',
   ],
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 };

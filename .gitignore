@@ -5,6 +5,9 @@ maven-wrapper.jar
 .DS_Store
 audit_log.txt
 .yarn/install-state.gz
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/cache
 
 # Local maven properties
 **/application-local.*
