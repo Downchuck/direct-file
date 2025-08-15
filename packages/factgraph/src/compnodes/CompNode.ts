@@ -5,14 +5,25 @@ import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { Limit } from '../limits/Limit';
 
-export interface CompNodeFactory {
+import { Graph } from "../Graph";
+
+export interface DerivedNodeFactory {
   readonly typeName: string;
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode;
 }
+
+export interface WritableNodeFactory {
+    readonly typeName: string;
+    fromWritableConfig(
+      e: any,
+      graph: Graph,
+    ): CompNode;
+}
+
+export type CompNodeFactory = DerivedNodeFactory | WritableNodeFactory;
 
 export abstract class CompNode {
   abstract readonly expr: Expression<any>;
@@ -74,15 +85,25 @@ class CompNodeRegistry {
 
   public fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    const factory = this.factories.get(e.typeName);
-    if (!factory) {
-      throw new Error(`${e.typeName} is not a registered CompNode`);
+    const factory = this.factories.get(e.typeName) as DerivedNodeFactory;
+    if (!factory || !factory.fromDerivedConfig) {
+      throw new Error(`${e.typeName} is not a registered DerivedNode`);
     }
-    return factory.fromDerivedConfig(e, factual, factDictionary);
+    return factory.fromDerivedConfig(e, graph);
   }
+
+  public fromWritableConfig(
+    e: any,
+    graph: Graph,
+    ): CompNode {
+    const factory = this.factories.get(e.typeName) as WritableNodeFactory;
+    if (!factory || !factory.fromWritableConfig) {
+        throw new Error(`${e.typeName} is not a registered WritableNode`);
+    }
+    return factory.fromWritableConfig(e, graph);
+    }
 }
 
 export const compNodeRegistry = new CompNodeRegistry();

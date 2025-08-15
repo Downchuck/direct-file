@@ -9,6 +9,7 @@ export class Thunk<A> {
   public get get(): A {
     if (this.value === undefined) {
       this.value = this.f();
+      console.log('Thunk value:', this.value);
     }
     return this.value;
   }

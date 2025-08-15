@@ -3,9 +3,8 @@ import { Path } from '../Path';
 import { CollectionItem } from '../types/CollectionItem';
 import { CompNode, compNodeRegistry } from './CompNode';
 import { BooleanNode } from './BooleanNode';
-import { WritableNodeFactory } from './WritableNodeFactory';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { WritableNodeFactory } from './CompNode';
+import { Graph } from '../Graph';
 import { DependencyExpression } from '../expressions/DependencyExpression';
 import { Result } from '../types';
 
@@ -56,8 +55,7 @@ class CollectionItemNodeFactory implements WritableNodeFactory {
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     return new CollectionItemNode(
       Expression.writable(Result.incomplete()),

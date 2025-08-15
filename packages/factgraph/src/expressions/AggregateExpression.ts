@@ -10,8 +10,6 @@ export class AggregateExpression<A, B> extends Expression<B> {
     public readonly op: AggregateOperator<A, B>
   ) {
     super();
-    this.get = this.get.bind(this);
-    this.explain = this.explain.bind(this);
   }
 
   override get(factual: Factual): Result<B> {

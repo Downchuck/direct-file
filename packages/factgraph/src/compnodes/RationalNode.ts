@@ -1,8 +1,6 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { WritableNodeFactory } from './WritableNodeFactory';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { Graph } from '../Graph';
 import { Rational } from '../types/Rational';
 import { Result } from '../types/Result';
 
@@ -19,21 +17,19 @@ export class RationalNode extends CompNode {
   }
 }
 
-class RationalNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class RationalNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Rational';
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    return new RationalNode(Expression.literal(Result.incomplete()));
+    return new RationalNode(Expression.writable(Result.incomplete()));
   }
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     // TODO: getOptionValue
     const value = e.value || '0/1';

@@ -1,8 +1,6 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { WritableNodeFactory } from './WritableNodeFactory';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { Graph } from '../Graph';
 import { Day } from '../types/Day';
 import { PathItem } from '../PathItem';
 import { IntNode } from './IntNode';
@@ -42,21 +40,19 @@ export class DayNode extends CompNode {
   }
 }
 
-class DayNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class DayNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Day';
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    return new DayNode(Expression.literal(Result.incomplete()));
+    return new DayNode(Expression.writable(Result.incomplete()));
   }
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     // TODO: getOptionValue
     const value = e.value || '2000-01-01';

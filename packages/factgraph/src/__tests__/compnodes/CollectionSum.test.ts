@@ -1,9 +1,9 @@
 import { FactDictionary } from '../../FactDictionary';
 import { Graph } from '../../Graph';
+import { InMemoryPersister } from '../../persisters';
 import { Collection } from '../../types/Collection';
 import { Dollar } from '../../types/Dollar';
 import { Rational } from '../../types/Rational';
-import { InMemoryPersister } from '../../persisters';
 
 // This is a workaround for the fact that the test environment is broken
 // and we can't import the compnodes directly.
@@ -150,9 +150,21 @@ describe('CollectionSum', () => {
           ],
         },
       });
+    localDictionary.addDefinition({
+        path: '/collection',
+        writable: {
+            typeName: 'Collection',
+        },
+    });
+    localDictionary.addDefinition({
+        path: '/collection/*/string',
+        writable: {
+            typeName: 'String',
+        },
+    });
     const graph = new Graph(localDictionary, new InMemoryPersister());
     graph.set('/collection', new Collection([uuid1, uuid2]));
     graph.set(`/collection/#${uuid1}/string`, "hello");
-    expect(() => graph.get('/stringTest')).toThrow('cannot sum a StringNode');
+    expect(() => graph.get('/stringTest')).toThrow('cannot sum a DependencyNode');
   });
 });

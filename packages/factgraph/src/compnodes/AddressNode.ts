@@ -1,8 +1,6 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { WritableNodeFactory } from './WritableNodeFactory';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { Graph } from '../Graph';
 import { Address } from '../types/Address';
 import { Result } from '../types';
 import { PathItem } from '../PathItem';
@@ -69,21 +67,19 @@ export class AddressNode extends CompNode {
   }
 }
 
-class AddressNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class AddressNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Address';
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    return new AddressNode(Expression.literal(Result.incomplete()));
+    return new AddressNode(Expression.writable(Result.incomplete()));
   }
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     const value = e.value || '';
     const address = Address.fromString(value);

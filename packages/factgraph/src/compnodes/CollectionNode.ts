@@ -6,9 +6,8 @@ import { BooleanNode } from './BooleanNode';
 import { PathItem } from '../PathItem';
 import { CollectionItemNode } from './CollectionItemNode';
 import { CollectionItem } from '../types/CollectionItem';
-import { WritableNodeFactory } from './WritableNodeFactory';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { WritableNodeFactory } from './CompNode';
+import { Graph } from '../Graph';
 import { Result } from '../types';
 import { DependencyExpression } from '../expressions/DependencyExpression';
 
@@ -72,8 +71,7 @@ class CollectionNodeFactory implements WritableNodeFactory {
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     return new CollectionNode(
       Expression.writable(Result.complete(new Collection([]))),

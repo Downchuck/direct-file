@@ -1,8 +1,6 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { WritableNodeFactory } from './WritableNodeFactory';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { Graph } from '../Graph';
 import { Dollar } from '../types/Dollar';
 import { Result } from '../types/Result';
 
@@ -19,21 +17,19 @@ export class DollarNode extends CompNode {
   }
 }
 
-class DollarNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Dollar';
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    return new DollarNode(Expression.literal(Result.incomplete()));
+    return new DollarNode(Expression.writable(Result.incomplete()));
   }
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     // TODO: getOptionValue
     const value = e.value || '0';
