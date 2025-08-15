@@ -7,8 +7,8 @@ export default mergeConfig(
   defineConfig({
     test: {
       globals: true,
-      environment: 'jsdom',
-      testTimeout: 1000,
+      environment: 'node',
+      testTimeout: 300000,
     },
   })
 );

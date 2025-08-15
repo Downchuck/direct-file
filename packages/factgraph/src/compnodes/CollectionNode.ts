@@ -75,9 +75,10 @@ class CollectionNodeFactory implements WritableNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    // This seems wrong, but it's what the Scala code does.
-    // It should probably be Expression.writable()
-    return new CollectionNode(new DependencyExpression(new Path('/')));
+    return new CollectionNode(
+      Expression.writable(Result.complete(new Collection([]))),
+      undefined
+    );
   }
 }
 

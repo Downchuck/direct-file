@@ -12,7 +12,7 @@ import { MaybeVector } from '../types/MaybeVector';
 import { Thunk } from '../Thunk';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import { Explanation } from '../Explanation';
+import { Explanation, opWithInclusiveChildren } from '../Explanation';
 import { Expression } from '../Expression';
 
 class SumOperator<T extends number | Dollar | Rational>
@@ -51,8 +51,7 @@ class SumOperator<T extends number | Dollar | Rational>
   }
 
   explain(xs: Expression<T>, factual: Factual): Explanation {
-    // TODO: Implement this
-    return new Explanation('Sum');
+    return opWithInclusiveChildren([xs.explain(factual)]);
   }
 }
 
