@@ -1,11 +1,11 @@
-import { CompNode, compNodeRegistry, CompNodeFactory } from './CompNode';
+import { CompNode, compNodeRegistry, DerivedNodeFactory } from './CompNode';
+import { DependencyNode } from './Dependency';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
 import { AggregateExpression } from '../expressions/AggregateExpression';
 import { AggregateOperator } from '../operators/AggregateOperator';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { getChildNode } from '../util/getChildNode';
 import { Result } from '../types';
 import { MaybeVector } from '../types/MaybeVector';
@@ -50,16 +50,30 @@ class SumOperator<T extends number | Dollar | Rational>
     return Result.placeholder(sum);
   }
 
-  explain(xs: Expression<T>, factual: Factual): Explanation {
-    return opWithInclusiveChildren([xs.explain(factual)]);
+  explain(xs: Expression<T>, graph: Graph): Explanation {
+    return opWithInclusiveChildren([xs.explain(graph)]);
   }
 }
 
-export class CollectionSumFactory implements CompNodeFactory {
+export class CollectionSumFactory implements DerivedNodeFactory {
   readonly typeName = 'CollectionSum';
 
   create(operands: CompNode[]): CompNode {
     const node = operands[0];
+    if (node instanceof DependencyNode) {
+        const path = (node.expr as DependencyExpression<any>).path;
+        const type = path.items[path.items.length - 1].key;
+        if (type === 'int') {
+            return new IntNode(new AggregateExpression(node.expr, new SumOperator(0)));
+        }
+        if (type === 'dollar') {
+            return new DollarNode(new AggregateExpression(node.expr, new SumOperator(Dollar.zero)));
+        }
+        if (type === 'rational') {
+            return new RationalNode(new AggregateExpression(node.expr, new SumOperator(Rational.zero)));
+        }
+    }
+
     if (node instanceof IntNode) {
       return new IntNode(
         new AggregateExpression(node.expr, new SumOperator(0))
@@ -80,10 +94,9 @@ export class CollectionSumFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    const childNode = getChildNode(e, factual, factDictionary);
+    const childNode = getChildNode(e, graph);
     return this.create([childNode]);
   }
 }

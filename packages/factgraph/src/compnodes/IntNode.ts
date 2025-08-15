@@ -1,8 +1,6 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { WritableNodeFactory } from './WritableNodeFactory';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { Graph } from '../Graph';
 import { Result } from '../types/Result';
 
 export class IntNode extends CompNode {
@@ -18,21 +16,19 @@ export class IntNode extends CompNode {
   }
 }
 
-class IntNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class IntNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Int';
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    return new IntNode(Expression.literal(Result.incomplete()));
+    return new IntNode(Expression.writable(Result.incomplete()));
   }
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     // TODO: getOptionValue
     const value = parseInt(e.value, 10);

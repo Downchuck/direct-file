@@ -1,8 +1,6 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { WritableNodeFactory } from './WritableNodeFactory';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { Graph } from '../Graph';
 import { Result } from '../types';
 
 export class StringNode extends CompNode {
@@ -18,21 +16,19 @@ export class StringNode extends CompNode {
   }
 }
 
-class StringNodeFactory implements WritableNodeFactory, CompNodeFactory {
+class StringNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'String';
 
   fromWritableConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
-    return new StringNode(Expression.literal(Result.incomplete()));
+    return new StringNode(Expression.writable(Result.incomplete()));
   }
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     const value = e.value || '';
     return new StringNode(Expression.literal(Result.complete(value)));

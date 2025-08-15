@@ -17,7 +17,6 @@ export * from './RationalNode';
 export * from './StringNode';
 export * from './Subtract';
 export * from './True';
-export * from './WritableNodeFactory';
 export * from './AddressNode';
 export * from './AsDecimalString';
 export * from './AsString';

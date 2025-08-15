@@ -7,8 +7,8 @@ import { Factual } from './Factual';
 
 export class Graph {
   public readonly root: Fact;
-  public readonly factCache = new Map<Path, Fact | undefined>();
-  private readonly resultCache = new Map<Path, MaybeVector<Result<any>>>();
+  public readonly factCache = new Map<string, Fact | undefined>();
+  private readonly resultCache = new Map<string, MaybeVector<Result<any>>>();
 
   constructor(
     public readonly dictionary: FactDictionary,
@@ -34,10 +34,8 @@ export class Graph {
     return results.values[0];
   }
 
-  public getVect(path: string | Path): MaybeVector<Result<any>> {
+  public getVect(path: string | Path, factual: Factual): MaybeVector<Result<any>> {
     const pathObj = typeof path === 'string' ? Path.fromString(path) : path;
-    const factual = new Factual(this.dictionary);
-
     const factResults = this.root.apply(pathObj);
 
     return factResults.flatMap((factResult: Result<Fact>) => {

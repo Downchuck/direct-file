@@ -4,7 +4,6 @@ import { PathItem } from './PathItem';
 import { Limit } from './limits/Limit';
 import { Graph } from './Graph';
 import { MaybeVector, Result, WritableType } from './types';
-import { Factual } from './Factual';
 import { Explanation } from './Explanation';
 import { CollectionNode } from './compnodes/CollectionNode';
 import { Collection } from './types/Collection';
@@ -32,17 +31,17 @@ export class Fact {
     return current;
   }
 
-  public get(factual: Factual): MaybeVector<Result<any>> {
-    const result = MaybeVector.single(this.value.get(factual));
+  public get(): MaybeVector<Result<any>> {
+    const result = MaybeVector.single(this.value.get(this.graph));
     return result;
   }
 
-  public getThunk(factual: Factual): MaybeVector<Result<any>> {
-    return MaybeVector.single(this.value.getThunk(factual).get);
+  public getThunk(): MaybeVector<Result<any>> {
+    return MaybeVector.single(this.value.getThunk(this.graph).get);
   }
 
-  public explain(factual: Factual): MaybeVector<Explanation> {
-    return MaybeVector.single(this.value.explain(factual));
+  public explain(): MaybeVector<Explanation> {
+    return MaybeVector.single(this.value.explain(this.graph));
   }
 
   public set(value: WritableType, allowCollectionItemDelete: boolean = false): void {
@@ -112,9 +111,9 @@ export class Fact {
 
   private applyWildcard(item: PathItem): MaybeVector<Result<Fact>> {
       if (this.value instanceof CollectionNode) {
-          const collectionResult = this.value.expr.get(new Factual(this.graph.dictionary));
+          const collectionResult = this.value.expr.get(this.graph);
           if (collectionResult.isComplete) {
-              const collection = collectionResult.get as Collection<string>;
+              const collection = collectionResult.value as Collection<string>;
               const items = collection.values.map(id => this.getMember(PathItem.fromString(`#${id}`)));
               const validItems = items.filter(i => i !== undefined) as Fact[];
               return MaybeVector.multiple(validItems.map(i => Result.complete(i)), true);
@@ -135,30 +134,40 @@ export class Fact {
 
   private getChild(key: PathItem): Fact | undefined {
     const childPath = this.path.append(key);
-    const cached = this.graph.factCache.get(childPath);
-    if (cached) return cached;
+    const cached = this.graph.factCache.get(childPath.toString());
+    if (cached) {
+      return cached;
+    }
 
     const fact = this.makeFact(key);
-    this.graph.factCache.set(childPath, fact);
+    this.graph.factCache.set(childPath.toString(), fact);
     return fact;
   }
 
   private getMember(key: PathItem): Fact | undefined {
     const memberPath = this.path.append(key);
-    const cached = this.graph.factCache.get(memberPath);
-    if (cached) return cached;
+    const cached = this.graph.factCache.get(memberPath.toString());
+    if (cached) {
+      return cached;
+    }
 
     const fact = this.makeExtract(key);
-    this.graph.factCache.set(memberPath, fact);
+    this.graph.factCache.set(memberPath.toString(), fact);
     return fact;
   }
 
   private makeFact(key: PathItem): Fact | undefined {
-    const definition = this.graph.dictionary.getDefinition(this.path.append(key));
+    const path = this.path.append(key);
+    const definition = this.graph.dictionary.getDefinition(path);
     if (definition) {
-        const config = definition.derived ?? definition.writable;
-        const compNode = compNodeRegistry.fromDerivedConfig(config, new Factual(this.graph.dictionary), this.graph.dictionary);
-        return new Fact(compNode, this.path.append(key), [], this.graph, this, {} as any);
+        if (definition.derived) {
+            const compNode = compNodeRegistry.fromDerivedConfig(definition.derived, this.graph);
+            return new Fact(compNode, this.path.append(key), [], this.graph, this, {} as any);
+        }
+        if (definition.writable) {
+            const compNode = compNodeRegistry.fromWritableConfig(definition.writable, this.graph);
+            return new Fact(compNode, this.path.append(key), [], this.graph, this, {} as any);
+        }
     }
     return this.makeExtract(key);
   }
