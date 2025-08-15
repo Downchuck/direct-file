@@ -10,6 +10,10 @@ export abstract class Expression<T> {
     return new LiteralExpression(value);
   }
 
+  static writable<T>(initialValue: Result<T>): Expression<T> {
+    return new WritableExpression(initialValue);
+  }
+
   static thunk<T>(value: () => Result<T>): Expression<T> {
     return new ThunkExpression(value);
   }
@@ -78,6 +82,31 @@ class ThunkExpression<T> extends Expression<T> {
 
   public explain(factual: Factual): Explanation {
     return new ConstantExplanation();
+  }
+}
+
+class WritableExpression<T> extends Expression<T> {
+  private value: Result<T>;
+
+  constructor(initialValue: Result<T>) {
+    super();
+    this.value = initialValue;
+  }
+
+  public get(factual: Factual): Result<T> {
+    return this.value;
+  }
+
+  public explain(factual: Factual): Explanation {
+    return new ConstantExplanation();
+  }
+
+  override set(value: any, allowCollectionItemDelete: boolean = false): void {
+    this.value = Result.complete(value);
+  }
+
+  override get isWritable(): boolean {
+    return true;
   }
 }
 

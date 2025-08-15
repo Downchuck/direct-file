@@ -7,6 +7,7 @@ import { WritableNodeFactory } from './WritableNodeFactory';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { DependencyExpression } from '../expressions/DependencyExpression';
+import { Result } from '../types';
 
 export class CollectionItemNode extends CompNode {
   public readonly expr: Expression<CollectionItem>;
@@ -58,12 +59,8 @@ class CollectionItemNodeFactory implements WritableNodeFactory {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    // In the scala code, this is Expression.Writable(classOf[CollectionItem])
-    // and it gets a path from e.collectionItemAlias.get
-    // Not sure how to handle that here yet.
-    // For now, I'll make it a dependency on the root path.
     return new CollectionItemNode(
-      new DependencyExpression(Path.fromString(e.collectionItemAlias)),
+      Expression.writable(Result.incomplete()),
       Path.fromString(e.collectionItemAlias)
     );
   }
