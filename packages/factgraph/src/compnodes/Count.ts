@@ -1,27 +1,25 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { BooleanNode } from './BooleanNode';
-import { IntNode } from './IntNode';
-import { AggregateOperator } from '../operators/AggregateOperator';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
-import { AggregateExpression } from '../expressions/AggregateExpression';
-import { Result } from '../types';
-import { Explanation, opWithInclusiveChildren } from '../Explanation';
-import { Expression } from '../Expression';
-import { MaybeVector } from '../types/MaybeVector';
-import { Thunk } from '../Thunk';
+import {
+  CompNode,
+  compNodeRegistry,
+  DerivedNodeFactory,
+} from './CompNode';
 
-export class CountOperator implements AggregateOperator<boolean, number> {
+import { AggregateExpression, Expression } from '../expressions';
+import { AggregateOperator, opWithInclusiveChildren } from '../operators';
+import { IntNode } from './IntNode';
+import { Explanation, Factual, Graph, MaybeVector, Result, Thunk } from '../types';
+
+class CountOperator implements AggregateOperator<boolean, number> {
   apply(vect: MaybeVector<Thunk<Result<boolean>>>): Result<number> {
     const list = vect.toList;
     if (list.length === 0) {
-      return Result.complete(0);
+      return Result.incomplete(0);
     }
     let count = 0;
     let isComplete = true;
 
     for (let i = 0; i < list.length; i++) {
-      const current = list[i].get;
+      const current = list[i].value;
       if (!current.hasValue) {
         return Result.incomplete();
       }
@@ -43,29 +41,14 @@ export class CountOperator implements AggregateOperator<boolean, number> {
   }
 }
 
-const countOperator = new CountOperator();
+const countOp = new CountOperator();
 
-export class CountFactory implements CompNodeFactory {
+export class CountFactory implements DerivedNodeFactory {
   readonly typeName = 'Count';
 
-  fromDerivedConfig(
-    e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
-  ): CompNode {
-    const node = compNodeRegistry.fromDerivedConfig(
-      e.children[0],
-      factual,
-      factDictionary
-    );
-    if (!(node instanceof BooleanNode)) {
-      throw new Error('Count can only operate on a BooleanNode');
-    }
-    return this.create(node);
-  }
-
-  create(node: BooleanNode): IntNode {
-    return new IntNode(new AggregateExpression(node.expr, countOperator));
+  fromDerivedConfig(e: any, graph: Graph): CompNode {
+    const node = compNodeRegistry.fromDerivedConfig(e.children[0], graph);
+    return new IntNode(new AggregateExpression(node.expr, countOp));
   }
 }
 

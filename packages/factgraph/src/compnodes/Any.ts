@@ -38,7 +38,7 @@ class AnyOperator implements ReduceOperator<boolean> {
     }
 
     const [thunk, ...rest] = thunks;
-    const result = thunk.get;
+    const result = thunk.value;
 
     if (result.isComplete && result.value === true) {
       return Result.complete(true);
@@ -89,7 +89,7 @@ class AnyOperator implements ReduceOperator<boolean> {
     }
 
     const [{ thunk, explanation: xExp }, ...next] = cases;
-    const result = thunk.get;
+    const result = thunk.value;
 
     if (result.isComplete && result.value === true) {
       return opWithInclusiveChildren([xExp]);

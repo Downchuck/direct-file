@@ -18,7 +18,7 @@ export function applyReduce<A>(
 ): Result<A> {
   let acc = head;
   for (const thunk of tail) {
-    const result = thunk.get;
+    const result = thunk.value;
     if (!acc.hasValue || !result.hasValue) {
       return Result.incomplete();
     }

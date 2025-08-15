@@ -32,7 +32,7 @@ class AllOperator implements ReduceOperator<boolean> {
     }
 
     const [head, ...tail] = thunks;
-    const result = head.get;
+    const result = head.value;
 
     if (result.isComplete && !result.get) {
       return Result.complete(false);
@@ -51,7 +51,7 @@ class AllOperator implements ReduceOperator<boolean> {
     }));
 
     for (const { thunk, explanation } of caseVectors) {
-      const result = thunk.get;
+      const result = thunk.value;
       if (result.isComplete && !result.value) {
         return opWithInclusiveChildren([explanation]);
       }

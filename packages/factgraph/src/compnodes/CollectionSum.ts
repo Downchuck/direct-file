@@ -29,7 +29,7 @@ class SumOperator<T extends number | Dollar | Rational>
     let sum: T = this.zero;
 
     for (const thunk of thunks) {
-      const result = thunk.get;
+      const result = thunk.value;
       if (result.hasValue) {
         if (typeof sum === 'number' && typeof result.get === 'number') {
           sum = (sum + result.get) as T;
