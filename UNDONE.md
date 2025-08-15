@@ -2,30 +2,29 @@
 
 This document tracks the progress of the `factgraph` migration from Scala to TypeScript.
 
-## Migrated `compnodes` (Testing In Progress)
-The following "SIMPLE" compnodes have been migrated from Scala to TypeScript. The test suite is now running, but there are still some failing tests that need to be addressed.
+## Migrated `compnodes`
+- [x] BankAccountNode
+- [x] CollectionItemNode
+- [x] CollectionNode
+- [x] CollectionSize
+- [x] CollectionSum
+- [x] Dependency
+- [x] EnumOptionsContains
+- [x] EnumOptionsNode
+- [x] EnumOptionsSize
+- [x] Filter
+- [x] Find
+- [x] FirstNCollectionItems
+- [x] IndexOf
+- [x] IpPinNode
+- [x] IsComplete
+- [x] MultiEnumNode
+- [x] Paste
+- [x] PhoneNumberNode
+- [x] PinNode
+- [x] Placeholder
 
 ## Remaining `compnodes` to migrate:
-- BankAccountNode
-- CollectionItemNode
-- CollectionNode
-- CollectionSize
-- CollectionSum
-- Dependency
-- EnumOptionsContains
-- EnumOptionsNode
-- EnumOptionsSize
-- Filter
-- Find
-- FirstNCollectionItems
-- IndexOf
-- IpPinNode
-- IsComplete
-- MultiEnumNode
-- Paste
-- PhoneNumberNode
-- PinNode
-- Placeholder
 - Regex
 - RootNode
 - StepwiseMultiply

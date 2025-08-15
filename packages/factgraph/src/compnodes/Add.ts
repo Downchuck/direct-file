@@ -2,6 +2,8 @@ import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
+import { DayNode } from './DayNode';
+import { DaysNode } from './DaysNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
 import {
@@ -39,10 +41,12 @@ class AddReduceOperator<A> implements ReduceOperator<A> {
 const intPlus = (x: number, y: number) => x + y;
 const dollarPlus = (x: Dollar, y: Dollar) => x.add(y);
 const rationalPlus = (x: Rational, y: Rational) => x.add(y);
+const dayPlus = (x: any, y: any) => x.add(y);
 
 const intReduceOperator = new AddReduceOperator(intPlus);
 const dollarReduceOperator = new AddReduceOperator(dollarPlus);
 const rationalReduceOperator = new AddReduceOperator(rationalPlus);
+const dayReduceOperator = new AddReduceOperator(dayPlus);
 
 class AddBinaryOperator<A, L, R> implements BinaryOperator<A, L, R> {
   constructor(private readonly op: (lhs: L, rhs: R) => A) {}
@@ -79,6 +83,7 @@ const rationalDollarPlus = (lhs: Rational, rhs: Dollar) => {
 const intIntBinaryOperator = new AddBinaryOperator(intPlus);
 const dollarDollarBinaryOperator = new AddBinaryOperator(dollarPlus);
 const rationalRationalBinaryOperator = new AddBinaryOperator(rationalPlus);
+const dayDayBinaryOperator = new AddBinaryOperator(dayPlus);
 const dollarIntBinaryOperator = new AddBinaryOperator(dollarIntPlus);
 const intDollarBinaryOperator = new AddBinaryOperator(intDollarPlus);
 const rationalIntBinaryOperator = new AddBinaryOperator(rationalIntPlus);
@@ -117,7 +122,17 @@ export class AddFactory implements CompNodeFactory {
         new ReduceExpression(expressions, rationalReduceOperator)
       );
     }
-    return nodes.reduce((lhs, rhs) => this.binaryAdd(lhs, rhs));
+    if (
+      nodes.every((n) => n instanceof DayNode || n instanceof DaysNode)
+    ) {
+      const expressions = nodes.map((n) => n.expr);
+      return new DayNode(new ReduceExpression(expressions, dayReduceOperator));
+    }
+    let acc = nodes[0];
+    for (let i = 1; i < nodes.length; i++) {
+      acc = this.binaryAdd(acc, nodes[i]);
+    }
+    return acc;
   }
 
   private binaryAdd(lhs: CompNode, rhs: CompNode): CompNode {
@@ -142,6 +157,16 @@ export class AddFactory implements CompNodeFactory {
           rhs.expr,
           rationalRationalBinaryOperator
         )
+      );
+    }
+    if (lhs instanceof DayNode && rhs instanceof DaysNode) {
+      return new DayNode(
+        new BinaryExpression(lhs.expr, rhs.expr, dayDayBinaryOperator)
+      );
+    }
+    if (lhs instanceof DaysNode && rhs instanceof DayNode) {
+      return new DayNode(
+        new BinaryExpression(lhs.expr, rhs.expr, dayDayBinaryOperator)
       );
     }
     if (lhs instanceof IntNode && rhs instanceof DollarNode) {
