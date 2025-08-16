@@ -1,15 +1,16 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { RationalNode } from './RationalNode';
 import { StringNode } from './StringNode';
 import { Rational } from '../types/Rational';
 import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { UnaryExpression } from '../expressions/UnaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
 import { Decimal } from 'decimal.js';
+import { compNodeRegistry } from './registry';
 
 class RationalAsDecimalString implements UnaryOperator<string, Rational> {
   constructor(private readonly scale: number) {}
@@ -32,13 +33,11 @@ export class AsDecimalStringFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const node = compNodeRegistry.fromDerivedConfig(
       e.children[0],
-      factual,
-      factDictionary
+      graph
     );
     const scale = e.options?.scale ?? 2;
     if (!(node instanceof RationalNode)) {
@@ -53,5 +52,3 @@ export class AsDecimalStringFactory implements CompNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new AsDecimalStringFactory());

@@ -1,7 +1,6 @@
 import {
   CompNode,
   CompNodeFactory,
-  compNodeRegistry,
 } from './CompNode';
 import { BooleanNode } from './BooleanNode';
 import { Expression } from '../Expression';
@@ -12,9 +11,10 @@ import {
 } from '../operators/BinaryOperator';
 import { BinaryExpression } from '../expressions/BinaryExpression';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
+import { compNodeRegistry } from './registry';
 
 class EqualOperator implements BinaryOperator<boolean, any, any> {
   operation(lhs: any, rhs: any): boolean {
@@ -33,24 +33,21 @@ class EqualOperator implements BinaryOperator<boolean, any, any> {
   }
 }
 
-class EqualFactory implements CompNodeFactory {
+export class EqualFactory implements CompNodeFactory {
   readonly typeName = 'Equal';
   private readonly operator = new EqualOperator();
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const lhs = compNodeRegistry.fromDerivedConfig(
       e.children.find((c: any) => c.key === 'Left').children[0],
-      factual,
-      factDictionary
+      graph
     );
     const rhs = compNodeRegistry.fromDerivedConfig(
       e.children.find((c: any) => c.key === 'Right').children[0],
-      factual,
-      factDictionary
+      graph
     );
 
     return this.create(lhs, rhs);
@@ -68,5 +65,3 @@ class EqualFactory implements CompNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new EqualFactory());
