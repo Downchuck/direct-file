@@ -1,8 +1,7 @@
 import { Expression } from '../Expression';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Tin } from '../types/Tin';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { Result } from '../types';
 import { BooleanNode } from './BooleanNode';
 import { PathItem } from '../PathItem';
@@ -37,12 +36,11 @@ export class TinNode extends CompNode {
   }
 }
 
-const tinNodeFactory: CompNodeFactory = {
+export const tinNodeFactory: CompNodeFactory = {
   typeName: 'TIN',
   fromDerivedConfig(
     e: { value?: string; writable?: boolean; options?: { name: string, value: string }[] },
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): TinNode {
     const allowAllZeros = e.options?.find(o => o.name === 'ALLOW_ALL_ZEROS')?.value === 'true';
 
@@ -60,5 +58,3 @@ const tinNodeFactory: CompNodeFactory = {
     throw new Error('TIN node requires a value or to be writable.');
   },
 };
-
-compNodeRegistry.register(tinNodeFactory);

@@ -1,5 +1,5 @@
 import { Expression } from '../Expression';
-import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { Day } from '../types/Day';
 import { PathItem } from '../PathItem';
@@ -40,7 +40,7 @@ export class DayNode extends CompNode {
   }
 }
 
-class DayNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
+export class DayNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Day';
 
   fromWritableConfig(
@@ -59,5 +59,3 @@ class DayNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
     return new DayNode(Expression.literal(Result.complete(new Day(value))));
   }
 }
-
-compNodeRegistry.register(new DayNodeFactory());

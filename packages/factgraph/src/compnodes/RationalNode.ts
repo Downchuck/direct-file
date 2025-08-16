@@ -1,5 +1,5 @@
 import { Expression } from '../Expression';
-import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { Rational } from '../types/Rational';
 import { Result } from '../types/Result';
@@ -17,7 +17,7 @@ export class RationalNode extends CompNode {
   }
 }
 
-class RationalNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
+export class RationalNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Rational';
 
   fromWritableConfig(
@@ -38,5 +38,3 @@ class RationalNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new RationalNodeFactory());

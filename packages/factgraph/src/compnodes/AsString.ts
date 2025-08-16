@@ -1,4 +1,4 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { StringNode } from './StringNode';
 import { EnumNode } from './EnumNode';
 import { EmailAddressNode } from './EmailAddressNode';
@@ -8,11 +8,12 @@ import { TinNode } from './TinNode';
 import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
 import { Expression } from '../Expression';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Enum, EmailAddress, Dollar, Ein, Tin } from '../types';
 import { UnaryExpression } from '../expressions/UnaryExpression';
+import { compNodeRegistry } from './registry';
 
 class EnumAsStringOperator implements UnaryOperator<string, Enum> {
   operation(x: Enum): string {
@@ -85,14 +86,12 @@ export class AsStringFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const childConfig = e.children[0];
     const child = compNodeRegistry.fromDerivedConfig(
       childConfig,
-      factual,
-      factDictionary
+      graph
     );
 
     if (child instanceof EnumNode) {
@@ -114,5 +113,3 @@ export class AsStringFactory implements CompNodeFactory {
     throw new Error(`cannot execute AsString on a ${child.constructor.name}`);
   }
 }
-
-compNodeRegistry.register(new AsStringFactory());

@@ -1,4 +1,4 @@
-import { CompNode, compNodeRegistry, DerivedNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { DependencyNode } from './Dependency';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
@@ -14,6 +14,7 @@ import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
 import { Explanation, opWithInclusiveChildren } from '../Explanation';
 import { Expression } from '../Expression';
+import { DependencyExpression } from '../expressions/DependencyExpression';
 
 class SumOperator<T extends number | Dollar | Rational>
   implements AggregateOperator<T, T>
@@ -100,5 +101,3 @@ export class CollectionSumFactory implements DerivedNodeFactory {
     return this.create([childNode]);
   }
 }
-
-compNodeRegistry.register(new CollectionSumFactory());

@@ -1,8 +1,7 @@
 import { Expression } from '../Expression';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { EmailAddress } from '../types/EmailAddress';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { Result } from '../types';
 
 export class EmailAddressNode extends CompNode {
@@ -19,12 +18,11 @@ export class EmailAddressNode extends CompNode {
   }
 }
 
-const emailAddressNodeFactory: CompNodeFactory = {
+export const emailAddressNodeFactory: CompNodeFactory = {
   typeName: 'EmailAddress',
   fromDerivedConfig(
     e: { value?: string, writable?: boolean },
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): EmailAddressNode {
     if (e.writable) {
         return new EmailAddressNode(Expression.literal(Result.incomplete()));
@@ -35,5 +33,3 @@ const emailAddressNodeFactory: CompNodeFactory = {
     throw new Error('EmailAddress node requires a value or to be writable.');
   },
 };
-
-compNodeRegistry.register(emailAddressNodeFactory);

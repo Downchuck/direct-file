@@ -1,5 +1,5 @@
 import { Expression } from '../Expression';
-import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { Dollar } from '../types/Dollar';
 import { Result } from '../types/Result';
@@ -17,7 +17,7 @@ export class DollarNode extends CompNode {
   }
 }
 
-class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
+export class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Dollar';
 
   fromWritableConfig(
@@ -38,5 +38,3 @@ class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new DollarNodeFactory());

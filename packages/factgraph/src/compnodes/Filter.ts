@@ -1,13 +1,12 @@
 import {
   CompNode,
   CompNodeFactory,
-  compNodeRegistry,
 } from './CompNode';
 import { CollectionNode } from './CollectionNode';
 import { BooleanNode } from './BooleanNode';
 import { CollectOperator } from '../operators/CollectOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { CollectExpression } from '../expressions/CollectExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
@@ -16,6 +15,7 @@ import { Expression } from '../Expression';
 import { Path } from '../Path';
 import { Collection } from '../types/Collection';
 import { CollectionItem } from '../types/CollectionItem';
+import { compNodeRegistry } from './registry';
 
 class FilterOperator implements CollectOperator<Collection<any>, boolean> {
   apply(
@@ -50,14 +50,12 @@ export class FilterFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph,
   ): CompNode {
     const path = Path.fromString(e.options.path);
     const child = compNodeRegistry.fromDerivedConfig(
       e.children[0],
-      factual,
-      factDictionary
+      graph
     );
 
     if (!(child instanceof BooleanNode)) {
@@ -67,8 +65,7 @@ export class FilterFactory implements CompNodeFactory {
     const cnBuilder = (item: Factual) =>
       compNodeRegistry.fromDerivedConfig(
         e.children[0],
-        item,
-        factDictionary
+        item.graph
       ) as BooleanNode;
 
     const expression = new CollectExpression(
@@ -80,5 +77,3 @@ export class FilterFactory implements CompNodeFactory {
     return new CollectionNode(expression);
   }
 }
-
-compNodeRegistry.register(new FilterFactory());

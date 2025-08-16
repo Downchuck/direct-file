@@ -4,8 +4,9 @@ import { Path } from './Path';
 import { Graph } from './Graph';
 import { FactualMeta } from './Fact';
 import { InMemoryPersister } from './persisters';
-import { compNodeRegistry } from './compnodes';
+import { compNodeRegistry } from './compnodes/registry';
 import { WritableType } from './types';
+import { CompNode } from './compnodes/CompNode';
 
 export class Factual {
   private readonly graph: Graph;
@@ -19,18 +20,16 @@ export class Factual {
     if (!definition) {
       throw new Error(`Fact not found: ${path}`);
     }
-    let value;
+    let value: CompNode;
     if (definition.writable) {
-      value = compNodeRegistry.fromDerivedConfig(
-        { typeName: definition.writable.typeName },
-        this,
-        this.factDictionary
+      value = compNodeRegistry.fromWritableConfig(
+        definition.writable,
+        this.graph
       );
     } else {
       value = compNodeRegistry.fromDerivedConfig(
         definition.derived,
-        this,
-        this.factDictionary
+        this.graph
       );
     }
 
@@ -43,5 +42,9 @@ export class Factual {
 
   public set(path: string, value: WritableType): void {
     this.graph.set(path, value);
+  }
+
+  public get(path: string) {
+    return this.graph.get(path);
   }
 }

@@ -1,4 +1,4 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
@@ -24,6 +24,7 @@ import { Result } from '../types';
 import { Thunk } from '../Thunk';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
+import { compNodeRegistry } from './registry';
 
 class AddReduceOperator<A> implements ReduceOperator<A> {
   constructor(private readonly plus: (x: A, y: A) => A) {}
@@ -100,7 +101,7 @@ export class AddFactory implements CompNodeFactory {
     factDictionary: FactDictionary
   ): CompNode {
     const addends = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, factual, factDictionary)
+      compNodeRegistry.fromDerivedConfig(child, factual.graph)
     );
     return this.create(addends);
   }
@@ -224,5 +225,3 @@ export class AddFactory implements CompNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new AddFactory());

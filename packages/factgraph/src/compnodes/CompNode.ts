@@ -1,10 +1,8 @@
 import { Expression } from '../Expression';
 import { Path } from '../Path';
 import { PathItem } from '../PathItem';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import type { Factual } from '../Factual';
 import { Limit } from '../limits/Limit';
-
 import { Graph } from "../Graph";
 
 export interface DerivedNodeFactory {
@@ -74,36 +72,3 @@ export abstract class CompNode {
     return [];
   }
 }
-
-class CompNodeRegistry {
-  private factories = new Map<string, CompNodeFactory>();
-
-  public register(factory: CompNodeFactory) {
-    console.log('registering', factory.typeName);
-    this.factories.set(factory.typeName, factory);
-  }
-
-  public fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    const factory = this.factories.get(e.typeName) as DerivedNodeFactory;
-    if (!factory || !factory.fromDerivedConfig) {
-      throw new Error(`${e.typeName} is not a registered DerivedNode`);
-    }
-    return factory.fromDerivedConfig(e, graph);
-  }
-
-  public fromWritableConfig(
-    e: any,
-    graph: Graph,
-    ): CompNode {
-    const factory = this.factories.get(e.typeName) as WritableNodeFactory;
-    if (!factory || !factory.fromWritableConfig) {
-        throw new Error(`${e.typeName} is not a registered WritableNode`);
-    }
-    return factory.fromWritableConfig(e, graph);
-    }
-}
-
-export const compNodeRegistry = new CompNodeRegistry();
