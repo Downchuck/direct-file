@@ -7,7 +7,7 @@ import { Result } from '../types/Result';
 import { v4 as uuidv4 } from 'uuid';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-import { BooleanNode } from '../compnodes';
+import { BooleanNode } from '../compnodes/BooleanNode';
 import { Path } from '../Path';
 import { SwitchExpression } from '../Expression';
 import { DependencyExpression } from '../expressions/DependencyExpression';

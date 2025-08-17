@@ -1,7 +1,9 @@
-import { All, BooleanNode } from '../compnodes';
+import { All } from '../compnodes/All';
+import { BooleanNode } from '../compnodes/BooleanNode';
 import { Result } from '../types';
 import { Factual } from '../Factual';
 import { Expression } from '../Expression';
+import { vi } from 'vitest';
 import {
   opWithInclusiveChildren,
   ConstantExplanation,
@@ -50,7 +52,7 @@ describe('All', () => {
   it('stops evaluating after first false child', () => {
     let canary = false;
     const canaryExpr = new MockExpression(Result.complete(true));
-    jest.spyOn(canaryExpr, 'get').mockImplementation(() => {
+    vi.spyOn(canaryExpr, 'get').mockImplementation(() => {
       canary = true;
       return Result.complete(true);
     });

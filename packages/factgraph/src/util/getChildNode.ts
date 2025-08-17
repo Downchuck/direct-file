@@ -1,5 +1,6 @@
 import { Graph } from '../Graph';
-import { CompNode, compNodeRegistry } from '../compnodes';
+import { CompNode } from '../compnodes/CompNode';
+import { compNodeRegistry } from '../compnodes/registry';
 
 export function getChildNode(
   e: any,

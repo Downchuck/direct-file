@@ -1,24 +1,41 @@
-import { MultiEnumNode, compNodeRegistry } from '../compnodes';
-import { MultiEnum } from '../types/MultiEnum';
+import { MultiEnumNodeFactory } from '../compnodes/MultiEnumNode';
+import { StringNode } from '../compnodes/StringNode';
 import { Result } from '../types';
 import { Factual } from '../Factual';
+import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
 
 describe('MultiEnumNode', () => {
-  it('can be created', () => {
-    const dictionary = new FactDictionary();
-    dictionary.addDefinition({
-      path: '/test',
-      writable: {
+  const factual = new Factual(new FactDictionary());
+  const options = ['a', 'b', 'c'];
+
+  it('can be created with a valid selection', () => {
+    const node = MultiEnumNodeFactory.fromDerivedConfig(
+      {
         typeName: 'MultiEnum',
-        options: [{ name: 'optionsPath', value: '/enumOptions' }],
+        options,
+        children: [
+          new StringNode(Expression.literal(Result.complete('a'))),
+          new StringNode(Expression.literal(Result.complete('c'))),
+        ],
       },
-    });
-    const factual = new Factual(dictionary);
-    const node = compNodeRegistry.fromWritableConfig(
-      { typeName: 'MultiEnum' },
       factual.graph
     );
-    expect(node).toBeDefined();
+    expect(node.get(factual)).toEqual(Result.complete(['a', 'c']));
+  });
+
+  it('is incomplete with an invalid selection', () => {
+    const node = MultiEnumNodeFactory.fromDerivedConfig(
+      {
+        typeName: 'MultiEnum',
+        options,
+        children: [
+          new StringNode(Expression.literal(Result.complete('a'))),
+          new StringNode(Expression.literal(Result.complete('d'))),
+        ],
+      },
+      factual.graph
+    );
+    expect(node.get(factual).isComplete).toBe(false);
   });
 });
