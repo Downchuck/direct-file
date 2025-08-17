@@ -15,42 +15,32 @@ import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
 
-export class CollectionSizeOperator implements UnaryOperator<number, Collection> {
+const CollectionSizeOperator: UnaryOperator<number, Collection> = {
   operation(x: Collection): number {
     return x.values.length;
-  }
+  },
 
   apply(x: Result<Collection>): Result<number> {
     return applyUnary(this, x);
-  }
+  },
 
   explain(x: Expression<Collection>, factual: Factual): Explanation {
     return explainUnary(x, factual);
-  }
-}
+  },
+};
 
-export class CollectionSizeFactory implements CompNodeFactory {
-  readonly typeName = 'CollectionSize';
-  private readonly operator = new CollectionSizeOperator();
-
-  create(operands: CompNode[]): CompNode {
-    if (operands.length !== 1 || !(operands[0] instanceof CollectionNode)) {
-      throw new Error('CollectionSize requires a single CollectionNode operand');
-    }
-    const collectionNode = operands[0] as CollectionNode;
-    return new IntNode(
-      new UnaryExpression(collectionNode.expr, this.operator)
-    );
-  }
-
+export const CollectionSizeFactory: CompNodeFactory = {
+  typeName: 'CollectionSize',
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
     const childNode = getChildNode(e, graph);
     if (childNode instanceof CollectionNode) {
-      return this.create([childNode]);
+      return new IntNode(
+        new UnaryExpression(childNode.expr, CollectionSizeOperator)
+      );
     }
     throw new Error(`invalid child type: ${childNode.constructor.name}`);
-  }
-}
+  },
+};

@@ -1,11 +1,9 @@
-import {
-  CollectionNode,
-  CollectionItemNode,
-  CollectionSizeFactory,
-  CollectionSumFactory,
-  IntNode,
-  DollarNode,
-} from '../compnodes';
+import { CollectionNode } from '../compnodes/CollectionNode';
+import { CollectionItemNode } from '../compnodes/CollectionItemNode';
+import { CollectionSizeFactory } from '../compnodes/CollectionSize';
+import { CollectionSumFactory } from '../compnodes/CollectionSum';
+import { IntNode } from '../compnodes/IntNode';
+import { DollarNode } from '../compnodes/DollarNode';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { Expression } from '../Expression';
@@ -18,8 +16,6 @@ import { PathItem } from '../PathItem';
 
 describe('Collection tests', () => {
   const factual = new Factual(new FactDictionary());
-  const collectionSizeFactory = new CollectionSizeFactory();
-  const collectionSumFactory = new CollectionSumFactory();
 
   const collectionPath = Path.fromString('/myCollection');
   const collection = new Collection([
@@ -35,7 +31,13 @@ describe('Collection tests', () => {
   );
 
   it('can get the size of a collection', () => {
-    const sizeNode = collectionSizeFactory.create([collectionNode]);
+    const sizeNode = CollectionSizeFactory.fromDerivedConfig(
+      {
+        typeName: 'CollectionSize',
+        children: [collectionNode],
+      },
+      factual
+    );
     expect(sizeNode.get(factual)).toEqual(Result.complete(3));
   });
 
@@ -69,18 +71,24 @@ describe('Collection tests', () => {
     };
 
     // This is a bit of a hack, as we don't have a real CollectExpression
-    const sumNode = collectionSumFactory.create([
-      new IntNode(
-        Expression.thunk(() => {
-          const items = intCollection.values.map((item) => {
-            const fact = new Factual(new FactDictionary());
-            fact.set(Path.fromString('/'), Result.complete(item));
-            return getIntExpr(fact).get(factual);
-          });
-          return Result.complete(items.reduce((a, b) => a.get + b.get, 0));
-        })
-      ),
-    ]);
+    const sumNode = CollectionSumFactory.fromDerivedConfig(
+      {
+        typeName: 'CollectionSum',
+        children: [
+          new IntNode(
+            Expression.thunk(() => {
+              const items = intCollection.values.map((item) => {
+                const fact = new Factual(new FactDictionary());
+                fact.set(Path.fromString('/'), Result.complete(item));
+                return getIntExpr(fact).get(factual);
+              });
+              return Result.complete(items.reduce((a, b) => a.get + b.get, 0));
+            })
+          ),
+        ],
+      },
+      factual
+    );
 
     expect(sumNode.get(factual).get).toEqual(6);
   });

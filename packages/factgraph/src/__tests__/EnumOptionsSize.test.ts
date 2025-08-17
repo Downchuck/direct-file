@@ -1,4 +1,5 @@
-import { EnumOptionsSizeFactory, EnumOptionsNode } from '../compnodes';
+import { EnumOptionsSizeFactory } from '../compnodes/EnumOptionsSize';
+import { EnumOptionsNode } from '../compnodes/EnumOptionsNode';
 import { Result } from '../types';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
@@ -11,9 +12,8 @@ describe('EnumOptionsSize', () => {
     const optionsNode = new EnumOptionsNode(
       Expression.literal(Result.complete(options))
     );
-    const factory = new EnumOptionsSizeFactory();
-    const sizeNode = factory.fromDerivedConfig(
-      { children: [optionsNode] },
+    const sizeNode = EnumOptionsSizeFactory.fromDerivedConfig(
+      { typeName: 'EnumOptionsSize', children: [optionsNode] },
       factual.graph
     );
     const result = sizeNode.get(factual);
