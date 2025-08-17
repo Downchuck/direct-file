@@ -1,5 +1,5 @@
 import { Expression } from '../Expression';
-import { CompNode, DerivedNodeFactory, WritableNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { Result } from '../types/Result';
 
@@ -16,7 +16,7 @@ export class IntNode extends CompNode {
   }
 }
 
-class IntNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
+export class IntNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
   readonly typeName = 'Int';
 
   fromWritableConfig(
@@ -35,5 +35,3 @@ class IntNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
     return new IntNode(Expression.literal(Result.complete(value)));
   }
 }
-
-compNodeRegistry.register(new IntNodeFactory());

@@ -1,8 +1,7 @@
 import { Expression } from '../Expression';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Enum } from '../types/Enum';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { Result } from '../types';
 
 export class EnumNode extends CompNode {
@@ -22,12 +21,11 @@ export class EnumNode extends CompNode {
   }
 }
 
-const enumNodeFactory: CompNodeFactory = {
-  typeName: 'Enum',
+export class EnumNodeFactory implements CompNodeFactory {
+  readonly typeName = 'Enum';
   fromDerivedConfig(
     e: { value?: string; writable?: boolean; options?: { name: string, value: string }[] },
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): EnumNode {
     const enumOptionsPath = e.options?.find(o => o.name === 'optionsPath')?.value;
     if (!enumOptionsPath) {
@@ -48,7 +46,5 @@ const enumNodeFactory: CompNodeFactory = {
     }
 
     throw new Error('Enum node requires a value or to be writable.');
-  },
+  }
 };
-
-compNodeRegistry.register(enumNodeFactory);

@@ -1,28 +1,25 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { BooleanNode } from './BooleanNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
+import { compNodeRegistry } from './registry';
 
-class SwitchFactory implements CompNodeFactory {
+export class SwitchFactory implements CompNodeFactory {
   readonly typeName = 'Switch';
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const cases = e.children
       .filter((c: any) => c.typeName === 'Case')
       .map((c: any) => {
         const when = compNodeRegistry.fromDerivedConfig(
           c.children.find((c: any) => c.typeName === 'When').children[0],
-          factual,
-          factDictionary
+          graph
         ) as BooleanNode;
         const then = compNodeRegistry.fromDerivedConfig(
           c.children.find((c: any) => c.typeName === 'Then').children[0],
-          factual,
-          factDictionary
+          graph
         );
         return [when, then];
       });
@@ -37,5 +34,3 @@ class SwitchFactory implements CompNodeFactory {
     return firstThen.switch(cases);
   }
 }
-
-compNodeRegistry.register(new SwitchFactory());

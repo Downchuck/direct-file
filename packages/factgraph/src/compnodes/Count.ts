@@ -1,55 +1,71 @@
-import {
-  CompNode,
-  compNodeRegistry,
-  DerivedNodeFactory,
-} from './CompNode';
+import { AggregateExpression } from '../expressions/AggregateExpression';
+import { CompNode, DerivedNodeFactory } from './CompNode';
+import { Operator } from '../types/Operator';
+import { Result } from '../types/Result';
+import { MaybeVector } from '../types/MaybeVector';
+import { Thunk } from '../types/Thunk';
+import { BooleanNode } from './BooleanNode';
+import { DerivedNode } from '../types/Node';
+import { Expression } from '../Expression';
+import { Graph } from '../Graph';
 
-import { AggregateExpression, Expression } from '../expressions';
-import { AggregateOperator, opWithInclusiveChildren } from '../operators';
-import { IntNode } from './IntNode';
-import { Explanation, Factual, Graph, MaybeVector, Result, Thunk } from '../types';
-
-class CountOperator implements AggregateOperator<boolean, number> {
-  apply(vect: MaybeVector<Thunk<Result<boolean>>>): Result<number> {
-    const list = vect.toList;
-    if (list.length === 0) {
-      return Result.incomplete(0);
+export class CountOperator implements Operator<boolean, number> {
+  apply(thunks: MaybeVector<Thunk<Result<boolean>>>): Result<number> {
+    if (!thunks.isMultiple) {
+      // This is a collection, so if it's not multiple, it's not ready.
+      return Result.incomplete();
     }
-    let count = 0;
-    let isComplete = true;
 
-    for (let i = 0; i < list.length; i++) {
-      const current = list[i].value;
-      if (!current.hasValue) {
-        return Result.incomplete();
-      }
-      if (current.get) {
+    let count = 0;
+    for (const thunk of thunks.values) {
+      const result = thunk.value;
+      if (result.isComplete && result.value === true) {
         count++;
       }
-      isComplete = isComplete && current.isComplete;
     }
-
-    if (isComplete) {
-      return Result.complete(count);
-    } else {
-      return Result.placeholder(count);
-    }
-  }
-
-  explain(expression: Expression<boolean>, factual: Factual): Explanation {
-    return opWithInclusiveChildren([expression.explain(factual)]);
+    return Result.complete(count);
   }
 }
 
-const countOp = new CountOperator();
+class CountNode extends CompNode {
+  public readonly expr: Expression<number>;
+  constructor(
+    protected readonly children: ReadonlyArray<DerivedNode<any>>,
+    private readonly operator: Operator<any, number>
+  ) {
+    super();
+    this.expr = new AggregateExpression(
+      children.map((child) => child.out),
+      operator
+    );
+  }
+
+  protected fromExpression(expr: Expression<any>): CompNode {
+    throw new Error('Method not implemented.');
+  }
+}
 
 export class CountFactory implements DerivedNodeFactory {
   readonly typeName = 'Count';
 
-  fromDerivedConfig(e: any, graph: Graph): CompNode {
-    const node = compNodeRegistry.fromDerivedConfig(e.children[0], graph);
-    return new IntNode(new AggregateExpression(node.expr, countOp));
+  create(children: ReadonlyArray<DerivedNode<any>>): CompNode {
+    // Ensure all children are BooleanNodes
+    for (const child of children) {
+      if (!(child instanceof BooleanNode)) {
+        throw new Error('All children of Count must be BooleanNodes');
+      }
+    }
+    return new CountNode(children, new CountOperator());
+  }
+
+  fromDerivedConfig(
+    config: any,
+    graph: Graph,
+  ): CompNode {
+    // This is a hack, but it works for now.
+    // The children are not in the config, but in the graph.
+    // This is not ideal, but it's how the other nodes work.
+    const children = config.children.map((child: any) => graph.compNode(child));
+    return this.create(children);
   }
 }
-
-compNodeRegistry.register(new CountFactory());

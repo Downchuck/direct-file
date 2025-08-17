@@ -1,4 +1,4 @@
-import { CompNode, compNodeRegistry, CompNodeFactory } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { CollectionNode } from './CollectionNode';
 import { IntNode } from './IntNode';
 import { UnaryExpression } from '../expressions/UnaryExpression';
@@ -9,7 +9,7 @@ import {
   explainUnary,
 } from '../operators/UnaryOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { getChildNode } from '../util/getChildNode';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
@@ -45,15 +45,12 @@ export class CollectionSizeFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
-    const childNode = getChildNode(e, factual, factDictionary);
+    const childNode = getChildNode(e, graph);
     if (childNode instanceof CollectionNode) {
       return this.create([childNode]);
     }
     throw new Error(`invalid child type: ${childNode.constructor.name}`);
   }
 }
-
-compNodeRegistry.register(new CollectionSizeFactory());

@@ -1,4 +1,4 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
@@ -19,13 +19,14 @@ import {
   explainReduce,
 } from '../operators/ReduceOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { BinaryExpression } from '../expressions/BinaryExpression';
 import { ReduceExpression } from '../expressions/ReduceExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
+import { compNodeRegistry } from './registry';
 
 class SubtractReduceOperator<A> implements ReduceOperator<A> {
   constructor(private readonly minus: (x: A, y: A) => A) {}
@@ -103,18 +104,16 @@ export class SubtractFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const minuend = compNodeRegistry.fromDerivedConfig(
       e.children.find((c: any) => c.key === 'Minuend').children[0],
-      factual,
-      factDictionary
+      graph
     );
     const subtrahends = e.children
       .find((c: any) => c.key === 'Subtrahends')
       .children.map((child: any) =>
-        compNodeRegistry.fromDerivedConfig(child, factual, factDictionary)
+        compNodeRegistry.fromDerivedConfig(child, graph)
       );
     return this.create([minuend, ...subtrahends]);
   }
@@ -223,5 +222,3 @@ export class SubtractFactory implements CompNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new SubtractFactory());

@@ -1,7 +1,7 @@
 import { Expression, SwitchExpression } from '../Expression';
 import { Path } from '../Path';
 import { CollectionItem } from '../types/CollectionItem';
-import { CompNode, compNodeRegistry } from './CompNode';
+import { CompNode } from './CompNode';
 import { BooleanNode } from './BooleanNode';
 import { WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
@@ -50,7 +50,7 @@ export class CollectionItemNode extends CompNode {
   }
 }
 
-class CollectionItemNodeFactory implements WritableNodeFactory {
+export class CollectionItemNodeFactory implements WritableNodeFactory {
   readonly typeName = 'CollectionItem';
 
   fromWritableConfig(
@@ -63,5 +63,3 @@ class CollectionItemNodeFactory implements WritableNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new CollectionItemNodeFactory());

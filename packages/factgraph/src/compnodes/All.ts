@@ -6,6 +6,9 @@ import { Result } from '../types';
 import { Thunk } from '../Thunk';
 import { Explanation, opWithInclusiveChildren } from '../Explanation';
 import { Factual } from '../Factual';
+import { CompNode, CompNodeFactory } from './CompNode';
+import { Graph } from '../Graph';
+import { compNodeRegistry } from './registry';
 
 class AllOperator implements ReduceOperator<boolean> {
   reduce(x: boolean, y: boolean): boolean {
@@ -63,11 +66,28 @@ class AllOperator implements ReduceOperator<boolean> {
 
 const allOperator = new AllOperator();
 
-export function All(nodes: BooleanNode[]): BooleanNode {
-  return new BooleanNode(
-    new ReduceExpression(
-      nodes.map((n) => n.expr),
-      allOperator
-    )
-  );
+export class AllFactory implements CompNodeFactory {
+  readonly typeName = 'All';
+
+  fromDerivedConfig(
+    e: any,
+    graph: Graph
+  ): CompNode {
+    const children = e.children.map((child: any) =>
+      compNodeRegistry.fromDerivedConfig(child, graph)
+    );
+    return this.create(children);
+  }
+
+  create(nodes: CompNode[]): BooleanNode {
+    if (nodes.every((n) => n instanceof BooleanNode)) {
+      const expressions = nodes.map((n) => (n as BooleanNode).expr);
+      return new BooleanNode(new ReduceExpression(expressions, allOperator));
+    }
+    throw new Error('All children of <All> must be BooleanNodes');
+  }
 }
+
+export const All = (nodes: BooleanNode[]): BooleanNode => {
+  return new AllFactory().create(nodes);
+};

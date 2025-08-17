@@ -1,5 +1,5 @@
 import { Expression } from '../Expression';
-import { CompNode, DerivedNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { DependencyExpression } from '../expressions/DependencyExpression';
 import { Path } from '../Path';
@@ -17,7 +17,7 @@ export class DependencyNode extends CompNode {
   }
 }
 
-class DependencyNodeFactory implements DerivedNodeFactory {
+export class DependencyFactory implements DerivedNodeFactory {
   readonly typeName = 'Dependency';
 
   fromDerivedConfig(
@@ -28,5 +28,3 @@ class DependencyNodeFactory implements DerivedNodeFactory {
     return new DependencyNode(new DependencyExpression(path));
   }
 }
-
-compNodeRegistry.register(new DependencyNodeFactory());

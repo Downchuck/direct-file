@@ -1,4 +1,4 @@
-import { CompNode, compNodeRegistry, DerivedNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { DependencyNode } from './Dependency';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
@@ -9,7 +9,7 @@ import { Rational } from '../types/Rational';
 import { Day } from '../types/Day';
 import { AggregateOperator } from '../operators/AggregateOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { AggregateExpression } from '../expressions/AggregateExpression';
 import { DependencyExpression } from '../expressions/DependencyExpression';
 import { Result } from '../types';
@@ -17,6 +17,7 @@ import { Explanation, opWithInclusiveChildren } from '../Explanation';
 import { Expression } from '../Expression';
 import { MaybeVector } from '../types/MaybeVector';
 import { Thunk } from '../Thunk';
+import { compNodeRegistry } from './registry';
 
 export class MaximumOperator<A> implements AggregateOperator<A, A> {
   constructor(private readonly gt: (x: A, y: A) => boolean) {}
@@ -71,11 +72,10 @@ export class MaximumFactory implements DerivedNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     return this.create([
-      compNodeRegistry.fromDerivedConfig(e.children[0], factual, factDictionary),
+      compNodeRegistry.fromDerivedConfig(e.children[0], graph),
     ]);
   }
 
@@ -115,5 +115,3 @@ export class MaximumFactory implements DerivedNodeFactory {
     throw new Error(`cannot execute maximum on a ${node.constructor.name}`);
   }
 }
-
-compNodeRegistry.register(new MaximumFactory());

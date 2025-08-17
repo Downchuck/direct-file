@@ -1,8 +1,7 @@
 import { Expression } from '../Expression';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Ein } from '../types/Ein';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { Result } from '../types';
 
 export class EinNode extends CompNode {
@@ -19,12 +18,11 @@ export class EinNode extends CompNode {
   }
 }
 
-const einNodeFactory: CompNodeFactory = {
-  typeName: 'EIN',
+export class EinNodeFactory implements CompNodeFactory {
+  readonly typeName = 'EIN';
   fromDerivedConfig(
     e: { value?: string, writable?: boolean },
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): EinNode {
     if (e.writable) {
         return new EinNode(Expression.literal(Result.incomplete()));
@@ -33,7 +31,5 @@ const einNodeFactory: CompNodeFactory = {
       return new EinNode(Expression.literal(Result.complete(Ein.fromString(e.value))));
     }
     throw new Error('EIN node requires a value or to be writable.');
-  },
+  }
 };
-
-compNodeRegistry.register(einNodeFactory);

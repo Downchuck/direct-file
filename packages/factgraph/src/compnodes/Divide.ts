@@ -1,4 +1,4 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
@@ -16,12 +16,13 @@ import {
   explainReduce,
 } from '../operators/ReduceOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { BinaryExpression } from '../expressions/BinaryExpression';
 import { ReduceExpression } from '../expressions/ReduceExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
 import { Explanation } from '../Explanation';
+import { compNodeRegistry } from './registry';
 
 class DivideReduceOperator<A> implements ReduceOperator<A> {
   constructor(private readonly div: (x: A, y: A) => A) {}
@@ -89,23 +90,21 @@ const rationalDollarBinaryOperator = new DivideBinaryOperator(
   rationalDollarDiv
 );
 
-class DivideFactory implements CompNodeFactory {
+export class DivideFactory implements CompNodeFactory {
   readonly typeName = 'Divide';
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const dividend = compNodeRegistry.fromDerivedConfig(
       e.children.find((c: any) => c.typeName === 'Dividend').children[0],
-      factual,
-      factDictionary
+      graph
     );
     const divisors = e.children
       .find((c: any) => c.typeName === 'Divisors')
       .children.map((child: any) =>
-        compNodeRegistry.fromDerivedConfig(child, factual, factDictionary)
+        compNodeRegistry.fromDerivedConfig(child, graph)
       );
 
     return this.create([dividend, ...divisors]);
@@ -210,5 +209,3 @@ class DivideFactory implements CompNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new DivideFactory());

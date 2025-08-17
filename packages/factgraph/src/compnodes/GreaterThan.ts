@@ -1,4 +1,4 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { IntNode } from './IntNode';
 import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
@@ -13,11 +13,12 @@ import {
   explainBinary,
 } from '../operators/BinaryOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { BinaryExpression } from '../expressions/BinaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
+import { compNodeRegistry } from './registry';
 
 class GreaterThanBinaryOperator<L, R>
   implements BinaryOperator<boolean, L, R>
@@ -55,18 +56,15 @@ export class GreaterThanFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const lhs = compNodeRegistry.fromDerivedConfig(
       e.children.find((c: any) => c.key === 'Left').children[0],
-      factual,
-      factDictionary
+      graph
     );
     const rhs = compNodeRegistry.fromDerivedConfig(
       e.children.find((c: any) => c.key === 'Right').children[0],
-      factual,
-      factDictionary
+      graph
     );
     return this.create(lhs, rhs);
   }
@@ -101,5 +99,3 @@ export class GreaterThanFactory implements CompNodeFactory {
     );
   }
 }
-
-compNodeRegistry.register(new GreaterThanFactory());

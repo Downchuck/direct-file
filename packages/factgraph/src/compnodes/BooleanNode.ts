@@ -1,8 +1,8 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
-import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { Result } from '../types';
+import { WritableNodeFactory } from './CompNode';
+import { Graph } from '../Graph';
 
 export class BooleanNode extends CompNode {
   constructor(public readonly expr: Expression<boolean>) {
@@ -14,16 +14,17 @@ export class BooleanNode extends CompNode {
   }
 }
 
-class BooleanNodeFactory implements CompNodeFactory {
+export class BooleanNodeFactory implements CompNodeFactory, WritableNodeFactory {
   readonly typeName = 'Boolean';
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     return new BooleanNode(Expression.literal(Result.complete(e.value)));
   }
-}
 
-compNodeRegistry.register(new BooleanNodeFactory());
+  fromWritableConfig(): CompNode {
+    return new BooleanNode(Expression.writable(Result.incomplete()));
+  }
+}

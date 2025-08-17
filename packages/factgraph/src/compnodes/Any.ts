@@ -1,9 +1,9 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { BooleanNode } from './BooleanNode';
 import { ReduceOperator } from '../operators/ReduceOperator';
 import { ReduceExpression } from '../expressions/ReduceExpression';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Result } from '../types/Result';
 import { Thunk } from '../Thunk';
 import {
@@ -13,6 +13,7 @@ import {
   getChildren,
 } from '../Explanation';
 import { Expression } from '../Expression';
+import { compNodeRegistry } from './registry';
 
 class AnyOperator implements ReduceOperator<boolean> {
   reduce(x: boolean, y: boolean): boolean {
@@ -102,16 +103,15 @@ class AnyOperator implements ReduceOperator<boolean> {
   }
 }
 
-class AnyFactory implements CompNodeFactory {
+export class AnyFactory implements CompNodeFactory {
   readonly typeName = 'Any';
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const conditions = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, factual, factDictionary)
+      compNodeRegistry.fromDerivedConfig(child, graph)
     );
 
     if (conditions.every((c: any) => c instanceof BooleanNode)) {
@@ -128,7 +128,6 @@ class AnyFactory implements CompNodeFactory {
 }
 
 const anyCompNodeFactory = new AnyFactory();
-compNodeRegistry.register(anyCompNodeFactory);
 
 export const Any = (nodes: BooleanNode[]): BooleanNode => {
   return anyCompNodeFactory.create(nodes);
