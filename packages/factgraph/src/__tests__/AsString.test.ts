@@ -1,78 +1,59 @@
 import { AsStringFactory } from '../compnodes/AsString';
-import { compNodeRegistry } from '../compnodes/CompNode';
-import { StringNode } from '../compnodes/StringNode';
+import { EnumNode } from '../compnodes/EnumNode';
+import { EmailAddressNode } from '../compnodes/EmailAddressNode';
+import { DollarNode } from '../compnodes/DollarNode';
+import { EinNode } from '../compnodes/EinNode';
+import { TinNode } from '../compnodes/TinNode';
+import { Result } from '../types/Result';
 import { Factual } from '../Factual';
+import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
-
-// This is a workaround for the fact that AsString is not exported from index.ts yet
-import '../compnodes/AsString';
-import '../compnodes/EnumNode';
-import '../compnodes/EmailAddressNode';
-import '../compnodes/DollarNode';
-import '../compnodes/EinNode';
-import '../compnodes/TinNode';
+import { Enum } from '../types/Enum';
+import { EmailAddress } from '../types/EmailAddress';
+import { Dollar } from '../types/Dollar';
+import { Ein } from '../types/Ein';
+import { Tin } from '../types/Tin';
 
 describe('AsString', () => {
-    const factual = new Factual(new FactDictionary());
+  const factual = new Factual(new FactDictionary());
 
-    it('should convert EnumNode to StringNode', () => {
-        const enumConfig = {
-            typeName: 'Enum',
-            value: 'test',
-            options: [{ name: 'optionsPath', value: 'options/path' }]
-        };
-        const asStringNode = new AsStringFactory().fromDerivedConfig({ children: [enumConfig] }, factual, factual.factDictionary);
-        expect(asStringNode).toBeInstanceOf(StringNode);
-        const result = asStringNode.get(factual);
-        expect(result.isComplete).toBe(true);
-        expect(result.get).toBe('test');
-    });
+  it('should convert EnumNode to StringNode', () => {
+    const node = new EnumNode(
+      Expression.literal(Result.complete(new Enum('a', ['a', 'b'])))
+    );
+    const stringNode = AsStringFactory.create(node);
+    expect(stringNode.get(factual)).toEqual(Result.complete('a'));
+  });
 
-    it('should convert EmailAddressNode to StringNode', () => {
-        const emailConfig = {
-            typeName: 'EmailAddress',
-            value: 'test@example.com'
-        };
-        const asStringNode = new AsStringFactory().fromDerivedConfig({ children: [emailConfig] }, factual, factual.factDictionary);
-        expect(asStringNode).toBeInstanceOf(StringNode);
-        const result = asStringNode.get(factual);
-        expect(result.isComplete).toBe(true);
-        expect(result.get).toBe('test@example.com');
-    });
+  it('should convert EmailAddressNode to StringNode', () => {
+    const node = new EmailAddressNode(
+      Expression.literal(Result.complete(new EmailAddress('a@b.com')))
+    );
+    const stringNode = AsStringFactory.create(node);
+    expect(stringNode.get(factual)).toEqual(Result.complete('a@b.com'));
+  });
 
-    it('should convert DollarNode to StringNode', () => {
-        const dollarConfig = {
-            typeName: 'Dollar',
-            value: '123.45'
-        };
-        const asStringNode = new AsStringFactory().fromDerivedConfig({ children: [dollarConfig] }, factual, factual.factDictionary);
-        expect(asStringNode).toBeInstanceOf(StringNode);
-        const result = asStringNode.get(factual);
-        expect(result.isComplete).toBe(true);
-        expect(result.get).toBe('123.45');
-    });
+  it('should convert DollarNode to StringNode', () => {
+    const node = new DollarNode(
+      Expression.literal(Result.complete(Dollar.fromNumber(1.23)))
+    );
+    const stringNode = AsStringFactory.create(node);
+    expect(stringNode.get(factual)).toEqual(Result.complete('1.23'));
+  });
 
-    it('should convert EinNode to StringNode', () => {
-        const einConfig = {
-            typeName: 'EIN',
-            value: '123456789'
-        };
-        const asStringNode = new AsStringFactory().fromDerivedConfig({ children: [einConfig] }, factual, factual.factDictionary);
-        expect(asStringNode).toBeInstanceOf(StringNode);
-        const result = asStringNode.get(factual);
-        expect(result.isComplete).toBe(true);
-        expect(result.get).toBe('12-3456789');
-    });
+  it('should convert EinNode to StringNode', () => {
+    const node = new EinNode(
+      Expression.literal(Result.complete(Ein.fromString('12-3456789')))
+    );
+    const stringNode = AsStringFactory.create(node);
+    expect(stringNode.get(factual)).toEqual(Result.complete('12-3456789'));
+  });
 
-    it('should convert TinNode to StringNode', () => {
-        const tinConfig = {
-            typeName: 'TIN',
-            value: '123456789'
-        };
-        const asStringNode = new AsStringFactory().fromDerivedConfig({ children: [tinConfig] }, factual, factual.factDictionary);
-        expect(asStringNode).toBeInstanceOf(StringNode);
-        const result = asStringNode.get(factual);
-        expect(result.isComplete).toBe(true);
-        expect(result.get).toBe('123-45-6789');
-    });
+  it('should convert TinNode to StringNode', () => {
+    const node = new TinNode(
+      Expression.literal(Result.complete(Tin.fromString('123-45-6789')))
+    );
+    const stringNode = AsStringFactory.create(node);
+    expect(stringNode.get(factual)).toEqual(Result.complete('123-45-6789'));
+  });
 });

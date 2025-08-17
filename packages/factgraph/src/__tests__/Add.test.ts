@@ -1,5 +1,8 @@
-import { AddFactory, IntNode, DollarNode, RationalNode } from '../compnodes';
-import { Result } from '../types';
+import { AddFactory } from '../compnodes/Add';
+import { IntNode } from '../compnodes/IntNode';
+import { DollarNode } from '../compnodes/DollarNode';
+import { RationalNode } from '../compnodes/RationalNode';
+import { Result } from '../types/Result';
 import { Factual } from '../Factual';
 import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
@@ -8,10 +11,9 @@ import { Rational } from '../types/Rational';
 
 describe('Add', () => {
   const factual = new Factual(new FactDictionary());
-  const factory = new AddFactory();
 
   it('adds two integers', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new IntNode(Expression.literal(Result.complete(1))),
       new IntNode(Expression.literal(Result.complete(2))),
     ]);
@@ -19,7 +21,7 @@ describe('Add', () => {
   });
 
   it('adds two dollars', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new DollarNode(
         Expression.literal(Result.complete(Dollar.fromNumber(1)))
       ),
@@ -33,7 +35,7 @@ describe('Add', () => {
   });
 
   it('adds two rationals', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new RationalNode(
         Expression.literal(Result.complete(new Rational(1, 2)))
       ),
@@ -47,7 +49,7 @@ describe('Add', () => {
   });
 
   it('adds an integer and a dollar', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new IntNode(Expression.literal(Result.complete(1))),
       new DollarNode(
         Expression.literal(Result.complete(Dollar.fromNumber(2)))
@@ -59,7 +61,7 @@ describe('Add', () => {
   });
 
   it('adds a dollar and an integer', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new DollarNode(
         Expression.literal(Result.complete(Dollar.fromNumber(1)))
       ),
@@ -71,7 +73,7 @@ describe('Add', () => {
   });
 
   it('adds an integer and a rational', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new IntNode(Expression.literal(Result.complete(1))),
       new RationalNode(
         Expression.literal(Result.complete(new Rational(1, 2)))
@@ -83,7 +85,7 @@ describe('Add', () => {
   });
 
   it('adds a rational and an integer', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new RationalNode(
         Expression.literal(Result.complete(new Rational(1, 2)))
       ),
@@ -95,7 +97,7 @@ describe('Add', () => {
   });
 
   it('adds a dollar and a rational', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new DollarNode(
         Expression.literal(Result.complete(Dollar.fromNumber(1)))
       ),
@@ -109,7 +111,7 @@ describe('Add', () => {
   });
 
   it('adds a rational and a dollar', () => {
-    const node = factory.create([
+    const node = AddFactory.create([
       new RationalNode(
         Expression.literal(Result.complete(new Rational(1, 2)))
       ),
