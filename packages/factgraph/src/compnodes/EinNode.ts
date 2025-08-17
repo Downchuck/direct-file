@@ -18,8 +18,8 @@ export class EinNode extends CompNode {
   }
 }
 
-export const einNodeFactory: CompNodeFactory = {
-  typeName: 'EIN',
+export class EinNodeFactory implements CompNodeFactory {
+  readonly typeName = 'EIN';
   fromDerivedConfig(
     e: { value?: string, writable?: boolean },
     graph: Graph
@@ -31,5 +31,5 @@ export const einNodeFactory: CompNodeFactory = {
       return new EinNode(Expression.literal(Result.complete(Ein.fromString(e.value))));
     }
     throw new Error('EIN node requires a value or to be writable.');
-  },
+  }
 };

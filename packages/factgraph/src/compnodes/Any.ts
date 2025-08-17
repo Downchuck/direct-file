@@ -103,7 +103,7 @@ class AnyOperator implements ReduceOperator<boolean> {
   }
 }
 
-class AnyFactory implements CompNodeFactory {
+export class AnyFactory implements CompNodeFactory {
   readonly typeName = 'Any';
 
   fromDerivedConfig(

@@ -1,14 +1,15 @@
-import { CompNode, CompNodeFactory, compNodeRegistry } from './CompNode';
+import { CompNode, CompNodeFactory } from './CompNode';
 import { DollarNode } from './DollarNode';
 import { IntNode } from './IntNode';
 import { Dollar } from '../types/Dollar';
 import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { UnaryExpression } from '../expressions/UnaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
+import { compNodeRegistry } from './registry';
 
 class RoundToIntOperator implements UnaryOperator<number, Dollar> {
   operation(x: Dollar): number {
@@ -29,13 +30,11 @@ export class RoundToIntFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary
+    graph: Graph
   ): CompNode {
     const amount = compNodeRegistry.fromDerivedConfig(
       e.children[0],
-      factual,
-      factDictionary
+      graph
     );
     if (!(amount instanceof DollarNode)) {
       throw new Error('RoundToInt can only operate on a DollarNode');
@@ -47,5 +46,3 @@ export class RoundToIntFactory implements CompNodeFactory {
     return new IntNode(new UnaryExpression(amount.expr, roundToIntOperator));
   }
 }
-
-compNodeRegistry.register(new RoundToIntFactory());

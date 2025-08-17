@@ -1,4 +1,4 @@
-import { CompNode, WritableNodeFactory, compNodeRegistry } from "./CompNode";
+import { CompNode, WritableNodeFactory } from "./CompNode";
 import { Expression } from "../Expression";
 import { MultiEnum } from "../types/MultiEnum";
 import { Graph } from "../Graph";
@@ -14,12 +14,10 @@ export class MultiEnumNode extends CompNode {
   }
 }
 
-class MultiEnumNodeFactory implements WritableNodeFactory {
+export class MultiEnumNodeFactory implements WritableNodeFactory {
   readonly typeName = "MultiEnum";
 
   fromWritableConfig(e: any, graph: Graph): CompNode {
     return new MultiEnumNode(Expression.writable(Result.incomplete()));
   }
 }
-
-compNodeRegistry.register(new MultiEnumNodeFactory());

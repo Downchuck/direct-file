@@ -1,12 +1,11 @@
 import {
   CompNode,
   CompNodeFactory,
-  compNodeRegistry,
 } from './CompNode';
 import { ReduceOperator } from '../operators/ReduceOperator';
 import { ReduceExpression } from '../expressions/ReduceExpression';
 import { Factual } from '../Factual';
-import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Result } from '../types/Result';
 import { Thunk } from '../Thunk';
 import { Expression } from '../Expression';
@@ -15,6 +14,7 @@ import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
 import { DayNode } from './DayNode';
 import { Explanation, opWithInclusiveChildren } from '../Explanation';
+import { compNodeRegistry } from './registry';
 
 class LesserOfOperator<T> implements ReduceOperator<T> {
   constructor(private valueExtractor: (item: T) => number) {}
@@ -42,11 +42,10 @@ class LesserOfFactory implements CompNodeFactory {
 
   fromDerivedConfig(
     e: any,
-    factual: Factual,
-    factDictionary: FactDictionary,
+    graph: Graph,
   ): CompNode {
     const children = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, factual, factDictionary),
+      compNodeRegistry.fromDerivedConfig(child, graph),
     );
     return this.create(children);
   }
@@ -93,7 +92,6 @@ class LesserOfFactory implements CompNodeFactory {
 }
 
 const lesserOfCompNodeFactory = new LesserOfFactory();
-compNodeRegistry.register(lesserOfCompNodeFactory);
 
 export const LesserOf = (nodes: CompNode[]): CompNode => {
   return lesserOfCompNodeFactory.create(nodes);

@@ -17,7 +17,7 @@ export class DependencyNode extends CompNode {
   }
 }
 
-export class DependencyNodeFactory implements DerivedNodeFactory {
+export class DependencyFactory implements DerivedNodeFactory {
   readonly typeName = 'Dependency';
 
   fromDerivedConfig(
