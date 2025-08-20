@@ -21,15 +21,9 @@ export class EinNode extends CompNode {
 export class EinNodeFactory implements CompNodeFactory {
   readonly typeName = 'EIN';
   fromDerivedConfig(
-    e: { value?: string, writable?: boolean },
+    e: { options: { value: string } },
     graph: Graph
   ): EinNode {
-    if (e.writable) {
-        return new EinNode(Expression.literal(Result.incomplete()));
-    }
-    if (e.value) {
-      return new EinNode(Expression.literal(Result.complete(Ein.fromString(e.value))));
-    }
-    throw new Error('EIN node requires a value or to be writable.');
+    return new EinNode(Expression.literal(Result.complete(Ein.fromString(e.options.value))));
   }
 };

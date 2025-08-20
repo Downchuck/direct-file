@@ -11,19 +11,18 @@ import { Graph } from '../Graph';
 
 export class CountOperator implements Operator<boolean, number> {
   apply(thunks: MaybeVector<Thunk<Result<boolean>>>): Result<number> {
-    if (!thunks.isMultiple) {
-      // This is a collection, so if it's not multiple, it's not ready.
-      return Result.incomplete();
-    }
-
     let count = 0;
     for (const thunk of thunks.values) {
       const result = thunk.value;
-      if (result.isComplete && result.value === true) {
+      if (result.hasValue && result.value === true) {
         count++;
       }
     }
-    return Result.complete(count);
+
+    if (thunks.isComplete) {
+      return Result.complete(count);
+    }
+    return Result.placeholder(count);
   }
 }
 

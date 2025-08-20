@@ -1,3 +1,4 @@
+import '../compnodes';
 import { All } from '../compnodes/All';
 import { BooleanNode } from '../compnodes/BooleanNode';
 import { Result } from '../types';

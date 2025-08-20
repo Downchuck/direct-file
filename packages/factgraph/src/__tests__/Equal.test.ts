@@ -1,3 +1,4 @@
+import '../compnodes';
 import { compNodeRegistry } from '../compnodes/CompNode';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
@@ -12,27 +13,16 @@ describe('Equal', () => {
         typeName: 'Equal',
         children: [
           {
-            key: 'Left',
-            children: [
-              {
-                typeName: 'Int',
-                value: '1',
-              },
-            ],
+            typeName: 'Int',
+            value: '1',
           },
           {
-            key: 'Right',
-            children: [
-              {
-                typeName: 'Int',
-                value: '2',
-              },
-            ],
+            typeName: 'Int',
+            value: '2',
           },
         ],
       },
-      factual,
-      new FactDictionary()
+      factual.graph
     );
     expect(node.get(factual)).toEqual(Result.complete(false));
   });
@@ -43,27 +33,16 @@ describe('Equal', () => {
         typeName: 'Equal',
         children: [
           {
-            key: 'Left',
-            children: [
-              {
-                typeName: 'String',
-                value: 'Test',
-              },
-            ],
+            typeName: 'String',
+            value: 'Test',
           },
           {
-            key: 'Right',
-            children: [
-              {
-                typeName: 'String',
-                value: 'Test',
-              },
-            ],
+            typeName: 'String',
+            value: 'Test',
           },
         ],
       },
-      factual,
-      new FactDictionary()
+      factual.graph
     );
     expect(node.get(factual)).toEqual(Result.complete(true));
   });

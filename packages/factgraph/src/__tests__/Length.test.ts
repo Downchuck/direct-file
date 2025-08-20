@@ -1,3 +1,4 @@
+import '../compnodes';
 import { LengthFactory } from '../compnodes/Length';
 import { StringNode } from '../compnodes/StringNode';
 import { Result } from '../types';

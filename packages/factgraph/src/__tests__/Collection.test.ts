@@ -1,12 +1,13 @@
+import '../compnodes';
 import { CollectionNode } from '../compnodes/CollectionNode';
 import { CollectionItemNode } from '../compnodes/CollectionItemNode';
-import { CollectionSizeFactory } from '../compnodes/CollectionSize';
-import { CollectionSumFactory } from '../compnodes/CollectionSum';
+import { compNodeRegistry } from '../compnodes/registry';
 import { IntNode } from '../compnodes/IntNode';
 import { DollarNode } from '../compnodes/DollarNode';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { Expression } from '../Expression';
+import { DependencyExpression } from '../expressions/DependencyExpression';
 import { Result } from '../types';
 import { Collection } from '../types/Collection';
 import { CollectionItem } from '../types/CollectionItem';
@@ -31,12 +32,12 @@ describe('Collection tests', () => {
   );
 
   it('can get the size of a collection', () => {
-    const sizeNode = CollectionSizeFactory.fromDerivedConfig(
+    const sizeNode = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'CollectionSize',
         children: [collectionNode],
       },
-      factual
+      factual.graph
     );
     expect(sizeNode.get(factual)).toEqual(Result.complete(3));
   });
@@ -48,56 +49,44 @@ describe('Collection tests', () => {
       new CollectionItem('c'),
     ]);
     const intCollectionPath = Path.fromString('/intCollection');
-    factual.set(intCollectionPath, Result.complete(intCollection));
-    factual.set(
-      intCollectionPath.concat(PathItem.from('a')),
-      Result.complete(1)
-    );
-    factual.set(
-      intCollectionPath.concat(PathItem.from('b')),
-      Result.complete(2)
-    );
-    factual.set(
-      intCollectionPath.concat(PathItem.from('c')),
-      Result.complete(3)
-    );
+    factual.factDictionary.addDefinition({
+      path: '/intCollection',
+      writable: {
+        typeName: 'Collection',
+      },
+    });
+    factual.set(intCollectionPath, intCollection);
+    factual.factDictionary.addDefinition({
+      path: '/intCollection/*',
+      writable: {
+        typeName: 'Int',
+      },
+    });
+    factual.set(new Path([PathItem.fromString('intCollection'), PathItem.fromString('#a')]), 1);
+    factual.set(new Path([PathItem.fromString('intCollection'), PathItem.fromString('#b')]), 2);
+    factual.set(new Path([PathItem.fromString('intCollection'), PathItem.fromString('#c')]), 3);
 
-    const getIntExpr = (item: Factual) => {
-      const collectionItem = item.get(Path.fromString('/')).get as CollectionItem;
-      const itemPath = intCollectionPath.concat(
-        PathItem.from(collectionItem.id)
-      );
-      return new IntNode(Expression.dependency(itemPath)).expr;
-    };
-
-    // This is a bit of a hack, as we don't have a real CollectExpression
-    const sumNode = CollectionSumFactory.fromDerivedConfig(
+    const sumNode = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'CollectionSum',
         children: [
-          new IntNode(
-            Expression.thunk(() => {
-              const items = intCollection.values.map((item) => {
-                const fact = new Factual(new FactDictionary());
-                fact.set(Path.fromString('/'), Result.complete(item));
-                return getIntExpr(fact).get(factual);
-              });
-              return Result.complete(items.reduce((a, b) => a.get + b.get, 0));
-            })
-          ),
+          {
+            typeName: 'Dependency',
+            options: { path: '/intCollection/*' },
+          },
         ],
       },
-      factual
+      factual.graph
     );
 
     expect(sumNode.get(factual).get).toEqual(6);
   });
 
   it('can extract an item from a collection', () => {
-    const itemNode = collectionNode.extract(PathItem.from('a'));
+    const itemNode = collectionNode.extract(PathItem.fromString('#a'));
     expect(itemNode).toBeInstanceOf(CollectionItemNode);
     expect((itemNode as CollectionItemNode).get(factual).get).toEqual(
-      new CollectionItem('a')
+      new CollectionItem('#a')
     );
   });
 });

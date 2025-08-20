@@ -1,3 +1,4 @@
+import '../compnodes';
 import { CollectionNode } from '../compnodes/CollectionNode';
 import { IntNode } from '../compnodes/IntNode';
 import { Expression } from '../Expression';
@@ -6,11 +7,10 @@ import { Result } from '../types/Result';
 import { v4 as uuidv4 } from 'uuid';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-import { CollectionSizeFactory } from '../compnodes/CollectionSize';
+import { compNodeRegistry } from '../compnodes/registry';
 
 describe('CollectionSize', () => {
   const factual = new Factual(new FactDictionary());
-  const factory = new CollectionSizeFactory();
 
   it('calculates the size of a collection', () => {
     const items = [uuidv4(), uuidv4(), uuidv4()];
@@ -20,7 +20,11 @@ describe('CollectionSize', () => {
       undefined
     );
 
-    const sizeNode = factory.create!([collectionNode]) as IntNode;
+    const sizeNode = compNodeRegistry.fromDerivedConfig({
+      typeName: 'CollectionSize',
+      children: [collectionNode]
+    }, factual.graph) as IntNode;
+
     const result = sizeNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -34,7 +38,10 @@ describe('CollectionSize', () => {
       undefined
     );
 
-    const sizeNode = factory.create!([collectionNode]) as IntNode;
+    const sizeNode = compNodeRegistry.fromDerivedConfig({
+      typeName: 'CollectionSize',
+      children: [collectionNode]
+    }, factual.graph) as IntNode;
     const result = sizeNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -47,7 +54,10 @@ describe('CollectionSize', () => {
       undefined
     );
 
-    const sizeNode = factory.create!([collectionNode]) as IntNode;
+    const sizeNode = compNodeRegistry.fromDerivedConfig({
+      typeName: 'CollectionSize',
+      children: [collectionNode]
+    }, factual.graph) as IntNode;
     const result = sizeNode.get(factual);
 
     expect(result.isComplete).toBe(false);

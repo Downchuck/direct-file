@@ -42,11 +42,11 @@ export class EqualFactory implements CompNodeFactory {
     graph: Graph
   ): CompNode {
     const lhs = compNodeRegistry.fromDerivedConfig(
-      e.children.find((c: any) => c.key === 'Left').children[0],
+      e.children[0],
       graph
     );
     const rhs = compNodeRegistry.fromDerivedConfig(
-      e.children.find((c: any) => c.key === 'Right').children[0],
+      e.children[1],
       graph
     );
 

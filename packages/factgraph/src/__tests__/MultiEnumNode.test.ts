@@ -1,4 +1,5 @@
-import { MultiEnumNodeFactory } from '../compnodes/MultiEnumNode';
+import '../compnodes';
+import { compNodeRegistry } from '../compnodes/registry';
 import { StringNode } from '../compnodes/StringNode';
 import { Result } from '../types';
 import { Factual } from '../Factual';
@@ -10,13 +11,13 @@ describe('MultiEnumNode', () => {
   const options = ['a', 'b', 'c'];
 
   it('can be created with a valid selection', () => {
-    const node = MultiEnumNodeFactory.fromDerivedConfig(
+    const node = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'MultiEnum',
         options,
         children: [
-          new StringNode(Expression.literal(Result.complete('a'))),
-          new StringNode(Expression.literal(Result.complete('c'))),
+          { typeName: 'String', value: 'a' },
+          { typeName: 'String', value: 'c' },
         ],
       },
       factual.graph
@@ -25,13 +26,13 @@ describe('MultiEnumNode', () => {
   });
 
   it('is incomplete with an invalid selection', () => {
-    const node = MultiEnumNodeFactory.fromDerivedConfig(
+    const node = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'MultiEnum',
         options,
         children: [
-          new StringNode(Expression.literal(Result.complete('a'))),
-          new StringNode(Expression.literal(Result.complete('d'))),
+          { typeName: 'String', value: 'a' },
+          { typeName: 'String', value: 'd' },
         ],
       },
       factual.graph

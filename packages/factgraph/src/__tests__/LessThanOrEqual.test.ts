@@ -1,3 +1,4 @@
+import '../compnodes';
 import { LessThanOrEqualFactory } from '../compnodes/LessThanOrEqual';
 import { IntNode } from '../compnodes/IntNode';
 import { DollarNode } from '../compnodes/DollarNode';

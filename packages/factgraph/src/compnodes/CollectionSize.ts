@@ -3,11 +3,11 @@ import { CollectionNode } from './CollectionNode';
 import { IntNode } from './IntNode';
 import { UnaryExpression } from '../expressions/UnaryExpression';
 import { Collection } from '../types/Collection';
+import { UnaryOperator } from '../operators/UnaryOperator';
 import {
-  UnaryOperator,
   applyUnary,
   explainUnary,
-} from '../operators/UnaryOperator';
+} from '../operators/UnaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
 import { getChildNode } from '../util/getChildNode';
@@ -29,8 +29,8 @@ const CollectionSizeOperator: UnaryOperator<number, Collection> = {
   },
 };
 
-export const CollectionSizeFactory: CompNodeFactory = {
-  typeName: 'CollectionSize',
+export class CollectionSizeFactory implements CompNodeFactory {
+  typeName = 'CollectionSize';
   fromDerivedConfig(
     e: any,
     graph: Graph
@@ -42,5 +42,5 @@ export const CollectionSizeFactory: CompNodeFactory = {
       );
     }
     throw new Error(`invalid child type: ${childNode.constructor.name}`);
-  },
-};
+  }
+}

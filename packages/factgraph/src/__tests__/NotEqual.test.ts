@@ -1,3 +1,4 @@
+import '../compnodes';
 import { NotEqualFactory } from '../compnodes/NotEqual';
 import { IntNode } from '../compnodes/IntNode';
 import { Result } from '../types';

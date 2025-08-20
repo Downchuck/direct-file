@@ -1,3 +1,4 @@
+import '../compnodes';
 import { compNodeRegistry } from '../compnodes/CompNode';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
@@ -16,8 +17,7 @@ describe('Not', () => {
           },
         ],
       },
-      factual,
-      new FactDictionary()
+      factual.graph
     );
     expect(node.get(factual)).toEqual(Result.complete(false));
   });
@@ -34,8 +34,7 @@ describe('Not', () => {
             },
           ],
         },
-        factual,
-        new FactDictionary()
+        factual.graph
       );
     }).toThrow();
   });

@@ -1,6 +1,7 @@
 import { CollectionNode } from '../compnodes/CollectionNode';
 import { Expression } from '../Expression';
 import { PathItem } from '../PathItem';
+import '../compnodes';
 import { Collection } from '../types/Collection';
 import { CollectionItem } from '../types/CollectionItem';
 import { Result } from '../types/Result';

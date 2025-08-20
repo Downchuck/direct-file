@@ -47,4 +47,8 @@ export class Factual {
   public get(path: string) {
     return this.graph.get(path);
   }
+
+  public getVect(path: string) {
+    return this.graph.getVect(path);
+  }
 }

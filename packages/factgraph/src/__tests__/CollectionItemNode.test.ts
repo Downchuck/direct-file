@@ -1,3 +1,4 @@
+import '../compnodes';
 import { CollectionItemNode } from '../compnodes/CollectionItemNode';
 import { Expression } from '../Expression';
 import { CollectionItem } from '../types/CollectionItem';

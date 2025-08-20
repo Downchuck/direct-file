@@ -1,5 +1,6 @@
 import { SubtractFactory } from '../compnodes/Subtract';
 import { IntNode } from '../compnodes/IntNode';
+import '../compnodes';
 import { Result } from '../types';
 import { Factual } from '../Factual';
 import { Expression } from '../Expression';

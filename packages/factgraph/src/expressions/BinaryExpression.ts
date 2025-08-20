@@ -14,12 +14,9 @@ export class BinaryExpression<A, L, R> extends Expression<A> {
   }
 
   override get(factual: Factual): Result<A> {
-    const thunk = thunkBinary(
-      this.op,
-      this.lhs.getThunk(factual),
-      this.rhs.getThunk(factual)
-    );
-    return thunk.get;
+    const l = this.lhs.get(factual);
+    const r = this.rhs.get(factual);
+    return this.op.apply(l, r);
   }
 
   override explain(factual: Factual): Explanation {

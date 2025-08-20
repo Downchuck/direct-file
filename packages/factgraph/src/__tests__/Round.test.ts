@@ -1,3 +1,4 @@
+import '../compnodes';
 import { RoundFactory } from '../compnodes/Round';
 import { RationalNode } from '../compnodes/RationalNode';
 import { Result } from '../types';

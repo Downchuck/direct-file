@@ -1,4 +1,4 @@
-import { MaximumFactory } from '../compnodes';
+import '../compnodes';
 import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Collection } from '../types/Collection';

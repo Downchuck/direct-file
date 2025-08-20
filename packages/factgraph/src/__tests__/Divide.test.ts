@@ -1,3 +1,4 @@
+import '../compnodes';
 import { compNodeRegistry } from '../compnodes/CompNode';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
@@ -14,31 +15,20 @@ describe('Divide', () => {
         typeName: 'Divide',
         children: [
           {
-            typeName: 'Dividend',
-            children: [
-              {
-                typeName: 'Rational',
-                value: '1/2',
-              },
-            ],
+            typeName: 'Rational',
+            value: '1/2',
           },
           {
-            typeName: 'Divisors',
-            children: [
-              {
-                typeName: 'Rational',
-                value: '2/3',
-              },
-              {
-                typeName: 'Rational',
-                value: '3/4',
-              },
-            ],
+            typeName: 'Rational',
+            value: '2/3',
+          },
+          {
+            typeName: 'Rational',
+            value: '3/4',
           },
         ],
       },
-      factual,
-      new FactDictionary()
+      factual.graph
     );
 
     expect(node.get(factual)).toEqual(Result.complete(new Rational(1, 1)));
@@ -50,31 +40,20 @@ describe('Divide', () => {
         typeName: 'Divide',
         children: [
           {
-            typeName: 'Dividend',
-            children: [
-              {
-                typeName: 'Dollar',
-                value: '100.00',
-              },
-            ],
+            typeName: 'Dollar',
+            value: '100.00',
           },
           {
-            typeName: 'Divisors',
-            children: [
-              {
-                typeName: 'Dollar',
-                value: '1.23',
-              },
-              {
-                typeName: 'Dollar',
-                value: '4.56',
-              },
-            ],
+            typeName: 'Dollar',
+            value: '1.23',
+          },
+          {
+            typeName: 'Dollar',
+            value: '4.56',
           },
         ],
       },
-      factual,
-      new FactDictionary()
+      factual.graph
     );
 
     expect(node.get(factual)).toEqual(
@@ -88,47 +67,36 @@ describe('Divide', () => {
         typeName: 'Divide',
         children: [
           {
-            typeName: 'Dividend',
-            children: [
-              {
-                typeName: 'Rational',
-                value: '6/7',
-              },
-            ],
+            typeName: 'Rational',
+            value: '6/7',
           },
           {
-            typeName: 'Divisors',
-            children: [
-              {
-                typeName: 'Int',
-                value: '1',
-              },
-              {
-                typeName: 'Rational',
-                value: '1/2',
-              },
-              {
-                typeName: 'Dollar',
-                value: '3.45',
-              },
-              {
-                typeName: 'Rational',
-                value: '1/2',
-              },
-              {
-                typeName: 'Dollar',
-                value: '0.1',
-              },
-              {
-                typeName: 'Int',
-                value: '5',
-              },
-            ],
+            typeName: 'Int',
+            value: '1',
+          },
+          {
+            typeName: 'Rational',
+            value: '1/2',
+          },
+          {
+            typeName: 'Dollar',
+            value: '3.45',
+          },
+          {
+            typeName: 'Rational',
+            value: '1/2',
+          },
+          {
+            typeName: 'Dollar',
+            value: '0.1',
+          },
+          {
+            typeName: 'Int',
+            value: '5',
           },
         ],
       },
-      factual,
-      new FactDictionary()
+      factual.graph
     );
     expect(node.get(factual)).toEqual(
       Result.complete(Dollar.fromNumber(2.0))
@@ -142,27 +110,16 @@ describe('Divide', () => {
           typeName: 'Divide',
           children: [
             {
-              typeName: 'Dividend',
-              children: [
-                {
-                  typeName: 'Int',
-                  value: '1',
-                },
-              ],
+              typeName: 'Int',
+              value: '1',
             },
             {
-              typeName: 'Divisors',
-              children: [
-                {
-                  typeName: 'Int',
-                  value: '2',
-                },
-              ],
+              typeName: 'Int',
+              value: '2',
             },
           ],
         },
-        factual,
-        new FactDictionary()
+        factual.graph
       );
       expect(node.get(factual)).toEqual(
         Result.complete(new Rational(1, 2))

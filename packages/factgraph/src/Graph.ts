@@ -1,5 +1,6 @@
 import { Fact } from './Fact';
 import { FactDictionary } from './FactDictionary';
+import { compNodeRegistry } from './compnodes/registry';
 import { Path } from './Path';
 import { Persister } from './persisters/Persister';
 import { MaybeVector, Result, WritableType } from './types';
@@ -14,8 +15,10 @@ export class Graph {
     public readonly dictionary: FactDictionary,
     public readonly persister: Persister
   ) {
-    // This is a temporary solution. The CompNode for the root should be a proper RootNode.
-    const rootCompNode = {} as any;
+    const rootCompNode = compNodeRegistry.fromDerivedConfig(
+      { typeName: 'Root' },
+      this
+    );
     this.root = new Fact(
       rootCompNode,
       Path.Root,
@@ -28,6 +31,7 @@ export class Graph {
 
   public get(path: string | Path): Result<any> {
     const results = this.getVect(path);
+    console.log('Graph.get results.values:', results.values);
     if (results.values.length !== 1) {
       throw new Error(`Path must resolve to a single value: ${path.toString()}`);
     }
@@ -38,10 +42,10 @@ export class Graph {
     const pathObj = typeof path === 'string' ? Path.fromString(path) : path;
     const factResults = this.root.apply(pathObj);
 
-    return factResults.flatMap((factResult: Result<Fact>) => {
+    return factResults.map((factResult: Result<Fact>) => {
       if (!factResult.isComplete || !factResult.value) {
         // In Scala, this would return a placeholder. For now, we'll just return an incomplete result.
-        return MaybeVector.single(Result.incomplete());
+        return Result.incomplete();
       }
       return factResult.value.get(factual);
     });

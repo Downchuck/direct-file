@@ -26,7 +26,7 @@ export type CompNodeFactory = DerivedNodeFactory | WritableNodeFactory;
 export abstract class CompNode {
   abstract readonly expr: Expression<any>;
 
-  public get(factual: Factual) {
+  public get(factual: any) {
     return this.expr.get(factual);
   }
   public getThunk(factual: Factual) {

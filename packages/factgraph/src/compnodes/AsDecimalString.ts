@@ -1,9 +1,9 @@
 import { UnaryExpression } from '../expressions/UnaryExpression';
+import { UnaryOperator } from '../operators/UnaryOperator';
 import {
   applyUnary,
   explainUnary,
-  UnaryOperator,
-} from '../operators/UnaryOperator';
+} from '../operators/UnaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Rational } from '../types/Rational';
 import { Result } from '../types/Result';
@@ -12,6 +12,7 @@ import { StringNode } from './StringNode';
 import { Graph } from '../Graph';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
+import { compNodeRegistry } from './registry';
 
 class RationalAsDecimalString
   implements UnaryOperator<string, Rational>
@@ -28,10 +29,10 @@ class RationalAsDecimalString
   }
 }
 
-export const AsDecimalStringFactory: CompNodeFactory = {
-  typeName: 'AsDecimalString',
+export class AsDecimalStringFactory implements CompNodeFactory {
+  readonly typeName = 'AsDecimalString';
   fromDerivedConfig(e: any, graph: Graph): CompNode {
-    const child = e.children[0];
+    const child = compNodeRegistry.fromDerivedConfig(e.children[0], graph);
     const scale = e.options?.scale ?? 2;
     return new StringNode(
       new UnaryExpression(
@@ -39,5 +40,5 @@ export const AsDecimalStringFactory: CompNodeFactory = {
         new RationalAsDecimalString(scale)
       )
     );
-  },
-};
+  }
+}

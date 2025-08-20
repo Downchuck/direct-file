@@ -1,3 +1,4 @@
+import '../compnodes';
 import { RoundToIntFactory } from '../compnodes/RoundToInt';
 import { RationalNode } from '../compnodes/RationalNode';
 import { Result } from '../types';

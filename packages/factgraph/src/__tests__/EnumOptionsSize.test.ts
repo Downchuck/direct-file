@@ -1,3 +1,4 @@
+import '../compnodes';
 import { EnumOptionsSizeFactory } from '../compnodes/EnumOptionsSize';
 import { EnumOptionsNode } from '../compnodes/EnumOptionsNode';
 import { Result } from '../types';

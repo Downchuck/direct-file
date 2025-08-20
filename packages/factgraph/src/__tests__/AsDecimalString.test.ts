@@ -1,4 +1,5 @@
-import { AsDecimalStringFactory } from '../compnodes/AsDecimalString';
+import '../compnodes';
+import { compNodeRegistry } from '../compnodes/registry';
 import { RationalNode } from '../compnodes/RationalNode';
 import { Result } from '../types/Result';
 import { Factual } from '../Factual';
@@ -10,7 +11,7 @@ describe('AsDecimalString', () => {
   const factual = new Factual(new FactDictionary());
 
   it('converts a rational to a decimal string with default scale', () => {
-    const node = AsDecimalStringFactory.fromDerivedConfig(
+    const node = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'AsDecimalString',
         children: [
@@ -25,7 +26,7 @@ describe('AsDecimalString', () => {
   });
 
   it('converts a rational to a decimal string with specified scale', () => {
-    const node = AsDecimalStringFactory.fromDerivedConfig(
+    const node = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'AsDecimalString',
         options: { scale: 4 },

@@ -1,3 +1,4 @@
+import '../compnodes';
 import { Tin } from '../types/Tin';
 import { TinNode } from '../compnodes/TinNode';
 import { Expression } from '../Expression';

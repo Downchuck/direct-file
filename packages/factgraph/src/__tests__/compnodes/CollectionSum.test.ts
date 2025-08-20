@@ -5,10 +5,7 @@ import { Collection } from '../../types/Collection';
 import { Dollar } from '../../types/Dollar';
 import { Rational } from '../../types/Rational';
 
-// This is a workaround for the fact that the test environment is broken
-// and we can't import the compnodes directly.
-import '../../compnodes/CollectionSum';
-import '../../compnodes/Dependency';
+import '../../compnodes';
 
 describe('CollectionSum', () => {
   const dictionary = new FactDictionary();

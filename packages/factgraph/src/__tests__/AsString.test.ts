@@ -1,5 +1,5 @@
-import { AsStringFactory } from '../compnodes/AsString';
-import { EnumNode } from '../compnodes/EnumNode';
+import { compNodeRegistry } from '../compnodes/registry';
+import '../compnodes';
 import { EmailAddressNode } from '../compnodes/EmailAddressNode';
 import { DollarNode } from '../compnodes/DollarNode';
 import { EinNode } from '../compnodes/EinNode';
@@ -18,42 +18,67 @@ describe('AsString', () => {
   const factual = new Factual(new FactDictionary());
 
   it('should convert EnumNode to StringNode', () => {
-    const node = new EnumNode(
-      Expression.literal(Result.complete(new Enum('a', ['a', 'b'])))
+    const stringNode = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'AsString',
+        children: [
+          { typeName: 'Enum', options: { value: 'a', enum: ['a', 'b'] } },
+        ],
+      },
+      factual.graph
     );
-    const stringNode = AsStringFactory.create(node);
     expect(stringNode.get(factual)).toEqual(Result.complete('a'));
   });
 
   it('should convert EmailAddressNode to StringNode', () => {
-    const node = new EmailAddressNode(
-      Expression.literal(Result.complete(new EmailAddress('a@b.com')))
+    const stringNode = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'AsString',
+        children: [
+          { typeName: 'EmailAddress', options: { value: 'a@b.com' } },
+        ],
+      },
+      factual.graph
     );
-    const stringNode = AsStringFactory.create(node);
     expect(stringNode.get(factual)).toEqual(Result.complete('a@b.com'));
   });
 
   it('should convert DollarNode to StringNode', () => {
-    const node = new DollarNode(
-      Expression.literal(Result.complete(Dollar.fromNumber(1.23)))
+    const stringNode = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'AsString',
+        children: [
+          { typeName: 'Dollar', options: { value: 1.23 } },
+        ],
+      },
+      factual.graph
     );
-    const stringNode = AsStringFactory.create(node);
     expect(stringNode.get(factual)).toEqual(Result.complete('1.23'));
   });
 
   it('should convert EinNode to StringNode', () => {
-    const node = new EinNode(
-      Expression.literal(Result.complete(Ein.fromString('12-3456789')))
+    const stringNode = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'AsString',
+        children: [
+          { typeName: 'Ein', options: { value: '12-3456789' } },
+        ],
+      },
+      factual.graph
     );
-    const stringNode = AsStringFactory.create(node);
     expect(stringNode.get(factual)).toEqual(Result.complete('12-3456789'));
   });
 
   it('should convert TinNode to StringNode', () => {
-    const node = new TinNode(
-      Expression.literal(Result.complete(Tin.fromString('123-45-6789')))
+    const stringNode = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'AsString',
+        children: [
+          { typeName: 'TIN', options: { value: '123-45-6789' } },
+        ],
+      },
+      factual.graph
     );
-    const stringNode = AsStringFactory.create(node);
     expect(stringNode.get(factual)).toEqual(Result.complete('123-45-6789'));
   });
 });

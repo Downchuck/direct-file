@@ -1,3 +1,4 @@
+import '../compnodes';
 import { LessThanFactory } from '../compnodes/LessThan';
 import { IntNode } from '../compnodes/IntNode';
 import { DollarNode } from '../compnodes/DollarNode';

@@ -1,4 +1,3 @@
-import { Factual } from './Factual';
 import { MaybeVector } from './types/MaybeVector';
 import { Thunk } from './Thunk';
 import { Result } from './types';
@@ -18,17 +17,17 @@ export abstract class Expression<T> {
     return new ThunkExpression(value);
   }
 
-  public abstract get(factual: Factual): Result<T>;
+  public abstract get(factual: any): Result<T>;
 
-  public getThunk(factual: Factual): Thunk<Result<T>> {
+  public getThunk(factual: any): Thunk<Result<T>> {
     return new Thunk(() => this.get(factual));
   }
 
-  public getVector(factual: Factual): MaybeVector<Thunk<Result<T>>> {
+  public getVector(factual: any): MaybeVector<Thunk<Result<T>>> {
     return MaybeVector.single(this.getThunk(factual));
   }
 
-  public abstract explain(factual: Factual): Explanation;
+  public abstract explain(factual: any): Explanation;
 
   public set(value: any, allowCollectionItemDelete: boolean = false): void {
     throw new Error('Not implemented');
@@ -58,11 +57,11 @@ class LiteralExpression<T> extends Expression<T> {
     super();
   }
 
-  public get(factual: Factual): Result<T> {
+  public get(factual: any): Result<T> {
     return this.value;
   }
 
-  public explain(factual: Factual): Explanation {
+  public explain(factual: any): Explanation {
     return new ConstantExplanation();
   }
 
@@ -76,11 +75,11 @@ class ThunkExpression<T> extends Expression<T> {
     super();
   }
 
-  public get(factual: Factual): Result<T> {
+  public get(factual: any): Result<T> {
     return this.f();
   }
 
-  public explain(factual: Factual): Explanation {
+  public explain(factual: any): Explanation {
     return new ConstantExplanation();
   }
 }
@@ -93,11 +92,11 @@ class WritableExpression<T> extends Expression<T> {
     this.value = initialValue;
   }
 
-  public get(factual: Factual): Result<T> {
+  public get(factual: any): Result<T> {
     return this.value;
   }
 
-  public explain(factual: Factual): Explanation {
+  public explain(factual: any): Explanation {
     return new ConstantExplanation();
   }
 
@@ -118,11 +117,11 @@ class MappedExpression<T, U> extends Expression<U> {
     super();
   }
 
-  public get(factual: Factual): Result<U> {
+  public get(factual: any): Result<U> {
     return this.f(this.source.get(factual));
   }
 
-  public explain(factual: Factual): Explanation {
+  public explain(factual: any): Explanation {
     return this.source.explain(factual);
   }
 }
@@ -134,7 +133,7 @@ export class SwitchExpression<A> extends Expression<A> {
     super();
   }
 
-  override get(factual: Factual): Result<A> {
+  override get(factual: any): Result<A> {
     for (const [when, then] of this.cases) {
       const whenResult = when.get(factual);
       if (whenResult.isComplete && whenResult.value) {
@@ -144,7 +143,7 @@ export class SwitchExpression<A> extends Expression<A> {
     return Result.incomplete();
   }
 
-  override explain(factual: Factual): Explanation {
+  override explain(factual: any): Explanation {
     // TODO: Implement this
     return new ConstantExplanation();
   }

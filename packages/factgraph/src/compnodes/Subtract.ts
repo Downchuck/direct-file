@@ -106,16 +106,10 @@ export class SubtractFactory implements CompNodeFactory {
     e: any,
     graph: Graph
   ): CompNode {
-    const minuend = compNodeRegistry.fromDerivedConfig(
-      e.children.find((c: any) => c.key === 'Minuend').children[0],
-      graph
+    const nodes = e.children.map((child: any) =>
+      compNodeRegistry.fromDerivedConfig(child, graph)
     );
-    const subtrahends = e.children
-      .find((c: any) => c.key === 'Subtrahends')
-      .children.map((child: any) =>
-        compNodeRegistry.fromDerivedConfig(child, graph)
-      );
-    return this.create([minuend, ...subtrahends]);
+    return this.create(nodes);
   }
 
   create(nodes: CompNode[]): CompNode {

@@ -1,4 +1,5 @@
-import { CompNode, compNodeRegistry } from './compnodes/CompNode';
+import { CompNode } from './compnodes/CompNode';
+import { compNodeRegistry } from './compnodes/registry';
 import { Path } from './Path';
 import { PathItem } from './PathItem';
 import { Limit } from './limits/Limit';
@@ -31,13 +32,12 @@ export class Fact {
     return current;
   }
 
-  public get(): MaybeVector<Result<any>> {
-    const result = MaybeVector.single(this.value.get(this.graph));
-    return result;
+  public get(): Result<any> {
+    return this.value.get(this.graph);
   }
 
-  public getThunk(): MaybeVector<Result<any>> {
-    return MaybeVector.single(this.value.getThunk(this.graph).get);
+  public getThunk(): MaybeVector<Thunk<Result<any>>> {
+    return this.value.getThunk(this.graph);
   }
 
   public explain(): MaybeVector<Explanation> {

@@ -28,13 +28,11 @@ export class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactor
   }
 
   fromDerivedConfig(
-    e: any,
+    e: { options: { value: number } },
     graph: Graph,
   ): CompNode {
-    // TODO: getOptionValue
-    const value = e.value || '0';
     return new DollarNode(
-      Expression.literal(Result.complete(Dollar.fromString(value)))
+      Expression.literal(Result.complete(Dollar.fromNumber(e.options.value)))
     );
   }
 }

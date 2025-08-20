@@ -36,25 +36,18 @@ export class TinNode extends CompNode {
   }
 }
 
-export const tinNodeFactory: CompNodeFactory = {
-  typeName: 'TIN',
+export class TinNodeFactory implements CompNodeFactory {
+  readonly typeName = 'TIN';
   fromDerivedConfig(
-    e: { value?: string; writable?: boolean; options?: { name: string, value: string }[] },
+    e: { options: { value: string, allowAllZeros?: boolean } },
     graph: Graph
   ): TinNode {
-    const allowAllZeros = e.options?.find(o => o.name === 'ALLOW_ALL_ZEROS')?.value === 'true';
-
-    if (e.writable) {
-      return new TinNode(Expression.literal(Result.incomplete()), allowAllZeros);
-    }
-    if (e.value) {
-      return new TinNode(
-        Expression.literal(
-          Result.complete(Tin.fromString(e.value, allowAllZeros))
-        ),
-        allowAllZeros
-      );
-    }
-    throw new Error('TIN node requires a value or to be writable.');
-  },
-};
+    const { value, allowAllZeros = false } = e.options;
+    return new TinNode(
+      Expression.literal(
+        Result.complete(Tin.fromString(value, allowAllZeros))
+      ),
+      allowAllZeros
+    );
+  }
+}

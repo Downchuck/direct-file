@@ -1,4 +1,4 @@
-import { Expression } from '../expressions';
+import { Expression } from '../Expression';
 import { CompNode, CompNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { Result } from '../types';

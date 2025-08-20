@@ -1,3 +1,4 @@
+import '../compnodes';
 import { AddressNode } from '../compnodes/AddressNode';
 import { compNodeRegistry } from '../compnodes/CompNode';
 import { Expression } from '../Expression';
@@ -28,8 +29,7 @@ describe('AddressNode', () => {
     };
     const node = compNodeRegistry.fromDerivedConfig(
       config,
-      factual,
-      new FactDictionary()
+      factual.graph
     ) as AddressNode;
     expect(node.get(factual)).toEqual(
       Result.complete(
@@ -80,11 +80,7 @@ describe('AddressNode', () => {
         },
       ],
     };
-    const node = compNodeRegistry.fromDerivedConfig(
-      config,
-      factual,
-      new FactDictionary()
-    );
+    const node = compNodeRegistry.fromDerivedConfig(config, factual.graph);
 
     expect(node.get(factual)).toEqual(
       Result.complete(

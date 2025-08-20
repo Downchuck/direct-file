@@ -1,5 +1,5 @@
-import { IpPinNodeFactory } from '../compnodes/IpPinNode';
-import { StringNode } from '../compnodes/StringNode';
+import '../compnodes';
+import { compNodeRegistry } from '../compnodes/registry';
 import { Result } from '../types';
 import { Factual } from '../Factual';
 import { Expression } from '../Expression';
@@ -9,11 +9,11 @@ describe('IpPinNode', () => {
   const factual = new Factual(new FactDictionary());
 
   it('can be created with a valid IP PIN', () => {
-    const node = IpPinNodeFactory.fromDerivedConfig(
+    const node = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'IpPin',
         children: [
-          new StringNode(Expression.literal(Result.complete('123456'))),
+          { typeName: 'String', value: '123456' },
         ],
       },
       factual.graph
@@ -22,11 +22,11 @@ describe('IpPinNode', () => {
   });
 
   it('is incomplete with an invalid IP PIN', () => {
-    const node = IpPinNodeFactory.fromDerivedConfig(
+    const node = compNodeRegistry.fromDerivedConfig(
       {
         typeName: 'IpPin',
         children: [
-          new StringNode(Expression.literal(Result.complete('12345'))),
+          { typeName: 'String', value: '12345' },
         ],
       },
       factual.graph

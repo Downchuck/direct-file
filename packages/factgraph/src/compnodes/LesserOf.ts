@@ -37,7 +37,7 @@ class LesserOfOperator<T> implements ReduceOperator<T> {
   }
 }
 
-class LesserOfFactory implements CompNodeFactory {
+export class LesserOfFactory implements CompNodeFactory {
   readonly typeName = 'LesserOf';
 
   fromDerivedConfig(
@@ -91,8 +91,3 @@ class LesserOfFactory implements CompNodeFactory {
   }
 }
 
-const lesserOfCompNodeFactory = new LesserOfFactory();
-
-export const LesserOf = (nodes: CompNode[]): CompNode => {
-  return lesserOfCompNodeFactory.create(nodes);
-};

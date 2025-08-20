@@ -97,17 +97,10 @@ export class DivideFactory implements CompNodeFactory {
     e: any,
     graph: Graph
   ): CompNode {
-    const dividend = compNodeRegistry.fromDerivedConfig(
-      e.children.find((c: any) => c.typeName === 'Dividend').children[0],
-      graph
+    const nodes = e.children.map((child: any) =>
+      compNodeRegistry.fromDerivedConfig(child, graph)
     );
-    const divisors = e.children
-      .find((c: any) => c.typeName === 'Divisors')
-      .children.map((child: any) =>
-        compNodeRegistry.fromDerivedConfig(child, graph)
-      );
-
-    return this.create([dividend, ...divisors]);
+    return this.create(nodes);
   }
 
   create(nodes: CompNode[]): CompNode {
