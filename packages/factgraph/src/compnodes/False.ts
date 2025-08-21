@@ -4,13 +4,17 @@ import { Expression } from '../Expression';
 import { Result } from '../types';
 import { Graph } from '../Graph';
 
-export class FalseFactory implements CompNodeFactory {
-  readonly typeName = 'False';
+export const FalseFactory: CompNodeFactory = {
+  typeName: 'False',
 
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
+    return this.create();
+  },
+
+  create(): CompNode {
     return new BooleanNode(Expression.literal(Result.complete(false)));
-  }
-}
+  },
+};

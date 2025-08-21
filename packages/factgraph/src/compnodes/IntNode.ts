@@ -16,15 +16,15 @@ export class IntNode extends CompNode {
   }
 }
 
-export class IntNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Int';
+export const IntNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'Int',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new IntNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -33,5 +33,5 @@ export class IntNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
     // TODO: getOptionValue
     const value = parseInt(e.value, 10);
     return new IntNode(Expression.literal(Result.complete(value)));
-  }
-}
+  },
+};

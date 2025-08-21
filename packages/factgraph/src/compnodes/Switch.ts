@@ -3,8 +3,8 @@ import { BooleanNode } from './BooleanNode';
 import { Graph } from '../Graph';
 import { compNodeRegistry } from './registry';
 
-export class SwitchFactory implements CompNodeFactory {
-  readonly typeName = 'Switch';
+export const SwitchFactory: CompNodeFactory = {
+  typeName: 'Switch',
 
   fromDerivedConfig(
     e: any,
@@ -24,6 +24,10 @@ export class SwitchFactory implements CompNodeFactory {
         return [when, then];
       });
 
+    return this.create(cases);
+  },
+
+  create(cases: [CompNode, CompNode][]): CompNode {
     if (cases.length === 0) {
       throw new Error('Switch must have at least one child node');
     }
@@ -32,5 +36,5 @@ export class SwitchFactory implements CompNodeFactory {
     const [firstWhen, firstThen] = firstCase;
 
     return firstThen.switch(cases);
-  }
-}
+  },
+};

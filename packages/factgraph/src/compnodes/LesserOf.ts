@@ -26,7 +26,7 @@ class LesserOfOperator<T> implements ReduceOperator<T> {
   apply(head: Result<T>, tail: Thunk<Result<T>>[]): Result<T> {
     return tail.reduce(
       (acc, thunk) =>
-        acc.flatMap((a) => thunk.get.map((b) => this.reduce(a, b))),
+        acc.flatMap((a) => thunk.value.map((b) => this.reduce(a, b))),
       head,
     );
   }
@@ -37,18 +37,15 @@ class LesserOfOperator<T> implements ReduceOperator<T> {
   }
 }
 
-class LesserOfFactory implements CompNodeFactory {
-  readonly typeName = 'LesserOf';
+export const LesserOfFactory: CompNodeFactory = {
+  typeName: 'LesserOf',
 
   fromDerivedConfig(
     e: any,
     graph: Graph,
   ): CompNode {
-    const children = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, graph),
-    );
-    return this.create(children);
-  }
+    throw new Error('fromDerivedConfig not implemented for LesserOf');
+  },
 
   create(nodes: CompNode[]): CompNode {
     if (nodes.every((n) => n instanceof IntNode)) {
@@ -88,11 +85,9 @@ class LesserOfFactory implements CompNodeFactory {
       );
     }
     throw new Error('LesserOf requires all children to be of the same type');
-  }
-}
-
-const lesserOfCompNodeFactory = new LesserOfFactory();
+  },
+};
 
 export const LesserOf = (nodes: CompNode[]): CompNode => {
-  return lesserOfCompNodeFactory.create(nodes);
+  return LesserOfFactory.create(nodes);
 };

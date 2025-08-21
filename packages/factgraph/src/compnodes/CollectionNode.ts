@@ -66,8 +66,8 @@ export class CollectionNode extends CompNode {
   }
 }
 
-export class CollectionNodeFactory implements WritableNodeFactory {
-  readonly typeName = 'Collection';
+export const CollectionNodeFactory: WritableNodeFactory = {
+  typeName: 'Collection',
 
   fromWritableConfig(
     e: any,
@@ -77,5 +77,5 @@ export class CollectionNodeFactory implements WritableNodeFactory {
       Expression.writable(Result.complete(new Collection([]))),
       undefined
     );
-  }
-}
+  },
+};

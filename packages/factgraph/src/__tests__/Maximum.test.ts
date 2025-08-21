@@ -1,9 +1,18 @@
-import { MaximumFactory } from '../compnodes';
+import { MaximumFactory } from '../compnodes/Maximum';
+import { DependencyNode } from '../compnodes/Dependency';
+import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-import { Graph } from '../Graph';
-import { Collection } from '../types/Collection';
+import { IntNode } from '../compnodes/IntNode';
+import { Expression } from '../Expression';
+import { Result } from '../types';
+import { DollarNode } from '../compnodes/DollarNode';
 import { Dollar } from '../types/Dollar';
+import { DependencyExpression } from '../expressions/DependencyExpression';
+import { Path } from '../Path';
+
+import { Graph } from '../Graph';
 import { InMemoryPersister } from '../persisters';
+import { Collection } from '../types/Collection';
 
 describe('Maximum', () => {
   const dictionary = new FactDictionary();

@@ -18,8 +18,8 @@ export class EmailAddressNode extends CompNode {
   }
 }
 
-export class EmailAddressNodeFactory implements CompNodeFactory {
-  readonly typeName = 'EmailAddress';
+export const EmailAddressNodeFactory: CompNodeFactory = {
+  typeName: 'EmailAddress',
   fromDerivedConfig(
     e: { value?: string, writable?: boolean },
     graph: Graph
@@ -31,5 +31,5 @@ export class EmailAddressNodeFactory implements CompNodeFactory {
       return new EmailAddressNode(Expression.literal(Result.complete(EmailAddress.fromString(e.value))));
     }
     throw new Error('EmailAddress node requires a value or to be writable.');
-  }
+  },
 };

@@ -1,21 +1,35 @@
 import { CompNode, CompNodeFactory } from './CompNode';
-import { Expression } from '../expressions';
 import { Graph } from '../Graph';
 import { UnaryOperator } from '../operators';
 import { EnumOptionsNode } from './EnumOptionsNode';
 import { IntNode } from './IntNode';
 import { compNodeRegistry } from './registry';
+import { UnaryExpression } from '../expressions/UnaryExpression';
+import {
+  applyUnary,
+  explainUnary,
+} from '../operators/UnaryOperatorHelpers';
+import { Factual } from '../Factual';
+import { Explanation } from '../Explanation';
+import { Expression } from '../Expression';
+import { Result } from '../types';
 
-class EnumOptionsSizeOperator implements UnaryOperator<string[], number> {
-  apply(value: string[]): number {
+class EnumOptionsSizeOperator implements UnaryOperator<number, string[]> {
+  operation(value: string[]): number {
     return value.length;
+  }
+  apply(x: Result<string[]>): Result<number> {
+    return applyUnary(this, x);
+  }
+  explain(x: Expression<string[]>, factual: Factual): Explanation {
+    return explainUnary(x, factual);
   }
 }
 
 const operator = new EnumOptionsSizeOperator();
 
-export class EnumOptionsSizeFactory implements CompNodeFactory {
-  readonly typeName = 'EnumOptionsSize';
+export const EnumOptionsSizeFactory: CompNodeFactory = {
+  typeName: 'EnumOptionsSize',
 
   fromDerivedConfig(
     e: { children: any[] },
@@ -25,6 +39,14 @@ export class EnumOptionsSizeFactory implements CompNodeFactory {
       e.children[0],
       graph
     ) as EnumOptionsNode;
-    return new IntNode(new Expression.Unary(child.expr, operator));
-  }
-}
+    return this.create([child]);
+  },
+
+  create(nodes: CompNode[]): CompNode {
+    const child = nodes[0];
+    if (!(child instanceof EnumOptionsNode)) {
+      throw new Error('EnumOptionsSize child must be an EnumOptionsNode');
+    }
+    return new IntNode(new UnaryExpression(child.expr, operator));
+  },
+};

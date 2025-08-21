@@ -33,14 +33,13 @@ class ListExpression<T> extends Expression<T> {
 
 describe('CollectionSum', () => {
   const factual = new Factual(new FactDictionary());
-  const factory = new CollectionSumFactory();
 
   it('sums a collection of integers', () => {
     const numbers = [1, 2, 3];
     const expr = new ListExpression(numbers, true);
     const intNode = new IntNode(expr as unknown as Expression<number>);
 
-    const sumNode = factory.create!([intNode]) as IntNode;
+    const sumNode = CollectionSumFactory.create!([intNode]) as IntNode;
     const result = sumNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -56,7 +55,7 @@ describe('CollectionSum', () => {
     const expr = new ListExpression(dollars, true);
     const dollarNode = new DollarNode(expr as unknown as Expression<Dollar>);
 
-    const sumNode = factory.create!([dollarNode]) as DollarNode;
+    const sumNode = CollectionSumFactory.create!([dollarNode]) as DollarNode;
     const result = sumNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -74,7 +73,7 @@ describe('CollectionSum', () => {
       expr as unknown as Expression<Rational>
     );
 
-    const sumNode = factory.create!([rationalNode]) as RationalNode;
+    const sumNode = CollectionSumFactory.create!([rationalNode]) as RationalNode;
     const result = sumNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -86,7 +85,7 @@ describe('CollectionSum', () => {
     const expr = new ListExpression(numbers, false); // Incomplete
     const intNode = new IntNode(expr as unknown as Expression<number>);
 
-    const sumNode = factory.create!([intNode]) as IntNode;
+    const sumNode = CollectionSumFactory.create!([intNode]) as IntNode;
     const result = sumNode.get(factual);
 
     expect(result.isComplete).toBe(false);

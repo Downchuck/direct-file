@@ -7,11 +7,11 @@ import { BooleanNode } from './BooleanNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
 import { Day } from '../types/Day';
+import { BinaryOperator } from '../operators/BinaryOperator';
 import {
-  BinaryOperator,
   applyBinary,
   explainBinary,
-} from '../operators/BinaryOperator';
+} from '../operators/BinaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
 import { BinaryExpression } from '../expressions/BinaryExpression';
@@ -53,8 +53,38 @@ const rationalRationalBinaryOperator = new LessThanOrEqualBinaryOperator(
 );
 const dayDayBinaryOperator = new LessThanOrEqualBinaryOperator(dayLte);
 
-export class LessThanOrEqualFactory implements CompNodeFactory {
-  readonly typeName = 'LessThanOrEqual';
+const create = (lhs: CompNode, rhs: CompNode): CompNode => {
+  if (lhs instanceof IntNode && rhs instanceof IntNode) {
+    return new BooleanNode(
+      new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
+    );
+  }
+  if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
+    return new BooleanNode(
+      new BinaryExpression(lhs.expr, rhs.expr, dollarDollarBinaryOperator)
+    );
+  }
+  if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
+    return new BooleanNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        rationalRationalBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof DayNode && rhs instanceof DayNode) {
+    return new BooleanNode(
+      new BinaryExpression(lhs.expr, rhs.expr, dayDayBinaryOperator)
+    );
+  }
+  throw new Error(
+    `cannot compare a ${lhs.constructor.name} and a ${rhs.constructor.name}`
+  );
+}
+
+export const LessThanOrEqualFactory: CompNodeFactory = {
+  typeName: 'LessThanOrEqual',
 
   fromDerivedConfig(
     e: any,
@@ -68,36 +98,11 @@ export class LessThanOrEqualFactory implements CompNodeFactory {
       e.children.find((c: any) => c.key === 'Right').children[0],
       graph
     );
-    return this.create(lhs, rhs);
-  }
+    return this.create([lhs, rhs]);
+  },
 
-  create(lhs: CompNode, rhs: CompNode): CompNode {
-    if (lhs instanceof IntNode && rhs instanceof IntNode) {
-      return new BooleanNode(
-        new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
-      );
-    }
-    if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
-      return new BooleanNode(
-        new BinaryExpression(lhs.expr, rhs.expr, dollarDollarBinaryOperator)
-      );
-    }
-    if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
-      return new BooleanNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          rationalRationalBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof DayNode && rhs instanceof DayNode) {
-      return new BooleanNode(
-        new BinaryExpression(lhs.expr, rhs.expr, dayDayBinaryOperator)
-      );
-    }
-    throw new Error(
-      `cannot compare a ${lhs.constructor.name} and a ${rhs.constructor.name}`
-    );
+  create(nodes: CompNode[]): CompNode {
+    const [lhs, rhs] = nodes;
+    return create(lhs, rhs);
   }
-}
+};

@@ -1,13 +1,17 @@
-import { Expression } from '../Expression';
 import { CompNode, CompNodeFactory } from './CompNode';
+import { BooleanNode } from './BooleanNode';
+import { UnaryOperator } from '../operators/UnaryOperator';
+import {
+  applyUnary,
+  explainUnary,
+} from '../operators/UnaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
-import { BooleanNode } from './BooleanNode';
-import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
+import { UnaryExpression } from '../expressions/UnaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
+import { Expression } from '../Expression';
 import { compNodeRegistry } from './registry';
-import { UnaryExpression } from '../expressions/UnaryExpression';
 
 class NotOperator implements UnaryOperator<boolean, boolean> {
   operation(x: boolean): boolean {
@@ -21,23 +25,30 @@ class NotOperator implements UnaryOperator<boolean, boolean> {
   }
 }
 
-export class NotFactory implements CompNodeFactory {
-  readonly typeName = 'Not';
-  private readonly operator = new NotOperator();
+const notOperator = new NotOperator();
+
+export const NotFactory: CompNodeFactory = {
+  typeName: 'Not',
 
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
-    const child = compNodeRegistry.fromDerivedConfig(
+    const childNode = compNodeRegistry.fromDerivedConfig(
       e.children[0],
       graph
     );
-    if (child instanceof BooleanNode) {
-      return new BooleanNode(
-        new UnaryExpression(child.expr, this.operator)
-      );
+    if (!(childNode instanceof BooleanNode)) {
+      throw new Error('Not can only operate on a BooleanNode');
     }
-    throw new Error('Not must have a boolean child');
-  }
-}
+    return this.create([childNode]);
+  },
+
+  create(nodes: CompNode[]): CompNode {
+    const node = nodes[0];
+    if (!(node instanceof BooleanNode)) {
+      throw new Error('Not can only operate on a BooleanNode');
+    }
+    return new BooleanNode(new UnaryExpression(node.expr, notOperator));
+  },
+};

@@ -13,7 +13,7 @@ export class AggregateExpression<A, B> extends Expression<B> {
   }
 
   override get(factual: Factual): Result<B> {
-    return this.op.apply(this.expression.getVector(factual));
+    return this.op.apply((this.expression as any).getVector(factual));
   }
 
   override explain(factual: Factual): Explanation {

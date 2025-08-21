@@ -5,16 +5,16 @@ import { RationalNode } from './RationalNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
 import { Expression } from '../Expression';
+import { BinaryOperator } from '../operators/BinaryOperator';
 import {
-  BinaryOperator,
   applyBinary,
   explainBinary,
-} from '../operators/BinaryOperator';
+} from '../operators/BinaryOperatorHelpers';
+import { ReduceOperator } from '../operators/ReduceOperator';
 import {
-  ReduceOperator,
   applyReduce,
   explainReduce,
-} from '../operators/ReduceOperator';
+} from '../operators/ReduceOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
 import { BinaryExpression } from '../expressions/BinaryExpression';
@@ -90,25 +90,94 @@ const rationalDollarBinaryOperator = new DivideBinaryOperator(
   rationalDollarDiv
 );
 
-export class DivideFactory implements CompNodeFactory {
-  readonly typeName = 'Divide';
+const binaryDivide = (lhs: CompNode, rhs: CompNode): CompNode => {
+  if (lhs instanceof IntNode && rhs instanceof IntNode) {
+    return new RationalNode(
+      new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
+    );
+  }
+  if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
+    return new DollarNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        dollarDollarBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
+    return new RationalNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        rationalRationalBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof IntNode && rhs instanceof DollarNode) {
+    return new DollarNode(
+      new BinaryExpression(lhs.expr, rhs.expr, intDollarBinaryOperator)
+    );
+  }
+  if (lhs instanceof DollarNode && rhs instanceof IntNode) {
+    return new DollarNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        dollarIntBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof IntNode && rhs instanceof RationalNode) {
+    return new RationalNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        intRationalBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof RationalNode && rhs instanceof IntNode) {
+    return new RationalNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        rationalIntBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof RationalNode && rhs instanceof DollarNode) {
+    return new DollarNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        rationalDollarBinaryOperator
+      )
+    );
+  }
+  if (lhs instanceof DollarNode && rhs instanceof RationalNode) {
+    return new DollarNode(
+      new BinaryExpression(
+        lhs.expr,
+        rhs.expr,
+        dollarRationalBinaryOperator
+      )
+    );
+  }
+  throw new Error(
+    `cannot divide a ${lhs.constructor.name} by a ${rhs.constructor.name}`
+  );
+}
+
+export const DivideFactory: CompNodeFactory = {
+  typeName: 'Divide',
 
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
-    const dividend = compNodeRegistry.fromDerivedConfig(
-      e.children.find((c: any) => c.typeName === 'Dividend').children[0],
-      graph
-    );
-    const divisors = e.children
-      .find((c: any) => c.typeName === 'Divisors')
-      .children.map((child: any) =>
-        compNodeRegistry.fromDerivedConfig(child, graph)
-      );
-
-    return this.create([dividend, ...divisors]);
-  }
+    throw new Error('fromDerivedConfig not implemented for Divide');
+  },
 
   create(nodes: CompNode[]): CompNode {
     if (nodes.every((n) => n instanceof DollarNode)) {
@@ -127,85 +196,6 @@ export class DivideFactory implements CompNodeFactory {
         )
       );
     }
-    return nodes.reduce((lhs, rhs) => this.binaryDivide(lhs, rhs));
-  }
-
-  private binaryDivide(lhs: CompNode, rhs: CompNode): CompNode {
-    if (lhs instanceof IntNode && rhs instanceof IntNode) {
-      return new RationalNode(
-        new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
-      );
-    }
-    if (lhs instanceof DollarNode && rhs instanceof DollarNode) {
-      return new DollarNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          dollarDollarBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof RationalNode && rhs instanceof RationalNode) {
-      return new RationalNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          rationalRationalBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof IntNode && rhs instanceof DollarNode) {
-      return new DollarNode(
-        new BinaryExpression(lhs.expr, rhs.expr, intDollarBinaryOperator)
-      );
-    }
-    if (lhs instanceof DollarNode && rhs instanceof IntNode) {
-      return new DollarNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          dollarIntBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof IntNode && rhs instanceof RationalNode) {
-      return new RationalNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          intRationalBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof RationalNode && rhs instanceof IntNode) {
-      return new RationalNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          rationalIntBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof RationalNode && rhs instanceof DollarNode) {
-      return new DollarNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          rationalDollarBinaryOperator
-        )
-      );
-    }
-    if (lhs instanceof DollarNode && rhs instanceof RationalNode) {
-      return new DollarNode(
-        new BinaryExpression(
-          lhs.expr,
-          rhs.expr,
-          dollarRationalBinaryOperator
-        )
-      );
-    }
-    throw new Error(
-      `cannot divide a ${lhs.constructor.name} by a ${rhs.constructor.name}`
-    );
-  }
-}
+    return nodes.reduce(binaryDivide);
+  },
+};

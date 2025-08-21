@@ -103,32 +103,25 @@ class AnyOperator implements ReduceOperator<boolean> {
   }
 }
 
-export class AnyFactory implements CompNodeFactory {
-  readonly typeName = 'Any';
+export const AnyFactory: CompNodeFactory = {
+  typeName: 'Any',
 
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
-    const conditions = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, graph)
-    );
+    throw new Error('fromDerivedConfig not implemented for Any');
+  },
 
-    if (conditions.every((c: any) => c instanceof BooleanNode)) {
-      return this.create(conditions);
+  create(nodes: CompNode[]): BooleanNode {
+    if (nodes.every((n) => n instanceof BooleanNode)) {
+      const expressions = nodes.map((n) => (n as BooleanNode).expr);
+      return new BooleanNode(new ReduceExpression(expressions, new AnyOperator()));
     }
-
     throw new Error('all children of <Any> must be BooleanNodes');
-  }
-
-  create(nodes: BooleanNode[]): BooleanNode {
-    const expressions = nodes.map((n) => n.expr);
-    return new BooleanNode(new ReduceExpression(expressions, new AnyOperator()));
-  }
-}
-
-const anyCompNodeFactory = new AnyFactory();
+  },
+};
 
 export const Any = (nodes: BooleanNode[]): BooleanNode => {
-  return anyCompNodeFactory.create(nodes);
+  return AnyFactory.create(nodes) as BooleanNode;
 };

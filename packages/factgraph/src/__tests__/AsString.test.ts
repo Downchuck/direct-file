@@ -21,7 +21,7 @@ describe('AsString', () => {
     const node = new EnumNode(
       Expression.literal(Result.complete(new Enum('a', ['a', 'b'])))
     );
-    const stringNode = AsStringFactory.create(node);
+    const stringNode = AsStringFactory.create([node]);
     expect(stringNode.get(factual)).toEqual(Result.complete('a'));
   });
 
@@ -29,7 +29,7 @@ describe('AsString', () => {
     const node = new EmailAddressNode(
       Expression.literal(Result.complete(new EmailAddress('a@b.com')))
     );
-    const stringNode = AsStringFactory.create(node);
+    const stringNode = AsStringFactory.create([node]);
     expect(stringNode.get(factual)).toEqual(Result.complete('a@b.com'));
   });
 
@@ -37,7 +37,7 @@ describe('AsString', () => {
     const node = new DollarNode(
       Expression.literal(Result.complete(Dollar.fromNumber(1.23)))
     );
-    const stringNode = AsStringFactory.create(node);
+    const stringNode = AsStringFactory.create([node]);
     expect(stringNode.get(factual)).toEqual(Result.complete('1.23'));
   });
 
@@ -45,7 +45,7 @@ describe('AsString', () => {
     const node = new EinNode(
       Expression.literal(Result.complete(Ein.fromString('12-3456789')))
     );
-    const stringNode = AsStringFactory.create(node);
+    const stringNode = AsStringFactory.create([node]);
     expect(stringNode.get(factual)).toEqual(Result.complete('12-3456789'));
   });
 
@@ -53,7 +53,7 @@ describe('AsString', () => {
     const node = new TinNode(
       Expression.literal(Result.complete(Tin.fromString('123-45-6789')))
     );
-    const stringNode = AsStringFactory.create(node);
+    const stringNode = AsStringFactory.create([node]);
     expect(stringNode.get(factual)).toEqual(Result.complete('123-45-6789'));
   });
 });

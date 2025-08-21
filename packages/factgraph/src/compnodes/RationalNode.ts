@@ -17,15 +17,15 @@ export class RationalNode extends CompNode {
   }
 }
 
-export class RationalNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Rational';
+export const RationalNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'Rational',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new RationalNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -36,5 +36,5 @@ export class RationalNodeFactory implements DerivedNodeFactory, WritableNodeFact
     return new RationalNode(
       Expression.literal(Result.complete(Rational.fromString(value)))
     );
-  }
-}
+  },
+};

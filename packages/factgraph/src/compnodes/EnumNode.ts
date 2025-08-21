@@ -21,8 +21,8 @@ export class EnumNode extends CompNode {
   }
 }
 
-export class EnumNodeFactory implements CompNodeFactory {
-  readonly typeName = 'Enum';
+export const EnumNodeFactory: CompNodeFactory = {
+  typeName: 'Enum',
   fromDerivedConfig(
     e: { value?: string; writable?: boolean; options?: { name: string, value: string }[] },
     graph: Graph
@@ -46,5 +46,5 @@ export class EnumNodeFactory implements CompNodeFactory {
     }
 
     throw new Error('Enum node requires a value or to be writable.');
-  }
+  },
 };

@@ -17,8 +17,8 @@ export class DependencyNode extends CompNode {
   }
 }
 
-export class DependencyFactory implements DerivedNodeFactory {
-  readonly typeName = 'Dependency';
+export const DependencyFactory: DerivedNodeFactory = {
+  typeName: 'Dependency',
 
   fromDerivedConfig(
     e: any,
@@ -26,5 +26,5 @@ export class DependencyFactory implements DerivedNodeFactory {
   ): CompNode {
     const path = Path.fromString(e.options.path);
     return new DependencyNode(new DependencyExpression(path));
-  }
-}
+  },
+};

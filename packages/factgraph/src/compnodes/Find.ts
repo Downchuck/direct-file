@@ -37,8 +37,8 @@ class FindOperator implements CollectOperator<CollectionItem<any>, boolean> {
 
 const findOperator = new FindOperator();
 
-export class FindFactory implements CompNodeFactory {
-  readonly typeName = 'Find';
+export const FindFactory: CompNodeFactory = {
+  typeName: 'Find',
 
   fromDerivedConfig(
     e: any,
@@ -67,5 +67,5 @@ export class FindFactory implements CompNodeFactory {
     );
 
     return new CollectionItemNode(expression);
-  }
-}
+  },
+};

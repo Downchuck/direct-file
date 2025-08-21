@@ -10,7 +10,6 @@ import { CollectionSizeFactory } from '../compnodes/CollectionSize';
 
 describe('CollectionSize', () => {
   const factual = new Factual(new FactDictionary());
-  const factory = new CollectionSizeFactory();
 
   it('calculates the size of a collection', () => {
     const items = [uuidv4(), uuidv4(), uuidv4()];
@@ -20,7 +19,7 @@ describe('CollectionSize', () => {
       undefined
     );
 
-    const sizeNode = factory.create!([collectionNode]) as IntNode;
+    const sizeNode = CollectionSizeFactory.create!([collectionNode]) as IntNode;
     const result = sizeNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -34,7 +33,7 @@ describe('CollectionSize', () => {
       undefined
     );
 
-    const sizeNode = factory.create!([collectionNode]) as IntNode;
+    const sizeNode = CollectionSizeFactory.create!([collectionNode]) as IntNode;
     const result = sizeNode.get(factual);
 
     expect(result.isComplete).toBe(true);
@@ -47,7 +46,7 @@ describe('CollectionSize', () => {
       undefined
     );
 
-    const sizeNode = factory.create!([collectionNode]) as IntNode;
+    const sizeNode = CollectionSizeFactory.create!([collectionNode]) as IntNode;
     const result = sizeNode.get(factual);
 
     expect(result.isComplete).toBe(false);

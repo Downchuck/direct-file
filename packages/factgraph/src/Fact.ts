@@ -1,4 +1,7 @@
-import { CompNode, compNodeRegistry } from './compnodes/CompNode';
+import './compnodes/register-factories';
+import { CompNode } from './compnodes/CompNode';
+import { compNodeRegistry } from './compnodes/registry';
+import { Factual } from './Factual';
 import { Path } from './Path';
 import { PathItem } from './PathItem';
 import { Limit } from './limits/Limit';
@@ -32,7 +35,7 @@ export class Fact {
   }
 
   public get(): MaybeVector<Result<any>> {
-    const result = MaybeVector.single(this.value.get(this.graph));
+    const result = MaybeVector.single(this.value.get(new Factual(this.graph.dictionary)));
     return result;
   }
 
@@ -173,7 +176,7 @@ export class Fact {
   }
 
   private makeExtract(key: PathItem): Fact | undefined {
-      const extractedNode = this.value.extract(key);
+      const extractedNode = this.value.extract(key, new Factual(this.graph.dictionary));
       if (extractedNode) {
           return new Fact(extractedNode, this.path.append(key), [], this.graph, this, {} as any);
       }

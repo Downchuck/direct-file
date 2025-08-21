@@ -1,5 +1,11 @@
+import { DependencyNode } from '../compnodes/Dependency';
+import { DependencyExpression } from '../expressions/DependencyExpression';
+import { Path } from '../Path';
+
 describe('Dependency', () => {
-  it('should have tests', () => {
-    expect(true).toBe(true);
+  it('can be created with a path', () => {
+    const path = Path.fromString('/a/b/c');
+    const node = new DependencyNode(new DependencyExpression(path));
+    expect(node.expr.path).toBe(path);
   });
 });

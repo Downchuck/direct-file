@@ -9,28 +9,16 @@ describe('IpPinNode', () => {
   const factual = new Factual(new FactDictionary());
 
   it('can be created with a valid IP PIN', () => {
-    const node = IpPinNodeFactory.fromDerivedConfig(
-      {
-        typeName: 'IpPin',
-        children: [
-          new StringNode(Expression.literal(Result.complete('123456'))),
-        ],
-      },
-      factual.graph
-    );
+    const node = IpPinNodeFactory.create([
+      new StringNode(Expression.literal(Result.complete('123456'))),
+    ]);
     expect(node.get(factual)).toEqual(Result.complete('123456'));
   });
 
   it('is incomplete with an invalid IP PIN', () => {
-    const node = IpPinNodeFactory.fromDerivedConfig(
-      {
-        typeName: 'IpPin',
-        children: [
-          new StringNode(Expression.literal(Result.complete('12345'))),
-        ],
-      },
-      factual.graph
-    );
+    const node = IpPinNodeFactory.create([
+      new StringNode(Expression.literal(Result.complete('12345'))),
+    ]);
     expect(node.get(factual).isComplete).toBe(false);
   });
 });

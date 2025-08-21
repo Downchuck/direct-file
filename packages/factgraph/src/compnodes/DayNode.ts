@@ -40,15 +40,15 @@ export class DayNode extends CompNode {
   }
 }
 
-export class DayNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Day';
+export const DayNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'Day',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new DayNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -57,5 +57,5 @@ export class DayNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
     // TODO: getOptionValue
     const value = e.value || '2000-01-01';
     return new DayNode(Expression.literal(Result.complete(new Day(value))));
-  }
-}
+  },
+};

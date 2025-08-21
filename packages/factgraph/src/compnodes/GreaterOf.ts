@@ -26,7 +26,7 @@ class GreaterOfOperator<T> implements ReduceOperator<T> {
   apply(head: Result<T>, tail: Thunk<Result<T>>[]): Result<T> {
     return tail.reduce(
       (acc, thunk) =>
-        acc.flatMap((a) => thunk.get.map((b) => this.reduce(a, b))),
+        acc.flatMap((a) => thunk.value.map((b) => this.reduce(a, b))),
       head,
     );
   }
@@ -37,18 +37,15 @@ class GreaterOfOperator<T> implements ReduceOperator<T> {
   }
 }
 
-class GreaterOfFactory implements CompNodeFactory {
-  readonly typeName = 'GreaterOf';
+export const GreaterOfFactory: CompNodeFactory = {
+  typeName: 'GreaterOf',
 
   fromDerivedConfig(
     e: any,
     graph: Graph,
   ): CompNode {
-    const children = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, graph),
-    );
-    return this.create(children);
-  }
+    throw new Error('fromDerivedConfig not implemented for GreaterOf');
+  },
 
   create(nodes: CompNode[]): CompNode {
     if (nodes.every((n) => n instanceof IntNode)) {
@@ -88,11 +85,9 @@ class GreaterOfFactory implements CompNodeFactory {
       );
     }
     throw new Error('GreaterOf requires all children to be of the same type');
-  }
-}
-
-const greaterOfCompNodeFactory = new GreaterOfFactory();
+  },
+};
 
 export const GreaterOf = (nodes: CompNode[]): CompNode => {
-  return greaterOfCompNodeFactory.create(nodes);
+  return GreaterOfFactory.create(nodes);
 };

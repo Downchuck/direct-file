@@ -14,15 +14,14 @@ export class DependencyExpression<T> extends Expression<T> {
     return factual.get(this.path);
   }
 
-  public override getThunk(factual: Factual): MaybeVector<Thunk<Result<T>>> {
-    console.log('factual in getThunk:', factual);
+  public override getVector(factual: Factual): MaybeVector<Thunk<Result<T>>> {
     const factVect = factual.getVect(this.path);
+    console.log('factVect', factVect);
     return factVect.map(result => {
         if (result.isComplete) {
             const fact = result.value;
             return new Thunk(() => {
-                const res = fact.get(factual).values[0];
-                console.log('thunk result:', res);
+                const res = fact.get().values[0];
                 return res;
             });
         } else {
