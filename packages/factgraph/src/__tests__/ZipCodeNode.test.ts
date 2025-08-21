@@ -1,16 +1,24 @@
-import { ZipCodeNode } from '../compnodes/ZipCodeNode';
-import { Expression } from '../Expression';
+import '../compnodes/register-factories';
+import { compNodeRegistry } from '../compnodes/registry';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-import { Result } from '../types';
+import { Graph } from '../Graph';
+import { Result } from '../types/Result';
+import { ZipCodeNodeFactory } from '../compnodes/ZipCodeNode';
 
 describe('ZipCodeNode', () => {
   const factual = new Factual(new FactDictionary());
+  const graph = new Graph(factual);
 
-  it('can be created with a valid zip code', () => {
-    const node = new ZipCodeNode(
-      Expression.literal(Result.complete('12345'))
+  compNodeRegistry.register(ZipCodeNodeFactory);
+
+  it('can be created from a writable config', () => {
+    const node = compNodeRegistry.fromWritableConfig(
+      {
+        typeName: 'ZipCode',
+      },
+      graph
     );
-    expect(node.get(factual)).toEqual(Result.complete('12345'));
+    expect(node.get(factual)).toEqual(Result.incomplete());
   });
 });
