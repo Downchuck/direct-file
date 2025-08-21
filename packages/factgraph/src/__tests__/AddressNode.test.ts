@@ -7,6 +7,11 @@ import { Result } from '../types';
 import { Address } from '../types/Address';
 import { PathItem } from '../PathItem';
 
+import { AddressNodeFactory } from '../compnodes/AddressNode';
+import { FalseFactory } from '../compnodes/False';
+import { TrueFactory } from '../compnodes/True';
+import { SwitchFactory } from '../compnodes/Switch';
+
 describe('AddressNode', () => {
   const factual = new Factual(new FactDictionary());
 
@@ -22,14 +27,9 @@ describe('AddressNode', () => {
   });
 
   it('parses config', () => {
-    const config = {
-      typeName: 'Address',
-      value: '736 Jackson Place NW\nWashington, DC 20503',
-    };
-    const node = compNodeRegistry.fromDerivedConfig(
-      config,
-      factual,
-      new FactDictionary()
+    const node = AddressNodeFactory.fromDerivedConfig(
+      { value: '736 Jackson Place NW\nWashington, DC 20503' },
+      factual.graph
     ) as AddressNode;
     expect(node.get(factual)).toEqual(
       Result.complete(
@@ -39,52 +39,22 @@ describe('AddressNode', () => {
   });
 
   it('can be used inside a switch statement', () => {
-    const config = {
-      typeName: 'Switch',
-      children: [
-        {
-          typeName: 'Case',
-          children: [
-            {
-              typeName: 'When',
-              children: [{ typeName: 'False' }],
-            },
-            {
-              typeName: 'Then',
-              children: [
-                {
-                  typeName: 'Address',
-                  value: '736 Jackson Place NW\nWashington, DC 20503',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          typeName: 'Case',
-          children: [
-            {
-              typeName: 'When',
-              children: [{ typeName: 'True' }],
-            },
-            {
-              typeName: 'Then',
-              children: [
-                {
-                  typeName: 'Address',
-                  value: '718 Jackson Place NW\nWashington, DC 20503',
-                },
-              ],
-            },
-          ],
-        },
+    const node = SwitchFactory.create([
+      [
+        FalseFactory.create(),
+        AddressNodeFactory.fromDerivedConfig(
+          { value: '736 Jackson Place NW\nWashington, DC 20503' },
+          factual.graph
+        ),
       ],
-    };
-    const node = compNodeRegistry.fromDerivedConfig(
-      config,
-      factual,
-      new FactDictionary()
-    );
+      [
+        TrueFactory.create(),
+        AddressNodeFactory.fromDerivedConfig(
+          { value: '718 Jackson Place NW\nWashington, DC 20503' },
+          factual.graph
+        ),
+      ],
+    ]);
 
     expect(node.get(factual)).toEqual(
       Result.complete(

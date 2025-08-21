@@ -17,15 +17,15 @@ export class DollarNode extends CompNode {
   }
 }
 
-export class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Dollar';
+export const DollarNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'Dollar',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new DollarNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -36,5 +36,5 @@ export class DollarNodeFactory implements DerivedNodeFactory, WritableNodeFactor
     return new DollarNode(
       Expression.literal(Result.complete(Dollar.fromString(value)))
     );
-  }
-}
+  },
+};

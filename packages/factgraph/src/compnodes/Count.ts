@@ -19,11 +19,15 @@ export class CountOperator implements Operator<boolean, number> {
     let count = 0;
     for (const thunk of thunks.values) {
       const result = thunk.value;
-      if (result.isComplete && result.value === true) {
+      if (result.hasValue && result.value === true) {
         count++;
       }
     }
-    return Result.complete(count);
+
+    if (thunks.isComplete) {
+      return Result.complete(count);
+    }
+    return Result.placeholder(count);
   }
 }
 
@@ -45,18 +49,12 @@ class CountNode extends CompNode {
   }
 }
 
-export class CountFactory implements DerivedNodeFactory {
-  readonly typeName = 'Count';
+export const CountFactory: DerivedNodeFactory = {
+  typeName: 'Count',
 
   create(children: ReadonlyArray<DerivedNode<any>>): CompNode {
-    // Ensure all children are BooleanNodes
-    for (const child of children) {
-      if (!(child instanceof BooleanNode)) {
-        throw new Error('All children of Count must be BooleanNodes');
-      }
-    }
     return new CountNode(children, new CountOperator());
-  }
+  },
 
   fromDerivedConfig(
     config: any,
@@ -67,5 +65,5 @@ export class CountFactory implements DerivedNodeFactory {
     // This is not ideal, but it's how the other nodes work.
     const children = config.children.map((child: any) => graph.compNode(child));
     return this.create(children);
-  }
-}
+  },
+};

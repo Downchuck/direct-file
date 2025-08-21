@@ -67,8 +67,8 @@ const dollarMax = new MaximumOperator(dollarGt);
 const rationalMax = new MaximumOperator(rationalGt);
 const dayMax = new MaximumOperator(dayGt);
 
-export class MaximumFactory implements DerivedNodeFactory {
-  readonly typeName = 'Maximum';
+export const MaximumFactory: DerivedNodeFactory = {
+  typeName: 'Maximum',
 
   fromDerivedConfig(
     e: any,
@@ -77,7 +77,7 @@ export class MaximumFactory implements DerivedNodeFactory {
     return this.create([
       compNodeRegistry.fromDerivedConfig(e.children[0], graph),
     ]);
-  }
+  },
 
   create(operands: CompNode[]): CompNode {
     const node = operands[0];
@@ -113,5 +113,5 @@ export class MaximumFactory implements DerivedNodeFactory {
       return new DayNode(new AggregateExpression(node.expr, dayMax));
     }
     throw new Error(`cannot execute maximum on a ${node.constructor.name}`);
-  }
-}
+  },
+};

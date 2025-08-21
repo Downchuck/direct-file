@@ -29,8 +29,8 @@ class FirstNCollectionItemsOperator implements BinaryOperator<Collection, Collec
 
 const operator = new FirstNCollectionItemsOperator();
 
-export class FirstNCollectionItemsFactory implements CompNodeFactory {
-  readonly typeName = 'FirstNCollectionItems';
+export const FirstNCollectionItemsFactory: CompNodeFactory = {
+  typeName: 'FirstNCollectionItems',
 
   fromDerivedConfig(
     e: any,
@@ -44,15 +44,16 @@ export class FirstNCollectionItemsFactory implements CompNodeFactory {
       e.children.find((c: any) => c.key === 'Right').children[0],
       graph
     );
-    return this.create(lhs, rhs);
-  }
+    return this.create([lhs, rhs]);
+  },
 
-  create(lhs: CompNode, rhs: CompNode): CompNode {
+  create(nodes: CompNode[]): CompNode {
+    const [lhs, rhs] = nodes;
     if (lhs instanceof CollectionNode && rhs instanceof IntNode) {
       return new CollectionNode(new BinaryExpression(lhs.expr, rhs.expr, operator));
     }
     throw new Error(
       `cannot get the first N items from a ${lhs.constructor.name} with a ${rhs.constructor.name}`
     );
-  }
-}
+  },
+};

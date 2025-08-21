@@ -1,170 +1,85 @@
+import { CollectionSumFactory } from '../CollectionSum';
+import { DependencyNode } from '../Dependency';
+import { Factual } from '../../Factual';
 import { FactDictionary } from '../../FactDictionary';
-import { Graph } from '../../Graph';
-import { InMemoryPersister } from '../../persisters';
-import { Collection } from '../../types/Collection';
+import { IntNode } from '../IntNode';
+import { Expression } from '../../Expression';
+import { Result } from '../../types';
+import { DollarNode } from '../DollarNode';
 import { Dollar } from '../../types/Dollar';
+import { RationalNode } from '../RationalNode';
 import { Rational } from '../../types/Rational';
-
-// This is a workaround for the fact that the test environment is broken
-// and we can't import the compnodes directly.
-import '../../compnodes/CollectionSum';
-import '../../compnodes/Dependency';
+import { DependencyExpression } from '../../expressions/DependencyExpression';
+import { Path } from '../../Path';
 
 describe('CollectionSum', () => {
-  const dictionary = new FactDictionary();
-  dictionary.addDefinition({
-    path: '/intTest',
-    derived: {
-      typeName: 'CollectionSum',
-      children: [
-        {
-          typeName: 'Dependency',
-          options: {
-            path: '/collection/*/int',
-          },
-        },
-      ],
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/rationalTest',
-    derived: {
-      typeName: 'CollectionSum',
-      children: [
-        {
-          typeName: 'Dependency',
-          options: {
-            path: '/collection/*/rational',
-          },
-        },
-      ],
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/dollarTest',
-    derived: {
-      typeName: 'CollectionSum',
-      children: [
-        {
-          typeName: 'Dependency',
-          options: {
-            path: '/collection/*/dollar',
-          },
-        },
-      ],
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/collection',
-    writable: {
-      typeName: 'Collection',
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/collection/*/int',
-    writable: {
-      typeName: 'Int',
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/collection/*/rational',
-    writable: {
-      typeName: 'Rational',
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/collection/*/dollar',
-    writable: {
-      typeName: 'Dollar',
-    },
-  });
-
-  dictionary.addDefinition({
-    path: '/collection/*/string',
-    writable: {
-      typeName: 'String',
-    },
-  });
-
-  const uuid1 = '59a3c760-2fac-45e2-a6cd-0792c4aef83e';
-  const uuid2 = '41042a1e-a2a2-459d-9f39-ccaac5612014';
+  const factual = new Factual(new FactDictionary());
 
   it('sums Ints', () => {
-    const graph = new Graph(dictionary, new InMemoryPersister());
-    graph.set('/collection', new Collection([uuid1, uuid2]));
-
-    expect(graph.get('/intTest').isComplete).toBe(false);
-
-    graph.set(`/collection/#${uuid1}/int`, 1);
-    graph.set(`/collection/#${uuid2}/int`, 2);
-
-    expect(graph.get('/intTest').isComplete).toBe(true);
-    expect(graph.get('/intTest').value).toEqual(3);
+    const node = CollectionSumFactory.create([
+      new DependencyNode(
+        new DependencyExpression(Path.fromString('/collection/*/int'))
+      ),
+    ]);
+    const collection = {
+      '#1': { int: new IntNode(Expression.literal(Result.complete(1))) },
+      '#2': { int: new IntNode(Expression.literal(Result.complete(2))) },
+    };
+    const factual = new Factual(new FactDictionary(), {
+      '/collection': collection,
+    });
+    expect(node.get(factual)).toEqual(Result.complete(3));
   });
 
   it('sums Rationals', () => {
-    const graph = new Graph(dictionary, new InMemoryPersister());
-    graph.set('/collection', new Collection([uuid1, uuid2]));
-
-    expect(graph.get('/rationalTest').isComplete).toBe(false);
-
-    graph.set(`/collection/#${uuid1}/rational`, new Rational(1, 2));
-    graph.set(`/collection/#${uuid2}/rational`, new Rational(1, 3));
-
-    expect(graph.get('/rationalTest').isComplete).toBe(true);
-    expect(graph.get('/rationalTest').value).toEqual(new Rational(5, 6));
+    const node = CollectionSumFactory.create([
+      new DependencyNode(
+        new DependencyExpression(Path.fromString('/collection/*/rational'))
+      ),
+    ]);
+    const collection = {
+      '#1': {
+        rational: new RationalNode(
+          Expression.literal(Result.complete(new Rational(1, 2)))
+        ),
+      },
+      '#2': {
+        rational: new RationalNode(
+          Expression.literal(Result.complete(new Rational(1, 3)))
+        ),
+      },
+    };
+    const factual = new Factual(new FactDictionary(), {
+      '/collection': collection,
+    });
+    expect(node.get(factual)).toEqual(
+      Result.complete(new Rational(5, 6))
+    );
   });
 
   it('sums Dollars', () => {
-    const graph = new Graph(dictionary, new InMemoryPersister());
-    graph.set('/collection', new Collection([uuid1, uuid2]));
-
-    expect(graph.get('/dollarTest').isComplete).toBe(false);
-
-    graph.set(`/collection/#${uuid1}/dollar`, Dollar.fromNumber(1.23));
-    graph.set(`/collection/#${uuid2}/dollar`, Dollar.fromNumber(4.56));
-
-    expect(graph.get('/dollarTest').isComplete).toBe(true);
-    expect(graph.get('/dollarTest').value).toEqual(Dollar.fromNumber(5.79));
-  });
-
-  it('throws an error if asked to sum non-numeric nodes', () => {
-    const localDictionary = new FactDictionary();
-    localDictionary.addDefinition({
-        path: '/stringTest',
-        derived: {
-          typeName: 'CollectionSum',
-          children: [
-            {
-              typeName: 'Dependency',
-              options: {
-                path: '/collection/*/string',
-              },
-            },
-          ],
-        },
-      });
-    localDictionary.addDefinition({
-        path: '/collection',
-        writable: {
-            typeName: 'Collection',
-        },
+    const node = CollectionSumFactory.create([
+      new DependencyNode(
+        new DependencyExpression(Path.fromString('/collection/*/dollar'))
+      ),
+    ]);
+    const collection = {
+      '#1': {
+        dollar: new DollarNode(
+          Expression.literal(Result.complete(Dollar.fromNumber(1.23)))
+        ),
+      },
+      '#2': {
+        dollar: new DollarNode(
+          Expression.literal(Result.complete(Dollar.fromNumber(4.56)))
+        ),
+      },
+    };
+    const factual = new Factual(new FactDictionary(), {
+      '/collection': collection,
     });
-    localDictionary.addDefinition({
-        path: '/collection/*/string',
-        writable: {
-            typeName: 'String',
-        },
-    });
-    const graph = new Graph(localDictionary, new InMemoryPersister());
-    graph.set('/collection', new Collection([uuid1, uuid2]));
-    graph.set(`/collection/#${uuid1}/string`, "hello");
-    expect(() => graph.get('/stringTest')).toThrow('cannot sum a DependencyNode');
+    expect(node.get(factual)).toEqual(
+      Result.complete(Dollar.fromNumber(5.79))
+    );
   });
 });

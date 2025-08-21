@@ -16,8 +16,8 @@ export class EnumOptionsNode extends CompNode {
   }
 }
 
-export class EnumOptionsNodeFactory implements CompNodeFactory {
-  readonly typeName = 'EnumOptions';
+export const EnumOptionsNodeFactory: CompNodeFactory = {
+  typeName: 'EnumOptions',
 
   fromDerivedConfig(
     e: { children: any[] },
@@ -43,5 +43,5 @@ export class EnumOptionsNodeFactory implements CompNodeFactory {
 
     const expr = Expression.conditionalList(options);
     return new EnumOptionsNode(expr);
-  }
-}
+  },
+};

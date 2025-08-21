@@ -17,15 +17,15 @@ export class DaysNode extends CompNode {
   }
 }
 
-export class DaysNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Days';
+export const DaysNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'Days',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new DaysNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -36,5 +36,5 @@ export class DaysNodeFactory implements DerivedNodeFactory, WritableNodeFactory 
     return new DaysNode(
       Expression.literal(Result.complete(new Days(parseInt(value, 10))))
     );
-  }
-}
+  },
+};

@@ -36,7 +36,7 @@ export class TinNode extends CompNode {
   }
 }
 
-export const tinNodeFactory: CompNodeFactory = {
+export const TinNodeFactory: CompNodeFactory = {
   typeName: 'TIN',
   fromDerivedConfig(
     e: { value?: string; writable?: boolean; options?: { name: string, value: string }[] },

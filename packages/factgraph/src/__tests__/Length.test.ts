@@ -9,15 +9,9 @@ describe('Length', () => {
   const factual = new Factual(new FactDictionary());
 
   it('returns the length of a string', () => {
-    const node = LengthFactory.fromDerivedConfig(
-      {
-        typeName: 'Length',
-        children: [
-          new StringNode(Expression.literal(Result.complete('hello'))),
-        ],
-      },
-      factual.graph
-    );
+    const node = LengthFactory.create([
+      new StringNode(Expression.literal(Result.complete('hello'))),
+    ]);
     expect(node.get(factual)).toEqual(Result.complete(5));
   });
 });

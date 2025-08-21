@@ -1,7 +1,11 @@
 import { CompNode, CompNodeFactory } from './CompNode';
 import { StringNode } from './StringNode';
 import { IntNode } from './IntNode';
-import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
+import { UnaryOperator } from '../operators/UnaryOperator';
+import {
+  applyUnary,
+  explainUnary,
+} from '../operators/UnaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
 import { UnaryExpression } from '../expressions/UnaryExpression';
@@ -24,8 +28,8 @@ class LengthOperator implements UnaryOperator<number, string> {
 
 const lengthOperator = new LengthOperator();
 
-export class LengthFactory implements CompNodeFactory {
-  readonly typeName = 'Length';
+export const LengthFactory: CompNodeFactory = {
+  typeName: 'Length',
 
   fromDerivedConfig(
     e: any,
@@ -38,10 +42,14 @@ export class LengthFactory implements CompNodeFactory {
     if (!(node instanceof StringNode)) {
       throw new Error('Length can only operate on a StringNode');
     }
-    return this.create(node);
-  }
+    return this.create([node]);
+  },
 
-  create(node: StringNode): IntNode {
+  create(nodes: CompNode[]): IntNode {
+    const node = nodes[0];
+    if (!(node instanceof StringNode)) {
+      throw new Error('Length can only operate on a StringNode');
+    }
     return new IntNode(new UnaryExpression(node.expr, lengthOperator));
-  }
-}
+  },
+};

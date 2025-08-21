@@ -195,10 +195,7 @@ export const AddFactory: CompNodeFactory = {
     factual: Factual,
     factDictionary: FactDictionary
   ): CompNode {
-    const addends = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, factual.graph)
-    );
-    return this.create(addends);
+    throw new Error('fromDerivedConfig not implemented for Add');
   },
 
   create(nodes: CompNode[]): CompNode {

@@ -10,32 +10,25 @@ describe('AsDecimalString', () => {
   const factual = new Factual(new FactDictionary());
 
   it('converts a rational to a decimal string with default scale', () => {
-    const node = AsDecimalStringFactory.fromDerivedConfig(
-      {
-        typeName: 'AsDecimalString',
-        children: [
-          new RationalNode(
-            Expression.literal(Result.complete(new Rational(1, 3)))
-          ),
-        ],
-      },
-      factual.graph
+    const node = AsDecimalStringFactory.create(
+      [
+        new RationalNode(
+          Expression.literal(Result.complete(new Rational(1, 3)))
+        ),
+      ],
+      {} as any
     );
     expect(node.get(factual)).toEqual(Result.complete('0.33'));
   });
 
   it('converts a rational to a decimal string with specified scale', () => {
-    const node = AsDecimalStringFactory.fromDerivedConfig(
-      {
-        typeName: 'AsDecimalString',
-        options: { scale: 4 },
-        children: [
-          new RationalNode(
-            Expression.literal(Result.complete(new Rational(1, 3)))
-          ),
-        ],
-      },
-      factual.graph
+    const node = AsDecimalStringFactory.create(
+      [
+        new RationalNode(
+          Expression.literal(Result.complete(new Rational(1, 3)))
+        ),
+      ],
+      { scale: 4 }
     );
     expect(node.get(factual)).toEqual(Result.complete('0.3333'));
   });

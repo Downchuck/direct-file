@@ -16,15 +16,15 @@ export class StringNode extends CompNode {
   }
 }
 
-export class StringNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'String';
+export const StringNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'String',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new StringNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -32,5 +32,5 @@ export class StringNodeFactory implements DerivedNodeFactory, WritableNodeFactor
   ): CompNode {
     const value = e.value || '';
     return new StringNode(Expression.literal(Result.complete(value)));
-  }
-}
+  },
+};

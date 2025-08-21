@@ -12,10 +12,7 @@ describe('EnumOptionsSize', () => {
     const optionsNode = new EnumOptionsNode(
       Expression.literal(Result.complete(options))
     );
-    const sizeNode = EnumOptionsSizeFactory.fromDerivedConfig(
-      { typeName: 'EnumOptionsSize', children: [optionsNode] },
-      factual.graph
-    );
+    const sizeNode = EnumOptionsSizeFactory.create([optionsNode]);
     const result = sizeNode.get(factual);
     expect(result.get).toBe(3);
   });

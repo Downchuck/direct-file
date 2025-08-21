@@ -9,16 +9,10 @@ describe('Subtract', () => {
   const factual = new Factual(new FactDictionary());
 
   it('subtracts two integers', () => {
-    const node = SubtractFactory.fromDerivedConfig(
-      {
-        typeName: 'Subtract',
-        children: [
-          new IntNode(Expression.literal(Result.complete(5))),
-          new IntNode(Expression.literal(Result.complete(2))),
-        ],
-      },
-      factual.graph
-    );
+    const node = SubtractFactory.create([
+      new IntNode(Expression.literal(Result.complete(5))),
+      new IntNode(Expression.literal(Result.complete(2))),
+    ]);
     expect(node.get(factual)).toEqual(Result.complete(3));
   });
 });

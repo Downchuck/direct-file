@@ -66,18 +66,15 @@ class AllOperator implements ReduceOperator<boolean> {
 
 const allOperator = new AllOperator();
 
-export class AllFactory implements CompNodeFactory {
-  readonly typeName = 'All';
+export const AllFactory: CompNodeFactory = {
+  typeName: 'All',
 
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
-    const children = e.children.map((child: any) =>
-      compNodeRegistry.fromDerivedConfig(child, graph)
-    );
-    return this.create(children);
-  }
+    throw new Error('fromDerivedConfig not implemented for All');
+  },
 
   create(nodes: CompNode[]): BooleanNode {
     if (nodes.every((n) => n instanceof BooleanNode)) {
@@ -85,8 +82,8 @@ export class AllFactory implements CompNodeFactory {
       return new BooleanNode(new ReduceExpression(expressions, allOperator));
     }
     throw new Error('All children of <All> must be BooleanNodes');
-  }
-}
+  },
+};
 
 export const All = (nodes: BooleanNode[]): BooleanNode => {
   return new AllFactory().create(nodes);

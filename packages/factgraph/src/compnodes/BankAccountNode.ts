@@ -14,10 +14,10 @@ export class BankAccountNode extends CompNode {
   }
 }
 
-export class BankAccountNodeFactory implements WritableNodeFactory {
-  readonly typeName = "BankAccount";
+export const BankAccountNodeFactory: WritableNodeFactory = {
+  typeName: "BankAccount",
 
   fromWritableConfig(e: any, graph: Graph): CompNode {
     return new BankAccountNode(Expression.writable(Result.incomplete()));
-  }
-}
+  },
+};

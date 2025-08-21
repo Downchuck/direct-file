@@ -53,8 +53,8 @@ const rationalRationalBinaryOperator = new GreaterThanOrEqualBinaryOperator(
 );
 const dayDayBinaryOperator = new GreaterThanOrEqualBinaryOperator(dayGte);
 
-export class GreaterThanOrEqualFactory implements CompNodeFactory {
-  readonly typeName = 'GreaterThanOrEqual';
+export const GreaterThanOrEqualFactory: CompNodeFactory = {
+  typeName: 'GreaterThanOrEqual',
 
   fromDerivedConfig(
     e: any,
@@ -68,10 +68,11 @@ export class GreaterThanOrEqualFactory implements CompNodeFactory {
       e.children.find((c: any) => c.key === 'Right').children[0],
       graph
     );
-    return this.create(lhs, rhs);
-  }
+    return this.create([lhs, rhs]);
+  },
 
-  create(lhs: CompNode, rhs: CompNode): CompNode {
+  create(nodes: CompNode[]): CompNode {
+    const [lhs, rhs] = nodes;
     if (lhs instanceof IntNode && rhs instanceof IntNode) {
       return new BooleanNode(
         new BinaryExpression(lhs.expr, rhs.expr, intIntBinaryOperator)
@@ -94,10 +95,10 @@ export class GreaterThanOrEqualFactory implements CompNodeFactory {
     if (lhs instanceof DayNode && rhs instanceof DayNode) {
       return new BooleanNode(
         new BinaryExpression(lhs.expr, rhs.expr, dayDayBinaryOperator)
-      );
+            );
     }
     throw new Error(
       `cannot compare a ${lhs.constructor.name} and a ${rhs.constructor.name}`
     );
-  }
-}
+  },
+};

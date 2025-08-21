@@ -56,8 +56,8 @@ class SumOperator<T extends number | Dollar | Rational>
   }
 }
 
-export class CollectionSumFactory implements DerivedNodeFactory {
-  readonly typeName = 'CollectionSum';
+export const CollectionSumFactory: DerivedNodeFactory = {
+  typeName: 'CollectionSum',
 
   create(operands: CompNode[]): CompNode {
     const node = operands[0];
@@ -91,7 +91,7 @@ export class CollectionSumFactory implements DerivedNodeFactory {
       );
     }
     throw new Error(`cannot sum a ${node.constructor.name}`);
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -99,5 +99,5 @@ export class CollectionSumFactory implements DerivedNodeFactory {
   ): CompNode {
     const childNode = getChildNode(e, graph);
     return this.create([childNode]);
-  }
-}
+  },
+};

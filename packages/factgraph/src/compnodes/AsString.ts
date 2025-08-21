@@ -5,7 +5,11 @@ import { EmailAddressNode } from './EmailAddressNode';
 import { DollarNode } from './DollarNode';
 import { EinNode } from './EinNode';
 import { TinNode } from './TinNode';
-import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
+import { UnaryOperator } from '../operators/UnaryOperator';
+import {
+  applyUnary,
+  explainUnary,
+} from '../operators/UnaryOperatorHelpers';
 import { Expression } from '../Expression';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
@@ -81,8 +85,30 @@ const dollarOperator = new DollarAsStringOperator();
 const einOperator = new EinAsStringOperator();
 const tinOperator = new TinAsStringOperator();
 
-export class AsStringFactory implements CompNodeFactory {
-  readonly typeName = 'AsString';
+const create = (child: CompNode): CompNode => {
+  if (child instanceof EnumNode) {
+    return new StringNode(new UnaryExpression(child.expr, enumOperator));
+  }
+  if (child instanceof EmailAddressNode) {
+    return new StringNode(
+      new UnaryExpression(child.expr, emailAddressOperator)
+    );
+  }
+  if (child instanceof DollarNode) {
+    return new StringNode(new UnaryExpression(child.expr, dollarOperator));
+  }
+  if (child instanceof EinNode) {
+    return new StringNode(new UnaryExpression(child.expr, einOperator));
+  }
+  if (child instanceof TinNode) {
+    return new StringNode(new UnaryExpression(child.expr, tinOperator));
+  }
+
+  throw new Error(`cannot execute AsString on a ${child.constructor.name}`);
+};
+
+export const AsStringFactory: CompNodeFactory = {
+  typeName: 'AsString',
 
   fromDerivedConfig(
     e: any,
@@ -93,23 +119,10 @@ export class AsStringFactory implements CompNodeFactory {
       childConfig,
       graph
     );
+    return create(child);
+  },
 
-    if (child instanceof EnumNode) {
-      return new StringNode(new UnaryExpression(child.expr, enumOperator));
-    }
-    if (child instanceof EmailAddressNode) {
-        return new StringNode(new UnaryExpression(child.expr, emailAddressOperator));
-    }
-    if (child instanceof DollarNode) {
-        return new StringNode(new UnaryExpression(child.expr, dollarOperator));
-    }
-    if (child instanceof EinNode) {
-        return new StringNode(new UnaryExpression(child.expr, einOperator));
-    }
-    if (child instanceof TinNode) {
-        return new StringNode(new UnaryExpression(child.expr, tinOperator));
-    }
-
-    throw new Error(`cannot execute AsString on a ${child.constructor.name}`);
-  }
-}
+  create(nodes: CompNode[]): CompNode {
+    return create(nodes[0]);
+  },
+};

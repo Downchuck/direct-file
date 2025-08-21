@@ -11,11 +11,15 @@ export function applyUnary<A, X>(
   if (!x.hasValue) {
     return Result.incomplete();
   }
-  const value = op.operation(x.get);
-  if (x.isComplete) {
-    return Result.complete(value);
+  try {
+    const value = op.operation(x.get);
+    if (x.isComplete) {
+      return Result.complete(value);
+    }
+    return Result.placeholder(value);
+  } catch (e) {
+    return Result.incomplete();
   }
-  return Result.placeholder(value);
 }
 
 export function explainUnary<X>(

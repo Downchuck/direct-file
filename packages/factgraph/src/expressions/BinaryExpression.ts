@@ -1,5 +1,6 @@
 import { Expression } from '../Expression';
-import { BinaryOperator, thunkBinary } from '../operators/BinaryOperator';
+import { BinaryOperator } from '../operators/BinaryOperator';
+import { thunkBinary } from '../operators/BinaryOperatorHelpers';
 import { Result } from '../types';
 import { Factual } from '../Factual';
 import { Explanation } from '../Explanation';
@@ -19,7 +20,7 @@ export class BinaryExpression<A, L, R> extends Expression<A> {
       this.lhs.getThunk(factual),
       this.rhs.getThunk(factual)
     );
-    return thunk.get;
+    return thunk.value;
   }
 
   override explain(factual: Factual): Explanation {

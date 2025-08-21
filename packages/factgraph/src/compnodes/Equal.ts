@@ -4,11 +4,11 @@ import {
 } from './CompNode';
 import { BooleanNode } from './BooleanNode';
 import { Expression } from '../Expression';
+import { BinaryOperator } from '../operators/BinaryOperator';
 import {
-  BinaryOperator,
   applyBinary,
   explainBinary,
-} from '../operators/BinaryOperator';
+} from '../operators/BinaryOperatorHelpers';
 import { BinaryExpression } from '../expressions/BinaryExpression';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
@@ -33,9 +33,10 @@ class EqualOperator implements BinaryOperator<boolean, any, any> {
   }
 }
 
-export class EqualFactory implements CompNodeFactory {
-  readonly typeName = 'Equal';
-  private readonly operator = new EqualOperator();
+const operator = new EqualOperator();
+
+export const EqualFactory: CompNodeFactory = {
+  typeName: 'Equal',
 
   fromDerivedConfig(
     e: any,
@@ -50,10 +51,11 @@ export class EqualFactory implements CompNodeFactory {
       graph
     );
 
-    return this.create(lhs, rhs);
-  }
+    return this.create([lhs, rhs]);
+  },
 
-  create(lhs: CompNode, rhs: CompNode): BooleanNode {
+  create(nodes: CompNode[]): BooleanNode {
+    const [lhs, rhs] = nodes;
     if (lhs.constructor !== rhs.constructor) {
       throw new Error(
         `cannot compare a ${lhs.constructor.name} and a ${rhs.constructor.name}`
@@ -61,7 +63,7 @@ export class EqualFactory implements CompNodeFactory {
     }
 
     return new BooleanNode(
-      new BinaryExpression(lhs.expr, rhs.expr, this.operator)
+      new BinaryExpression(lhs.expr, rhs.expr, operator)
     );
-  }
-}
+  },
+};

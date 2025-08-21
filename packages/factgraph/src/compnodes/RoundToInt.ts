@@ -2,7 +2,11 @@ import { CompNode, CompNodeFactory } from './CompNode';
 import { DollarNode } from './DollarNode';
 import { IntNode } from './IntNode';
 import { Dollar } from '../types/Dollar';
-import { UnaryOperator, applyUnary, explainUnary } from '../operators/UnaryOperator';
+import { UnaryOperator } from '../operators/UnaryOperator';
+import {
+  applyUnary,
+  explainUnary,
+} from '../operators/UnaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
 import { UnaryExpression } from '../expressions/UnaryExpression';
@@ -25,8 +29,8 @@ class RoundToIntOperator implements UnaryOperator<number, Dollar> {
 
 const roundToIntOperator = new RoundToIntOperator();
 
-export class RoundToIntFactory implements CompNodeFactory {
-  readonly typeName = 'RoundToInt';
+export const RoundToIntFactory: CompNodeFactory = {
+  typeName: 'RoundToInt',
 
   fromDerivedConfig(
     e: any,
@@ -39,10 +43,14 @@ export class RoundToIntFactory implements CompNodeFactory {
     if (!(amount instanceof DollarNode)) {
       throw new Error('RoundToInt can only operate on a DollarNode');
     }
-    return this.create(amount);
-  }
+    return this.create([amount]);
+  },
 
-  create(amount: DollarNode): IntNode {
+  create(nodes: CompNode[]): IntNode {
+    const amount = nodes[0];
+    if (!(amount instanceof DollarNode)) {
+      throw new Error('RoundToInt can only operate on a DollarNode');
+    }
     return new IntNode(new UnaryExpression(amount.expr, roundToIntOperator));
-  }
-}
+  },
+};

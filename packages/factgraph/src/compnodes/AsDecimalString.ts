@@ -31,8 +31,12 @@ class RationalAsDecimalString
 export const AsDecimalStringFactory: CompNodeFactory = {
   typeName: 'AsDecimalString',
   fromDerivedConfig(e: any, graph: Graph): CompNode {
-    const child = e.children[0];
-    const scale = e.options?.scale ?? 2;
+    throw new Error('fromDerivedConfig not implemented for AsDecimalString');
+  },
+
+  create(nodes: CompNode[], options: { scale: number }): CompNode {
+    const child = nodes[0];
+    const scale = options?.scale ?? 2;
     return new StringNode(
       new UnaryExpression(
         child.expr as Expression<Rational>,

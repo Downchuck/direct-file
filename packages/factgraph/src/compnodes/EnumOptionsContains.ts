@@ -29,8 +29,8 @@ class EnumOptionsContainsOperator implements BinaryOperator<boolean, string[], s
 
 const operator = new EnumOptionsContainsOperator();
 
-export class EnumOptionsContainsFactory implements CompNodeFactory {
-  readonly typeName = 'EnumOptionsContains';
+export const EnumOptionsContainsFactory: CompNodeFactory = {
+  typeName: 'EnumOptionsContains',
 
   fromDerivedConfig(
     e: any,
@@ -44,15 +44,16 @@ export class EnumOptionsContainsFactory implements CompNodeFactory {
       e.children.find((c: any) => c.key === 'Right').children[0],
       graph
     );
-    return this.create(lhs, rhs);
-  }
+    return this.create([lhs, rhs]);
+  },
 
-  create(lhs: CompNode, rhs: CompNode): CompNode {
+  create(nodes: CompNode[]): CompNode {
+    const [lhs, rhs] = nodes;
     if (lhs instanceof EnumOptionsNode && rhs instanceof StringNode) {
       return new BooleanNode(new BinaryExpression(lhs.expr, rhs.expr, operator));
     }
     throw new Error(
       `cannot check if a ${lhs.constructor.name} contains a ${rhs.constructor.name}`
     );
-  }
-}
+  },
+};

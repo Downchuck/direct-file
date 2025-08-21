@@ -67,15 +67,15 @@ export class AddressNode extends CompNode {
   }
 }
 
-export class AddressNodeFactory implements DerivedNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Address';
+export const AddressNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
+  typeName: 'Address',
 
   fromWritableConfig(
     e: any,
     graph: Graph,
   ): CompNode {
     return new AddressNode(Expression.writable(Result.incomplete()));
-  }
+  },
 
   fromDerivedConfig(
     e: any,
@@ -87,5 +87,5 @@ export class AddressNodeFactory implements DerivedNodeFactory, WritableNodeFacto
       return new AddressNode(Expression.literal(Result.complete(address)));
     }
     return new AddressNode(Expression.literal(Result.incomplete()));
-  }
-}
+  },
+};

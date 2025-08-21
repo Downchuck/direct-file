@@ -1,26 +1,22 @@
 import { RoundFactory } from '../compnodes/Round';
-import { RationalNode } from '../compnodes/RationalNode';
+import { DollarNode } from '../compnodes/DollarNode';
 import { Result } from '../types';
 import { Factual } from '../Factual';
 import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
-import { Rational } from '../types/Rational';
+import { Dollar } from '../types/Dollar';
 
 describe('Round', () => {
   const factual = new Factual(new FactDictionary());
 
-  it('rounds a rational to the nearest integer', () => {
-    const node = RoundFactory.fromDerivedConfig(
-      {
-        typeName: 'Round',
-        children: [
-          new RationalNode(
-            Expression.literal(Result.complete(new Rational(5, 2)))
-          ),
-        ],
-      },
-      factual.graph
+  it('rounds a dollar amount', () => {
+    const node = RoundFactory.create([
+      new DollarNode(
+        Expression.literal(Result.complete(Dollar.fromNumber(2.5)))
+      ),
+    ]);
+    expect(node.get(factual)).toEqual(
+      Result.complete(Dollar.fromNumber(3))
     );
-    expect(node.get(factual)).toEqual(Result.complete(3));
   });
 });

@@ -14,17 +14,17 @@ export class BooleanNode extends CompNode {
   }
 }
 
-export class BooleanNodeFactory implements CompNodeFactory, WritableNodeFactory {
-  readonly typeName = 'Boolean';
+export const BooleanNodeFactory: CompNodeFactory & WritableNodeFactory = {
+  typeName: 'Boolean',
 
   fromDerivedConfig(
     e: any,
     graph: Graph
   ): CompNode {
     return new BooleanNode(Expression.literal(Result.complete(e.value)));
-  }
+  },
 
   fromWritableConfig(): CompNode {
     return new BooleanNode(Expression.writable(Result.incomplete()));
-  }
-}
+  },
+};

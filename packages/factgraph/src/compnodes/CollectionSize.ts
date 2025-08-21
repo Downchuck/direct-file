@@ -36,6 +36,11 @@ export const CollectionSizeFactory: CompNodeFactory = {
     graph: Graph
   ): CompNode {
     const childNode = getChildNode(e, graph);
+    return this.create([childNode]);
+  },
+
+  create(nodes: CompNode[]): CompNode {
+    const childNode = nodes[0];
     if (childNode instanceof CollectionNode) {
       return new IntNode(
         new UnaryExpression(childNode.expr, CollectionSizeOperator)

@@ -1,10 +1,10 @@
 import { CompNode, CompNodeFactory } from './CompNode';
 import { BooleanNode } from './BooleanNode';
+import { BinaryOperator } from '../operators/BinaryOperator';
 import {
-  BinaryOperator,
   applyBinary,
   explainBinary,
-} from '../operators/BinaryOperator';
+} from '../operators/BinaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';
 import { BinaryExpression } from '../expressions/BinaryExpression';
@@ -34,8 +34,8 @@ class NotEqualBinaryOperator implements BinaryOperator<boolean, any, any> {
 
 const notEqualOperator = new NotEqualBinaryOperator();
 
-export class NotEqualFactory implements CompNodeFactory {
-  readonly typeName = 'NotEqual';
+export const NotEqualFactory: CompNodeFactory = {
+  typeName: 'NotEqual',
 
   fromDerivedConfig(
     e: any,
@@ -49,10 +49,11 @@ export class NotEqualFactory implements CompNodeFactory {
       e.children.find((c: any) => c.key === 'Right').children[0],
       graph
     );
-    return this.create(lhs, rhs);
-  }
+    return this.create([lhs, rhs]);
+  },
 
-  create(lhs: CompNode, rhs: CompNode): CompNode {
+  create(nodes: CompNode[]): CompNode {
+    const [lhs, rhs] = nodes;
     if (lhs.constructor.name !== rhs.constructor.name) {
       throw new Error(
         `cannot compare a ${lhs.constructor.name} and a ${rhs.constructor.name}`
@@ -61,5 +62,5 @@ export class NotEqualFactory implements CompNodeFactory {
     return new BooleanNode(
       new BinaryExpression(lhs.expr, rhs.expr, notEqualOperator)
     );
-  }
-}
+  },
+};
