@@ -19,7 +19,7 @@ export class AddressNode extends CompNode {
     return new AddressNode(expr);
   }
 
-  override extract(key: PathItem): CompNode | undefined {
+  override extract(key: PathItem, factual: Factual): CompNode | undefined {
     if (key.type === 'child' && key.key === 'streetAddress') {
       return new StringNode(
         this.expr.map((a: Result<Address>) =>

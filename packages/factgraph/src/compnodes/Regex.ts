@@ -1,7 +1,11 @@
 import { CompNode, CompNodeFactory } from './CompNode';
 import { StringNode } from './StringNode';
 import { BooleanNode } from './BooleanNode';
-import { BinaryOperator, applyBinary, explainBinary } from '../operators/BinaryOperator';
+import { BinaryOperator } from '../operators/BinaryOperator';
+import {
+  applyBinary,
+  explainBinary,
+} from '../operators/BinaryOperatorHelpers';
 import { Expression } from '../Expression';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';

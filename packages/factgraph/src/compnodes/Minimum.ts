@@ -27,28 +27,23 @@ export class MinimumOperator<A> implements AggregateOperator<A, A> {
     if (list.length === 0) {
       return Result.incomplete();
     }
-    const head = list[0].value;
-    if (!head.hasValue) {
-      return Result.incomplete();
-    }
-    let min = head.get;
-    let isComplete = head.isComplete;
-
-    for (let i = 1; i < list.length; i++) {
-      const current = list[i].value;
-      if (!current.hasValue) {
+    const results = list.map(t => t.value);
+    if (results.some(r => !r.hasValue)) {
         return Result.incomplete();
-      }
-      if (this.lt(current.get, min)) {
-        min = current.get;
-      }
-      isComplete = isComplete && current.isComplete;
     }
 
-    if (isComplete) {
-      return Result.complete(min);
+    const values = results.map(r => r.get);
+    let min = values[0];
+    for (let i = 1; i < values.length; i++) {
+        if (this.lt(values[i], min)) {
+            min = values[i];
+        }
+    }
+
+    if (results.every(r => r.isComplete)) {
+        return Result.complete(min);
     } else {
-      return Result.placeholder(min);
+        return Result.placeholder(min);
     }
   }
 

@@ -23,6 +23,7 @@ export class MaximumOperator<A> implements AggregateOperator<A, A> {
   constructor(private readonly gt: (x: A, y: A) => boolean) {}
 
   apply(vect: MaybeVector<Thunk<Result<A>>>): Result<A> {
+    console.log('MaximumOperator.apply', vect);
     const list = vect.toList;
     if (list.length === 0) {
       return Result.incomplete();
@@ -40,7 +41,7 @@ export class MaximumOperator<A> implements AggregateOperator<A, A> {
         }
     }
 
-    if (results.every(r => r.isComplete)) {
+    if (vect.isComplete) {
         return Result.complete(max);
     } else {
         return Result.placeholder(max);

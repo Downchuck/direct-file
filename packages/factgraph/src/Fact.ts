@@ -176,7 +176,7 @@ export class Fact {
   }
 
   private makeExtract(key: PathItem): Fact | undefined {
-      const extractedNode = this.value.extract(key);
+      const extractedNode = this.value.extract(key, new Factual(this.graph.dictionary));
       if (extractedNode) {
           return new Fact(extractedNode, this.path.append(key), [], this.graph, this, {} as any);
       }

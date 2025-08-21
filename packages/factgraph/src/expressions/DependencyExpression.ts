@@ -16,6 +16,7 @@ export class DependencyExpression<T> extends Expression<T> {
 
   public override getVector(factual: Factual): MaybeVector<Thunk<Result<T>>> {
     const factVect = factual.getVect(this.path);
+    console.log('factVect', factVect);
     return factVect.map(result => {
         if (result.isComplete) {
             const fact = result.value;

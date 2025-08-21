@@ -64,7 +64,7 @@ export abstract class CompNode {
     throw new Error('Not implemented');
   }
 
-  public extract(key: PathItem): CompNode | undefined {
+  public extract(key: PathItem, factual: Factual): CompNode | undefined {
     return undefined;
   }
 
