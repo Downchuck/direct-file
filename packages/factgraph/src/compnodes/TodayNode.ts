@@ -1,17 +1,23 @@
-import { CompNode, CompNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { DayNode } from './DayNode';
-import { Expression } from '../Expression';
-import { Result } from '../types';
+import { IntNode } from './IntNode';
+import { getChildNode } from '../util/getChildNode';
 import { Graph } from '../Graph';
-import { Day } from '../types/Day';
+import { TodayExpression } from '../expressions/TodayExpression';
 
-export const TodayNodeFactory: CompNodeFactory = {
+export const TodayNodeFactory: DerivedNodeFactory = {
   typeName: 'Today',
 
   fromDerivedConfig(
     e: any,
     graph: Graph,
   ): CompNode {
-    return new DayNode(Expression.literal(Result.complete(new Day())));
+    const offsetNode = getChildNode(e.children[0], graph);
+
+    if (!(offsetNode instanceof IntNode)) {
+      throw new Error('TodayNode input must be an IntNode');
+    }
+
+    return new DayNode(new TodayExpression(offsetNode.expr));
   },
 };

@@ -1,26 +1,47 @@
-import { RegexFactory } from '../compnodes/Regex';
-import { StringNode } from '../compnodes/StringNode';
-import { Expression } from '../Expression';
+import '../compnodes/register-factories';
+import { compNodeRegistry } from '../compnodes/registry';
 import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-import { Result } from '../types';
+import { Graph } from '../Graph';
+import { Result } from '../types/Result';
 
 describe('Regex', () => {
   const factual = new Factual(new FactDictionary());
+  const graph = new Graph(factual);
 
-  it('returns true if the string matches the regex', () => {
-    const node = RegexFactory.create([
-      new StringNode(Expression.literal(Result.complete('a'))),
-      new StringNode(Expression.literal(Result.complete('a'))),
-    ]);
+  it('returns true when the input matches the pattern', () => {
+    const node = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'Regex',
+        Input: {
+          typeName: 'String',
+          value: 'hello world',
+        },
+        Pattern: {
+          typeName: 'String',
+          value: '^hello',
+        },
+      },
+      graph
+    );
     expect(node.get(factual)).toEqual(Result.complete(true));
   });
 
-  it('returns false if the string does not match the regex', () => {
-    const node = RegexFactory.create([
-      new StringNode(Expression.literal(Result.complete('a'))),
-      new StringNode(Expression.literal(Result.complete('b'))),
-    ]);
+  it('returns false when the input does not match the pattern', () => {
+    const node = compNodeRegistry.fromDerivedConfig(
+      {
+        typeName: 'Regex',
+        Input: {
+          typeName: 'String',
+          value: 'hello world',
+        },
+        Pattern: {
+          typeName: 'String',
+          value: 'goodbye',
+        },
+      },
+      graph
+    );
     expect(node.get(factual)).toEqual(Result.complete(false));
   });
 });
