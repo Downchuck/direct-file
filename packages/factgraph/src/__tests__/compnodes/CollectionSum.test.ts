@@ -1,5 +1,5 @@
-import { CollectionSumFactory } from '../CollectionSum';
-import { DependencyNode } from '../Dependency';
+import { CollectionSumFactory } from '../../compnodes/CollectionSum';
+import { DependencyNode } from '../../compnodes/Dependency';
 import { Factual } from '../../Factual';
 import { FactDictionary } from '../../FactDictionary';
 import { IntNode } from '../IntNode';

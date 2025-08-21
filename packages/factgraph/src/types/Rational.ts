@@ -100,4 +100,9 @@ export class Rational {
   }
 
   public static readonly zero = new Rational(0, 1);
+
+  public toDecimal(scale: number): string {
+    const value = this.n / this.d;
+    return value.toFixed(scale);
+  }
 }

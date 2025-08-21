@@ -122,8 +122,6 @@ export const AnyFactory: CompNodeFactory = {
   },
 };
 
-const anyCompNodeFactory = new AnyFactory();
-
 export const Any = (nodes: BooleanNode[]): BooleanNode => {
-  return anyCompNodeFactory.create(nodes);
+  return AnyFactory.create(nodes) as BooleanNode;
 };

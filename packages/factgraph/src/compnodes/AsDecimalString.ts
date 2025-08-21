@@ -1,9 +1,9 @@
 import { UnaryExpression } from '../expressions/UnaryExpression';
+import { UnaryOperator } from '../operators/UnaryOperator';
 import {
   applyUnary,
   explainUnary,
-  UnaryOperator,
-} from '../operators/UnaryOperator';
+} from '../operators/UnaryOperatorHelpers';
 import { Factual } from '../Factual';
 import { Rational } from '../types/Rational';
 import { Result } from '../types/Result';
@@ -34,7 +34,7 @@ export const AsDecimalStringFactory: CompNodeFactory = {
     throw new Error('fromDerivedConfig not implemented for AsDecimalString');
   },
 
-  create(nodes: CompNode[], options: { scale: number }): CompNode {
+  create(nodes: CompNode[], options?: { scale: number }): CompNode {
     const child = nodes[0];
     const scale = options?.scale ?? 2;
     return new StringNode(

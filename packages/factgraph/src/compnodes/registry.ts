@@ -7,6 +7,7 @@ class CompNodeRegistry {
   private factories = new Map<string, CompNodeFactory>();
 
   public register(factory: CompNodeFactory) {
+    console.log('registering', factory.typeName);
     this.factories.set(factory.typeName, factory);
   }
 

@@ -20,7 +20,7 @@ export class DependencyExpression<T> extends Expression<T> {
         if (result.isComplete) {
             const fact = result.value;
             return new Thunk(() => {
-                const res = fact.get(factual).values[0];
+                const res = fact.get().values[0];
                 return res;
             });
         } else {

@@ -1,6 +1,6 @@
-import { FilterFactory } from '../Filter';
-import { DependencyNode } from '../Dependency';
-import { TrueFactory } from '../True';
+import { FilterFactory } from '../../compnodes/Filter';
+import { DependencyNode } from '../../compnodes/Dependency';
+import { TrueFactory } from '../../compnodes/True';
 import { Factual } from '../../Factual';
 import { FactDictionary } from '../../FactDictionary';
 import { Collection } from '../../types/Collection';

@@ -24,6 +24,10 @@ export const SwitchFactory: CompNodeFactory = {
         return [when, then];
       });
 
+    return this.create(cases);
+  },
+
+  create(cases: [CompNode, CompNode][]): CompNode {
     if (cases.length === 0) {
       throw new Error('Switch must have at least one child node');
     }

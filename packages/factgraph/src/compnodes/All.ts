@@ -86,5 +86,5 @@ export const AllFactory: CompNodeFactory = {
 };
 
 export const All = (nodes: BooleanNode[]): BooleanNode => {
-  return new AllFactory().create(nodes);
+  return AllFactory.create(nodes) as BooleanNode;
 };

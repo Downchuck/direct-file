@@ -1,6 +1,10 @@
 import { CompNode, CompNodeFactory } from './CompNode';
 import { StringNode } from './StringNode';
-import { ReduceOperator, applyReduce, explainReduce } from '../operators/ReduceOperator';
+import { ReduceOperator } from '../operators/ReduceOperator';
+import {
+  applyReduce,
+  explainReduce,
+} from '../operators/ReduceOperatorHelpers';
 import { Expression } from '../Expression';
 import { Factual } from '../Factual';
 import { Graph } from '../Graph';

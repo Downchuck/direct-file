@@ -16,7 +16,7 @@ describe('AsDecimalString', () => {
           Expression.literal(Result.complete(new Rational(1, 3)))
         ),
       ],
-      {} as any
+      {}
     );
     expect(node.get(factual)).toEqual(Result.complete('0.33'));
   });

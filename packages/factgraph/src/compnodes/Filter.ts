@@ -45,8 +45,8 @@ class FilterOperator implements CollectOperator<Collection<any>, boolean> {
 
 const filterOperator = new FilterOperator();
 
-export class FilterFactory implements CompNodeFactory {
-  readonly typeName = 'Filter';
+export const FilterFactory: CompNodeFactory = {
+  typeName: 'Filter',
 
   fromDerivedConfig(
     e: any,
@@ -75,5 +75,5 @@ export class FilterFactory implements CompNodeFactory {
     );
 
     return new CollectionNode(expression);
-  }
-}
+  },
+};

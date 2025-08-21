@@ -26,7 +26,7 @@ class LesserOfOperator<T> implements ReduceOperator<T> {
   apply(head: Result<T>, tail: Thunk<Result<T>>[]): Result<T> {
     return tail.reduce(
       (acc, thunk) =>
-        acc.flatMap((a) => thunk.get.map((b) => this.reduce(a, b))),
+        acc.flatMap((a) => thunk.value.map((b) => this.reduce(a, b))),
       head,
     );
   }

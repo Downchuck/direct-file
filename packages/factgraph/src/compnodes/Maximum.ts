@@ -27,28 +27,23 @@ export class MaximumOperator<A> implements AggregateOperator<A, A> {
     if (list.length === 0) {
       return Result.incomplete();
     }
-    const head = list[0].value;
-    if (!head.hasValue) {
-      return Result.incomplete();
-    }
-    let max = head.get;
-    let isComplete = head.isComplete;
-
-    for (let i = 1; i < list.length; i++) {
-      const current = list[i].value;
-      if (!current.hasValue) {
+    const results = list.map(t => t.value);
+    if (results.some(r => !r.hasValue)) {
         return Result.incomplete();
-      }
-      if (this.gt(current.get, max)) {
-        max = current.get;
-      }
-      isComplete = isComplete && current.isComplete;
     }
 
-    if (isComplete) {
-      return Result.complete(max);
+    const values = results.map(r => r.get);
+    let max = values[0];
+    for (let i = 1; i < values.length; i++) {
+        if (this.gt(values[i], max)) {
+            max = values[i];
+        }
+    }
+
+    if (results.every(r => r.isComplete)) {
+        return Result.complete(max);
     } else {
-      return Result.placeholder(max);
+        return Result.placeholder(max);
     }
   }
 
