@@ -2,39 +2,20 @@ import { Expression } from '../Expression';
 import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { Days } from '../types/Days';
-import { Result } from '../types/Result';
+import { Factual } from '../Factual';
 
-export class DaysNode extends CompNode {
-  public readonly expr: Expression<Days>;
-
-  constructor(expr: Expression<Days>) {
-    super();
-    this.expr = expr;
+export class DaysNode extends CompNode<Days> {
+  constructor(expression: Expression<Days>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<Days>): CompNode {
-    return new DaysNode(expr);
+  public override set(factual: Factual, value: Days): CompNode<Days> {
+    return new DaysNode(Expression.literal(value));
   }
 }
 
 export const DaysNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Days',
-
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new DaysNode(Expression.writable(Result.incomplete()));
-  },
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    // TODO: getOptionValue
-    const value = e.value || '0';
-    return new DaysNode(
-      Expression.literal(Result.complete(new Days(parseInt(value, 10))))
-    );
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new DaysNode(Expression.literal(new Days(0))),
+  fromDerivedConfig: (e: any, graph: Graph) => new DaysNode(Expression.literal(new Days(e.value))),
 };

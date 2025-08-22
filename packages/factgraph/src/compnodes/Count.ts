@@ -8,6 +8,7 @@ import { BooleanNode } from './BooleanNode';
 import { DerivedNode } from '../types/Node';
 import { Expression } from '../Expression';
 import { Graph } from '../Graph';
+import { compNodeRegistry } from './registry';
 
 export class CountOperator implements Operator<boolean, number> {
   apply(thunks: MaybeVector<Thunk<Result<boolean>>>): Result<number> {
@@ -60,10 +61,9 @@ export const CountFactory: DerivedNodeFactory = {
     config: any,
     graph: Graph,
   ): CompNode {
-    // This is a hack, but it works for now.
-    // The children are not in the config, but in the graph.
-    // This is not ideal, but it's how the other nodes work.
-    const children = config.children.map((child: any) => graph.compNode(child));
+    const children = config.children.map((child: any) =>
+      compNodeRegistry.fromDerivedConfig(child, graph)
+    );
     return this.create(children);
   },
 };

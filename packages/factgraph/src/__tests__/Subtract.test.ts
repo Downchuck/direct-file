@@ -1,18 +1,15 @@
-import { SubtractFactory } from '../compnodes/Subtract';
-import { IntNode } from '../compnodes/IntNode';
-import { Result } from '../types';
-import { Factual } from '../Factual';
-import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
+import { Result } from '../types';
+import '../compnodes/register-factories';
 
 describe('Subtract', () => {
-  const factual = new Factual(new FactDictionary());
-
-  it('subtracts two integers', () => {
-    const node = SubtractFactory.create([
-      new IntNode(Expression.literal(Result.complete(5))),
-      new IntNode(Expression.literal(Result.complete(2))),
-    ]);
-    expect(node.get(factual)).toEqual(Result.complete(3));
-  });
+    it('subtracts two integers', () => {
+        const dictionary = new FactDictionary();
+        dictionary.addDefinition({ path: '/a', derived: { typeName: 'Int', value: 5 } });
+        dictionary.addDefinition({ path: '/b', derived: { typeName: 'Int', value: 2 } });
+        dictionary.addDefinition({ path: '/test', derived: { typeName: 'Subtract', children: [['/a'], ['/b']] } });
+        const graph = new Graph(dictionary);
+        expect(graph.get('/test')).toEqual(Result.complete(3));
+    });
 });

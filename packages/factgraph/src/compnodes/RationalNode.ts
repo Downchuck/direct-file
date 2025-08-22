@@ -1,40 +1,21 @@
 import { Expression } from '../Expression';
 import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
-import { Rational } from '../types/Rational';
-import { Result } from '../types/Result';
+import { Factual } from '../Factual';
+import { Rational } from '../types';
 
-export class RationalNode extends CompNode {
-  public readonly expr: Expression<Rational>;
-
-  constructor(expr: Expression<Rational>) {
-    super();
-    this.expr = expr;
+export class RationalNode extends CompNode<Rational> {
+  constructor(expression: Expression<Rational>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<Rational>): CompNode {
-    return new RationalNode(expr);
+  public override set(factual: Factual, value: Rational): CompNode<Rational> {
+    return new RationalNode(Expression.literal(value));
   }
 }
 
 export const RationalNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Rational',
-
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new RationalNode(Expression.writable(Result.incomplete()));
-  },
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    // TODO: getOptionValue
-    const value = e.value || '0/1';
-    return new RationalNode(
-      Expression.literal(Result.complete(Rational.fromString(value)))
-    );
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new RationalNode(Expression.literal(Rational.from(0))),
+  fromDerivedConfig: (e: any, graph: Graph) => new RationalNode(Expression.literal(new Rational(e.value.p, e.value.q))),
 };

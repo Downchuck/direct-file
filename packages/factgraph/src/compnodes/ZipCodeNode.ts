@@ -1,22 +1,21 @@
 import { Expression } from '../Expression';
-import { CompNode, WritableNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
-import { Result } from '../types';
+import { Factual } from '../Factual';
 
-export class ZipCodeNode extends CompNode {
-  constructor(public readonly expr: Expression<string>) {
-    super();
+export class ZipCodeNode extends CompNode<string> {
+  constructor(expression: Expression<string>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<string>): CompNode {
-    return new ZipCodeNode(expr);
+  public override set(factual: Factual, value: string): CompNode<string> {
+    // TODO: Add validation for zip code format
+    return new ZipCodeNode(Expression.literal(value));
   }
 }
 
-export const ZipCodeNodeFactory: WritableNodeFactory = {
+export const ZipCodeNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'ZipCode',
-
-  fromWritableConfig(e: any, graph: Graph): CompNode {
-    return new ZipCodeNode(Expression.writable(Result.incomplete()));
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new ZipCodeNode(Expression.literal('')),
+  fromDerivedConfig: (e: any, graph: Graph) => new ZipCodeNode(Expression.literal(e.value ?? '')),
 };

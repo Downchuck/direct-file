@@ -1,36 +1,29 @@
 import { Result } from '../types/Result';
-import { Thunk } from '../Thunk';
 import { Explanation, opWithInclusiveChildren } from '../Explanation';
 import { Expression } from '../Expression';
 import { Factual } from '../Factual';
 import { ReduceOperator } from './ReduceOperator';
 
-export function applyReduce<A>(
-  op: ReduceOperator<A>,
-  head: Result<A>,
-  tail: Thunk<Result<A>>[]
-): Result<A> {
-  let acc = head;
-  for (const thunk of tail) {
-    const result = thunk.value;
-    if (!acc.hasValue || !result.hasValue) {
-      return Result.incomplete();
-    }
-    const value = op.reduce(acc.get, result.get);
-    const complete = acc.isComplete && result.isComplete;
-    if (complete) {
-      acc = Result.complete(value);
-    } else {
-      acc = Result.placeholder(value);
-    }
+export function applyReduce<T>(
+  op: ReduceOperator<T>,
+  results: Result<T>[]
+): Result<T> {
+  if (results.some(r => !r.hasValue)) {
+    return Result.incomplete();
   }
-  return acc;
+
+  const values = results.map(r => r.get);
+  const finalValue = values.reduce(op.reduce, op.identity);
+
+  const isComplete = results.every(r => r.isComplete);
+
+  return isComplete ? Result.complete(finalValue) : Result.placeholder(finalValue);
 }
 
 export function explainReduce(
-  xs: Expression<any>[],
+  expressions: Expression<any>[],
   factual: Factual
 ): Explanation {
-  const explanations = xs.map((expression) => expression.explain(factual));
+  const explanations = expressions.map((expression) => expression.explain(factual));
   return opWithInclusiveChildren(explanations);
 }

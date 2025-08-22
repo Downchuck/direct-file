@@ -8,7 +8,7 @@ describe('StringNode', () => {
   const factual = new Factual(new FactDictionary());
 
   it('can be created with a valid string', () => {
-    const node = new StringNode(Expression.literal(Result.complete('a')));
+    const node = new StringNode(Expression.literal('a'));
     expect(node.get(factual)).toEqual(Result.complete('a'));
   });
 });

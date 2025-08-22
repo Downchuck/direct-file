@@ -1,65 +1,46 @@
-import { Expression, SwitchExpression } from '../Expression';
-import { Path } from '../Path';
-import { CollectionItem } from '../types/CollectionItem';
 import { CompNode } from './CompNode';
-import { BooleanNode } from './BooleanNode';
-import { WritableNodeFactory } from './CompNode';
-import { Graph } from '../Graph';
-import { DependencyExpression } from '../expressions/DependencyExpression';
-import { Result } from '../types';
+import { Expression } from '../expressions/Expression';
+import { Factual } from '../Factual';
+import { Result } from '../types/Result';
+import { Path } from '../Path';
 
-export class CollectionItemNode extends CompNode {
-  public readonly expr: Expression<CollectionItem>;
-  public readonly alias?: Path;
-
-  constructor(expr: Expression<CollectionItem>, alias?: Path) {
-    super();
-    this.expr = expr;
-    this.alias = alias;
-  }
-
-  public override switch(cases: [BooleanNode, CompNode][]): CompNode {
-    const aliasesMatch = cases.every(
-      ([, node]) => (node as CollectionItemNode).alias?.toString() === this.alias?.toString()
+/**
+ * This node is a special placeholder used by collection operators
+ * like Filter and Find to represent the item being iterated over.
+ * Its value is not derived from the graph but is provided contextually
+ * by the operator that is using it.
+ */
+export class CollectionItemNode extends CompNode<any> {
+  constructor() {
+    // The expression is a dummy because this node's get method is overridden.
+    super(
+      new (class extends Expression<any> {
+        get(): Result<any> {
+          // This should never be called.
+          return Result.incomplete();
+        }
+        toString() {
+          return 'CollectionItemExpression';
+        }
+      })()
     );
-
-    if (!aliasesMatch) {
-      throw new Error(
-        'collection items in a <Switch> must reference the same collection'
-      );
-    }
-
-    const switchCases = cases.map(
-      ([boolNode, itemNode]) =>
-        [boolNode.expr, (itemNode as CollectionItemNode).expr] as [
-          Expression<boolean>,
-          Expression<CollectionItem>
-        ]
-    );
-
-    return new CollectionItemNode(new SwitchExpression(switchCases), this.alias);
+    // Give it a special, recognizable path. This assumes that nested
+    // operators will work correctly with Factual scoping.
+    this.path = Path.fromString('$item');
   }
 
-  public override dependency(path: Path): CompNode {
-    const newAlias = this.alias ?? path;
-    return new CollectionItemNode(new DependencyExpression(path), newAlias);
-  }
-
-  protected fromExpression(expr: Expression<CollectionItem>): CompNode {
-    return new CollectionItemNode(expr, this.alias);
-  }
-}
-
-export class CollectionItemNodeFactory implements WritableNodeFactory {
-  readonly typeName = 'CollectionItem';
-
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new CollectionItemNode(
-      Expression.writable(Result.incomplete()),
-      Path.fromString(e.collectionItemAlias)
-    );
+  /**
+   * Overrides the default CompNode behavior to look up the value from the
+   * Factual's contextual scope. This scope is populated by the collection
+   * operator (e.g., FilterExpression) that is currently iterating.
+   */
+  public override get(
+    factual: Factual,
+    ..._children: Expression<any>[]
+  ): Result<any> {
+    // Factual.get will check its contextualScope first.
+    // FilterExpression/FindExpression will have put the current item's
+    // value there, keyed by this node's path.
+    return factual.get(this.path);
   }
 }

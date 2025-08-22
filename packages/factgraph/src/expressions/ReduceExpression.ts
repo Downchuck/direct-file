@@ -2,34 +2,22 @@ import { Expression } from '../Expression';
 import { ReduceOperator } from '../operators/ReduceOperator';
 import { Result } from '../types';
 import { Factual } from '../Factual';
-import { Explanation, ConstantExplanation } from '../Explanation';
+import { Explanation } from '../Explanation';
 
-export class ReduceExpression<A> extends Expression<A> {
-  constructor(
-    public readonly expressions: Expression<A>[],
-    public readonly op: ReduceOperator<A>
-  ) {
+export class ReduceExpression<T> extends Expression<T> {
+  constructor(public readonly op: ReduceOperator<T>) {
     super();
-    this.get = this.get.bind(this);
-    this.explain = this.explain.bind(this);
   }
 
-  override get(factual: Factual): Result<A> {
-    if (this.expressions.length === 0) {
-      return Result.incomplete();
+  override get(factual: Factual, ...children: Expression<any>[]): Result<T> {
+    if (children.length === 0) {
+      return Result.complete(this.op.identity);
     }
-    const head = this.expressions[0];
-    const tail = this.expressions.slice(1);
-    return this.op.apply(
-      head.get(factual),
-      tail.map((e) => e.getThunk(factual))
-    );
+    const results = children.map(c => c.get(factual));
+    return this.op.apply(results);
   }
 
-  override explain(factual: Factual): Explanation {
-    if (!this.op) {
-      return new ConstantExplanation();
-    }
-    return this.op.explain(this.expressions, factual);
+  override explain(factual: Factual, ...children: Expression<any>[]): Explanation {
+    return this.op.explain(children, factual);
   }
 }

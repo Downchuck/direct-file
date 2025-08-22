@@ -1,35 +1,35 @@
-import { AsDecimalStringFactory } from '../compnodes/AsDecimalString';
-import { RationalNode } from '../compnodes/RationalNode';
-import { Result } from '../types/Result';
-import { Factual } from '../Factual';
-import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
-import { Rational } from '../types/Rational';
+import { Graph } from '../Graph';
+import { Result } from '../types';
+import '../compnodes/register-factories';
 
 describe('AsDecimalString', () => {
-  const factual = new Factual(new FactDictionary());
-
   it('converts a rational to a decimal string with default scale', () => {
-    const node = AsDecimalStringFactory.create(
-      [
-        new RationalNode(
-          Expression.literal(Result.complete(new Rational(1, 3)))
-        ),
-      ],
-      {}
-    );
-    expect(node.get(factual)).toEqual(Result.complete('0.33'));
+    const dictionary = new FactDictionary();
+    dictionary.addDefinition({ path: '/a', derived: { typeName: 'Rational', value: { n: 1, d: 3 } } });
+    dictionary.addDefinition({
+      path: '/test',
+      derived: {
+        typeName: 'AsDecimalString',
+        children: [['/a']],
+      },
+    });
+    const graph = new Graph(dictionary);
+    expect(graph.get('/test')).toEqual(Result.complete('0.33'));
   });
 
   it('converts a rational to a decimal string with specified scale', () => {
-    const node = AsDecimalStringFactory.create(
-      [
-        new RationalNode(
-          Expression.literal(Result.complete(new Rational(1, 3)))
-        ),
-      ],
-      { scale: 4 }
-    );
-    expect(node.get(factual)).toEqual(Result.complete('0.3333'));
+    const dictionary = new FactDictionary();
+    dictionary.addDefinition({ path: '/a', derived: { typeName: 'Rational', value: { n: 1, d: 3 } } });
+    dictionary.addDefinition({
+      path: '/test',
+      derived: {
+        typeName: 'AsDecimalString',
+        scale: 4,
+        children: [['/a']],
+      },
+    });
+    const graph = new Graph(dictionary);
+    expect(graph.get('/test')).toEqual(Result.complete('0.3333'));
   });
 });

@@ -1,9 +1,15 @@
+import { MaybeVector } from './MaybeVector';
+
 export class Result<A> {
   private constructor(
     public readonly value: A | undefined,
     public readonly isComplete: boolean,
     public readonly isPlaceholder: boolean
   ) {}
+
+  public static fromVector<T>(vector: MaybeVector<T>): Result<T[]> {
+    return new Result(vector.values, vector.isComplete, false);
+  }
 
   public static complete<A>(value: A): Result<A> {
     return new Result(value, true, false);

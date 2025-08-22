@@ -1,91 +1,80 @@
 import { Fact } from './Fact';
 import { FactDictionary } from './FactDictionary';
-import { Path } from './Path';
-import { Persister } from './persisters/Persister';
-import { MaybeVector, Result, WritableType } from './types';
+import { Path, PathItem } from './Path';
+import { MaybeVector, Result } from './types';
 import { Factual } from './Factual';
+import { Explanation } from './Explanation';
+import { compNodeRegistry } from './compnodes/registry';
+import { v4 as uuidv4 } from 'uuid';
+import { CollectionNode } from './compnodes/CollectionNode';
 
 export class Graph {
   public readonly root: Fact;
-  public readonly factCache = new Map<string, Fact | undefined>();
-  private readonly resultCache = new Map<string, MaybeVector<Result<any>>>();
 
-  constructor(
-    public readonly dictionary: FactDictionary,
-    public readonly persister: Persister
-  ) {
-    // This is a temporary solution. The CompNode for the root should be a proper RootNode.
-    const rootCompNode = {} as any;
-    this.root = new Fact(
-      rootCompNode,
-      Path.Root,
-      [],
-      this,
-      undefined,
-      {} as any
-    );
+  constructor(public readonly dictionary: FactDictionary) {
+    const rootPath = Path.fromString('/');
+    const rootDef = this.dictionary.getDefinition(rootPath);
+    if (!rootDef) {
+      throw new Error('Root definition not found in dictionary');
+    }
+    const rootNode = compNodeRegistry.fromDerivedConfig(rootDef.derived, this, []);
+    this.root = new Fact(rootNode, rootPath, this, undefined, rootDef);
   }
 
-  public get(path: string | Path): Result<any> {
-    const results = this.getVect(path);
+  public get<T>(path: Path | string): Result<T> {
+    const results = this.getVect<T>(path);
     if (results.values.length !== 1) {
-      throw new Error(`Path must resolve to a single value: ${path.toString()}`);
+      if (results.isComplete) {
+        throw new Error(`Path must resolve to a single value: ${path.toString()}`);
+      }
+      return Result.incomplete();
     }
     return results.values[0];
   }
 
-  public getVect(path: string | Path, factual: Factual): MaybeVector<Result<any>> {
-    const pathObj = typeof path === 'string' ? Path.fromString(path) : path;
-    const factResults = this.root.apply(pathObj);
+  public getVect<T>(path: Path | string): MaybeVector<Result<T>> {
+    const p = path instanceof Path ? path : Path.fromString(path);
+    const facts = this.root.apply(p);
+    return facts.flatMap(fact => fact.get(new Factual(this)));
+  }
 
-    return factResults.flatMap((factResult: Result<Fact>) => {
-      if (!factResult.isComplete || !factResult.value) {
-        // In Scala, this would return a placeholder. For now, we'll just return an incomplete result.
-        return MaybeVector.single(Result.incomplete());
+  public explain(path: Path | string): Explanation {
+    const p = path instanceof Path ? path : Path.fromString(path);
+    const factResults = this.root.apply(p);
+    if (factResults.values.length !== 1) {
+        throw new Error(`Path must resolve to a single explanation: ${path.toString()}`);
+    }
+    const fact = factResults.values[0];
+    return fact.explain(new Factual(this));
+  }
+
+  public set<T>(path: Path | string, value: T): MaybeVector<Fact> {
+    const p = path instanceof Path ? path : Path.fromString(path);
+    const factResults = this.root.apply(p);
+    if (factResults.values.length !== 1) {
+        throw new Error(`Set path must resolve to a single fact: ${path.toString()}`);
+    }
+    const fact = factResults.values[0];
+
+    if (fact.value instanceof CollectionNode && Array.isArray(value)) {
+      fact.children = [];
+      const newFacts: Fact[] = [];
+      for (const item of value) {
+        const newId = uuidv4();
+        const newPath = p.append(new PathItem(`#${newId}`, 'collection-member'));
+        const itemDef = this.dictionary.getDefinition(newPath);
+        if (itemDef) {
+          const newNode = compNodeRegistry.fromConfig(itemDef, this);
+          const newFact = new Fact(newNode, newPath, this, fact, itemDef);
+          newFact.set(new Factual(this), item);
+          fact.children.push(newFact);
+          newFacts.push(newFact);
+        }
       }
-      return factResult.value.get(factual);
-    });
-  }
+      return new MaybeVector(newFacts, true);
+    }
 
-  public explain(path: string | Path): any {
-    throw new Error('Not implemented');
-  }
-
-  public set(path: string | Path, value: WritableType): void {
-    const pathObj = typeof path === 'string' ? Path.fromString(path) : path;
-    const factResults = this.root.apply(pathObj);
-
-    factResults.foreach((factResult: Result<Fact>) => {
-      if (factResult.isComplete && factResult.value) {
-        factResult.value.set(value);
-      }
-    });
-  }
-
-  public delete(path: string | Path): void {
-    throw new Error('Not implemented');
-  }
-
-  public checkPersister(): any[] {
-    throw new Error('Not implemented');
-  }
-
-  public save(): [boolean, any[]] {
-    this.factCache.clear();
-    this.resultCache.clear();
-    // const out = this.persister.save();
-    // if (!out[0]) {
-    //   this.resultCache.clear();
-    // }
-    // return out;
-    throw new Error('Not implemented');
-  }
-
-  public getDictionary(): FactDictionary {
-    return this.dictionary;
-  }
-
-  public getCollectionPaths(collectionPath: string): string[] {
-    throw new Error('Not implemented');
+    fact.set(new Factual(this), value);
+    return MaybeVector.of([fact]);
   }
 }

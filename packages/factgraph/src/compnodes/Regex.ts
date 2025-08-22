@@ -1,29 +1,31 @@
-import { Expression } from '../Expression';
 import { CompNode, DerivedNodeFactory } from './CompNode';
-import { Graph } from '../Graph';
-import { getChildNode } from '../util/getChildNode';
 import { StringNode } from './StringNode';
 import { BooleanNode } from './BooleanNode';
-import { BinaryOperator } from '../operators';
+import { BinaryOperator, applyBinary, explainBinary } from '../operators/BinaryOperator';
+import { Factual } from '../Factual';
 import { BinaryExpression } from '../expressions/BinaryExpression';
-import { applyBinary } from '../operators/BinaryOperatorHelpers';
+import { Graph } from '../Graph';
 import { Result } from '../types';
+import { Explanation } from '../Explanation';
+import { Expression } from '../Expression';
 
-const RegexOperator: BinaryOperator<boolean, string, string> = {
-  name: 'Regex',
-  isCommutative: false,
-  operation: (input, pattern) => new RegExp(pattern).test(input),
-  apply: (lhs: Result<string>, rhs: Result<string>) =>
-    applyBinary({ operation: RegexOperator.operation }, lhs, rhs),
-  explain: (l, r, f) => new (f.Explanation)(),
-};
+const regexOp = (input: string, pattern: string) => new RegExp(pattern).test(input);
+
+class RegexBinaryOperator implements BinaryOperator<boolean, string, string> {
+    operation = regexOp;
+    apply = (lhs: Result<string>, rhs: Result<string>) => applyBinary(this, lhs, rhs);
+    explain = (lhs: Expression<string>, rhs: Expression<string>, factual: Factual) => explainBinary(lhs, rhs, factual);
+}
+
+const regexOperator = new RegexBinaryOperator();
 
 export const RegexFactory: DerivedNodeFactory = {
   typeName: 'Regex',
-  fromDerivedConfig(e: any, graph: Graph): CompNode {
-    const inputNode = getChildNode(e.Input, graph);
-    const patternNode = getChildNode(e.Pattern, graph);
-
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
+    if (children.length !== 2) {
+        throw new Error(`Regex expects 2 children, but got ${children.length}`);
+    }
+    const [inputNode, patternNode] = children;
     if (!(inputNode instanceof StringNode)) {
       throw new Error('Regex `Input` must be a StringNode');
     }
@@ -31,8 +33,6 @@ export const RegexFactory: DerivedNodeFactory = {
       throw new Error('Regex `Pattern` must be a StringNode');
     }
 
-    return new BooleanNode(
-      new BinaryExpression(inputNode.expr, patternNode.expr, RegexOperator)
-    );
+    return new BooleanNode(new BinaryExpression(regexOperator));
   },
 };

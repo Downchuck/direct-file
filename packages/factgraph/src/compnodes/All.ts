@@ -1,90 +1,41 @@
-import { Expression } from '../Expression';
-import { ReduceExpression } from '../expressions/ReduceExpression';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { BooleanNode } from './BooleanNode';
 import { ReduceOperator } from '../operators/ReduceOperator';
-import { Result } from '../types';
-import { Thunk } from '../Thunk';
-import { Explanation, opWithInclusiveChildren } from '../Explanation';
+import { applyReduce, explainReduce } from '../operators/ReduceOperatorHelpers';
 import { Factual } from '../Factual';
-import { CompNode, CompNodeFactory } from './CompNode';
+import { ReduceExpression } from '../expressions/ReduceExpression';
 import { Graph } from '../Graph';
-import { compNodeRegistry } from './registry';
+import { Result } from '../types';
+import { Expression } from '../Expression';
+import { Explanation } from '../Explanation';
 
 class AllOperator implements ReduceOperator<boolean> {
-  reduce(x: boolean, y: boolean): boolean {
-    return x && y;
-  }
+  identity = true;
+  reduce = (a: boolean, b: boolean) => a && b;
 
-  apply(
-    head: Result<boolean>,
-    tail: Thunk<Result<boolean>>[]
-  ): Result<boolean> {
-    if (head.isComplete && !head.value) {
+  apply(results: Result<boolean>[]): Result<boolean> {
+    // Short-circuit if any result is a complete false
+    const falseResult = results.find(r => r.isComplete && r.value === false);
+    if (falseResult) {
       return Result.complete(false);
     }
-
-    return this.accumulator(tail, head);
+    return applyReduce(this, results);
   }
 
-  private accumulator(
-    thunks: Thunk<Result<boolean>>[],
-    a: Result<boolean>
-  ): Result<boolean> {
-    if (thunks.length === 0) {
-      return a;
-    }
-
-    const [head, ...tail] = thunks;
-    const result = head.value;
-
-    if (result.isComplete && !result.get) {
-      return Result.complete(false);
-    }
-
-    const nextA: Result<boolean> = a.flatMap((aValue) =>
-      result.map((rValue) => aValue && rValue)
-    );
-    return this.accumulator(tail, nextA);
-  }
-
-  explain(xs: Expression<boolean>[], factual: Factual): Explanation {
-    const caseVectors = xs.map((x) => ({
-      thunk: x.getThunk(factual),
-      explanation: x.explain(factual),
-    }));
-
-    for (const { thunk, explanation } of caseVectors) {
-      const result = thunk.value;
-      if (result.isComplete && !result.value) {
-        return opWithInclusiveChildren([explanation]);
-      }
-    }
-
-    return opWithInclusiveChildren(caseVectors.map((c) => c.explanation));
+  explain(expressions: Expression<boolean>[], factual: Factual): Explanation {
+    // This can be improved, but for now, the default is fine.
+    return explainReduce(expressions, factual);
   }
 }
 
 const allOperator = new AllOperator();
 
-export const AllFactory: CompNodeFactory = {
+export const AllFactory: DerivedNodeFactory = {
   typeName: 'All',
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph
-  ): CompNode {
-    throw new Error('fromDerivedConfig not implemented for All');
-  },
-
-  create(nodes: CompNode[]): BooleanNode {
-    if (nodes.every((n) => n instanceof BooleanNode)) {
-      const expressions = nodes.map((n) => (n as BooleanNode).expr);
-      return new BooleanNode(new ReduceExpression(expressions, allOperator));
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
+    if (!children.every(c => c instanceof BooleanNode)) {
+        throw new Error('All children of <All> must be BooleanNodes');
     }
-    throw new Error('All children of <All> must be BooleanNodes');
+    return new BooleanNode(new ReduceExpression(allOperator));
   },
-};
-
-export const All = (nodes: BooleanNode[]): BooleanNode => {
-  return AllFactory.create(nodes) as BooleanNode;
 };

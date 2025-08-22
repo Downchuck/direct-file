@@ -1,185 +1,148 @@
-import './compnodes/register-factories';
 import { CompNode } from './compnodes/CompNode';
 import { compNodeRegistry } from './compnodes/registry';
 import { Factual } from './Factual';
-import { Path } from './Path';
-import { PathItem } from './PathItem';
-import { Limit } from './limits/Limit';
+import { Path, PathItem } from './Path';
 import { Graph } from './Graph';
-import { MaybeVector, Result, WritableType } from './types';
+import { MaybeVector, Result } from './types';
 import { Explanation } from './Explanation';
 import { CollectionNode } from './compnodes/CollectionNode';
-import { Collection } from './types/Collection';
-
-// In Scala, Factual.Meta was a class. Here, we can use an interface.
-export interface FactualMeta {
-  // ...
-}
+import { FactDefinition } from './FactDictionary';
+import { Expression } from './Expression';
+import { DependencyExpression } from './expressions/DependencyExpression';
 
 export class Fact {
+  public children: Fact[] = [];
+  public readonly isWritable: boolean;
+
   constructor(
-    public readonly value: CompNode,
+    public value: CompNode,
     public readonly path: Path,
-    public readonly limits: Limit[],
     public readonly graph: Graph,
     public readonly parent: Fact | undefined,
-    public readonly meta: FactualMeta
-  ) {}
-
-  public get root(): Fact {
-    let current: Fact = this;
-    while (current.parent) {
-      current = current.parent;
-    }
-    return current;
+    public readonly definition: FactDefinition,
+  ) {
+    this.isWritable = !!definition.writable;
   }
 
-  public get(): MaybeVector<Result<any>> {
-    const result = MaybeVector.single(this.value.get(new Factual(this.graph.dictionary)));
-    return result;
-  }
-
-  public getThunk(): MaybeVector<Result<any>> {
-    return MaybeVector.single(this.value.getThunk(this.graph).get);
-  }
-
-  public explain(): MaybeVector<Explanation> {
-    return MaybeVector.single(this.value.explain(this.graph));
-  }
-
-  public set(value: WritableType, allowCollectionItemDelete: boolean = false): void {
-    this.value.set(value, allowCollectionItemDelete);
-  }
-
-  public validate(): any[] {
-    throw new Error('Not implemented');
-  }
-
-  public delete(): void {
-    this.value.delete();
-  }
-
-  public apply(path: Path): MaybeVector<Result<Fact>> {
-    if (path.absolute && this.parent) {
-      return this.root.apply(path);
-    }
-
-    let current: MaybeVector<Result<Fact>> = MaybeVector.single(
-      Result.complete(this)
-    );
-
-    for (const item of path.items) {
-      current = current.flatMap((result) => {
-        if (!result.isComplete) {
-          return MaybeVector.single(Result.incomplete());
-        }
-        if (!result.value) {
-          return MaybeVector.empty();
-        }
-        return result.value.applyItem(item);
-      });
-    }
-
-    return current;
-  }
-
-  private applyItem(item: PathItem): MaybeVector<Result<Fact>> {
-    if (item.type === 'parent') {
-      if (this.parent) {
-        return MaybeVector.single(Result.complete(this.parent));
-      } else {
-        return MaybeVector.empty();
-      }
-    }
-    if (item.type === 'child') {
-        return this.applyChild(item);
-    }
-    if (item.type === 'wildcard') {
-        return this.applyWildcard(item);
-    }
-    if (item.type === 'collection-member') {
-        return this.applyMember(item);
-    }
-
-    throw new Error(`Not implemented: ${item.type}`);
-  }
-
-  private applyChild(item: PathItem): MaybeVector<Result<Fact>> {
-      const child = this.getChild(item);
-      if (child) {
-          return MaybeVector.single(Result.complete(child));
-      }
-      return MaybeVector.empty();
-  }
-
-  private applyWildcard(item: PathItem): MaybeVector<Result<Fact>> {
-      if (this.value instanceof CollectionNode) {
-          const collectionResult = this.value.expr.get(this.graph);
-          if (collectionResult.isComplete) {
-              const collection = collectionResult.value as Collection<string>;
-              const items = collection.values.map(id => this.getMember(PathItem.fromString(`#${id}`)));
-              const validItems = items.filter(i => i !== undefined) as Fact[];
-              return MaybeVector.multiple(validItems.map(i => Result.complete(i)), true);
-          }
-      }
-      return MaybeVector.single(Result.incomplete());
-  }
-
-  private applyMember(item: PathItem): MaybeVector<Result<Fact>> {
+  public get(factual: Factual): MaybeVector<Result<any>> {
+    const childExpressions = this.children.map(c => new DependencyExpression(c.path));
     if (this.value instanceof CollectionNode) {
-        const member = this.getMember(item);
-        if (member) {
-            return MaybeVector.single(Result.complete(member));
-        }
+      const result = this.value.get(factual, ...childExpressions);
+      return MaybeVector.of([result]);
+    } else {
+      const result = this.value.get(factual, ...childExpressions);
+      return MaybeVector.of([result]);
     }
-    return MaybeVector.single(Result.incomplete());
   }
 
-  private getChild(key: PathItem): Fact | undefined {
-    const childPath = this.path.append(key);
-    const cached = this.graph.factCache.get(childPath.toString());
-    if (cached) {
-      return cached;
+  public set(factual: Factual, value: any): Fact {
+    if (!this.isWritable) {
+      throw new Error(`Fact at path ${this.path} is not writable`);
+    }
+    const newNode = this.value.set(factual, value);
+    this.value = newNode;
+    return this;
+  }
+
+  public explain(factual: Factual): Explanation {
+    const childExpressions = this.children.map(c => new DependencyExpression(c.path));
+    return this.value.explain(factual, ...childExpressions);
+  }
+
+  public apply(path: Path): MaybeVector<Fact> {
+    if (path.absolute) {
+      return this.graph.root.apply(path.relativeTo(Path.root));
+    }
+    if (path.isEmpty) {
+      return MaybeVector.of([this]);
     }
 
-    const fact = this.makeFact(key);
-    this.graph.factCache.set(childPath.toString(), fact);
+    const item = path.items[0];
+    const rest = path.slice(1);
+
+    const childFacts = this.applyItem(item);
+
+    return childFacts.flatMap(child => child.apply(rest));
+  }
+
+  public applyItem(item: PathItem): MaybeVector<Fact> {
+    if (item.type === 'parent') {
+      return this.parent ? MaybeVector.of([this.parent]) : MaybeVector.empty();
+    }
+
+    if (item.type === 'wildcard') {
+      return new MaybeVector(this.children, true);
+    }
+
+    const matchingChild = this.children.find(c => c.path.endsWith(item));
+    if (matchingChild) {
+      return MaybeVector.of([matchingChild]);
+    }
+
+    const childFact = this.getChild(item);
+    return childFact ? MaybeVector.of([childFact]) : MaybeVector.empty();
+  }
+
+  public getChild(item: PathItem): Fact | undefined {
+    const childPath = this.path.append(item);
+
+    const existing = this.children.find(c => c.path.equals(childPath));
+    if (existing) {
+        return existing;
+    }
+
+    const childDef = this.graph.dictionary.getDefinition(childPath);
+    if (childDef) {
+        const newFact = this.makeFact(childDef);
+        this.children.push(newFact);
+        return newFact;
+    }
+
+    const extractedNode = this.value.extract(item);
+    if (extractedNode) {
+        const extractedDef = new FactDefinition({ path: childPath.toString(), derived: { typeName: 'Extracted' } } as any);
+        const fact = new Fact(extractedNode, childPath, this.graph, this, extractedDef);
+        if (extractedNode instanceof CompNode) {
+            (fact.value as any).path = childPath;
+        }
+        this.children.push(fact);
+        return fact;
+    }
+
+    return undefined;
+  }
+
+  private makeFact(definition: FactDefinition): Fact {
+    let node: CompNode;
+    let childrenFacts: Fact[] = [];
+
+    if (definition.derived) {
+      const childrenPaths = (definition.derived.children || []).map((c: any) => Path.fromString(c[0]));
+      childrenFacts = childrenPaths.map((p: Path) => {
+        console.log(`makeFact: finding child at path: ${p.toString()}`);
+        const factResult = this.graph.root.apply(p);
+        if (factResult.values.length === 0) {
+            throw new Error(`Could not find fact at path ${p}`);
+        }
+        const fact = factResult.values[0];
+        if (!fact) throw new Error(`Could not find fact at path ${p}`);
+        console.log(`makeFact: found child fact: ${fact.path.toString()}`);
+        return fact;
+      });
+      const childrenNodes = childrenFacts.map((f: Fact) => f.value);
+      node = this.graph.compNodeRegistry.fromDerivedConfig(definition.derived, this.graph, childrenNodes);
+    } else if (definition.writable) {
+      node = this.graph.compNodeRegistry.fromWritableConfig(definition.writable, this.graph);
+    } else {
+      throw new Error(`Fact definition for ${definition.path} has no derived or writable config`);
+    }
+
+    const fact = new Fact(node, definition.path, this.graph, this, definition);
+    fact.children = childrenFacts;
+
+    if (node instanceof CollectionNode) {
+        (node as any).path = definition.path;
+    }
     return fact;
-  }
-
-  private getMember(key: PathItem): Fact | undefined {
-    const memberPath = this.path.append(key);
-    const cached = this.graph.factCache.get(memberPath.toString());
-    if (cached) {
-      return cached;
-    }
-
-    const fact = this.makeExtract(key);
-    this.graph.factCache.set(memberPath.toString(), fact);
-    return fact;
-  }
-
-  private makeFact(key: PathItem): Fact | undefined {
-    const path = this.path.append(key);
-    const definition = this.graph.dictionary.getDefinition(path);
-    if (definition) {
-        if (definition.derived) {
-            const compNode = compNodeRegistry.fromDerivedConfig(definition.derived, this.graph);
-            return new Fact(compNode, this.path.append(key), [], this.graph, this, {} as any);
-        }
-        if (definition.writable) {
-            const compNode = compNodeRegistry.fromWritableConfig(definition.writable, this.graph);
-            return new Fact(compNode, this.path.append(key), [], this.graph, this, {} as any);
-        }
-    }
-    return this.makeExtract(key);
-  }
-
-  private makeExtract(key: PathItem): Fact | undefined {
-      const extractedNode = this.value.extract(key, new Factual(this.graph.dictionary));
-      if (extractedNode) {
-          return new Fact(extractedNode, this.path.append(key), [], this.graph, this, {} as any);
-      }
-      return undefined;
   }
 }

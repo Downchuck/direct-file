@@ -1,47 +1,25 @@
-import { UnaryExpression } from '../expressions/UnaryExpression';
-import { UnaryOperator } from '../operators/UnaryOperator';
-import {
-  applyUnary,
-  explainUnary,
-} from '../operators/UnaryOperatorHelpers';
-import { Factual } from '../Factual';
-import { Rational } from '../types/Rational';
-import { Result } from '../types/Result';
-import { CompNode, CompNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { StringNode } from './StringNode';
+import { RationalNode } from './RationalNode';
+import { UnaryOperator } from '../operators/UnaryOperator';
+import { UnaryExpression } from '../expressions/UnaryExpression';
 import { Graph } from '../Graph';
-import { Explanation } from '../Explanation';
-import { Expression } from '../Expression';
+import { Rational } from '../types';
 
-class RationalAsDecimalString
-  implements UnaryOperator<string, Rational>
-{
-  constructor(private readonly scale: number) {}
-  operation(x: Rational): string {
-    return x.toDecimal(this.scale);
-  }
-  apply(x: Result<Rational>): Result<string> {
-    return applyUnary(this, x);
-  }
-  explain(x: Expression<Rational>, factual: Factual): Explanation {
-    return explainUnary(x, factual);
-  }
-}
-
-export const AsDecimalStringFactory: CompNodeFactory = {
+export const AsDecimalStringFactory: DerivedNodeFactory = {
   typeName: 'AsDecimalString',
-  fromDerivedConfig(e: any, graph: Graph): CompNode {
-    throw new Error('fromDerivedConfig not implemented for AsDecimalString');
-  },
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
+    if (children.length !== 1) {
+      throw new Error(`AsDecimalString expects 1 child, but got ${children.length}`);
+    }
+    const child = children[0];
+    if (!(child instanceof RationalNode)) {
+        throw new Error('AsDecimalString child must be a RationalNode');
+    }
 
-  create(nodes: CompNode[], options?: { scale: number }): CompNode {
-    const child = nodes[0];
-    const scale = options?.scale ?? 2;
-    return new StringNode(
-      new UnaryExpression(
-        child.expr as Expression<Rational>,
-        new RationalAsDecimalString(scale)
-      )
-    );
+    const scale = e.scale ?? 2;
+    const operator = new UnaryOperator((r: Rational) => r.toDecimal(scale));
+
+    return new StringNode(new UnaryExpression(operator));
   },
 };
