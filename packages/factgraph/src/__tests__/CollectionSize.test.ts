@@ -5,15 +5,15 @@ import { Result } from '../types';
 describe('CollectionSize', () => {
     it('calculates the size of a collection', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*',
             writable: { typeName: 'String' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSize',
@@ -28,15 +28,15 @@ describe('CollectionSize', () => {
 
     it('returns 0 for an empty collection', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*',
             writable: { typeName: 'String' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSize',
@@ -51,11 +51,11 @@ describe('CollectionSize', () => {
 
     it('returns incomplete for an incomplete collection', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             // This is not a writable fact, so it will be incomplete
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSize',

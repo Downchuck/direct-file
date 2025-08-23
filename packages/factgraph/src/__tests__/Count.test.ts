@@ -3,20 +3,20 @@ import { Graph } from '../Graph';
 import { Result } from '../types';
 
 describe('Count', () => {
-    it.skip('counts the number of true values in a collection', () => {
+    it('counts the number of true values in a collection', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/count',
             derived: {
                 typeName: 'Count',
                 children: [['/collection/*/bool']],
             },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*/bool',
             writable: { typeName: 'Boolean' },
         });
@@ -26,20 +26,20 @@ describe('Count', () => {
         expect(graph.get('/count')).toEqual(Result.complete(3));
     });
 
-    it.skip('returns 0 for an empty collection', () => {
+    it('returns 0 for an empty collection', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/count',
             derived: {
                 typeName: 'Count',
                 children: [['/collection/*/bool']],
             },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*/bool',
             writable: { typeName: 'Boolean' },
         });
@@ -49,20 +49,20 @@ describe('Count', () => {
         expect(graph.get('/count')).toEqual(Result.complete(0));
     });
 
-    it.skip('returns 0 for a collection of all false values', () => {
+    it('returns 0 for a collection of all false values', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/count',
             derived: {
                 typeName: 'Count',
                 children: [['/collection/*/bool']],
             },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*/bool',
             writable: { typeName: 'Boolean' },
         });

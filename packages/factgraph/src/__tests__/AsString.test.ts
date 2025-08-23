@@ -17,32 +17,32 @@ describe('AsString', () => {
 
     it('should convert EmailAddressNode to StringNode', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({ path: '/a', derived: { typeName: 'EmailAddress', value: 'a@b.com' } });
-        dictionary.addDefinition({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
+        dictionary.define({ path: '/a', derived: { typeName: 'EmailAddress', value: 'a@b.com' } });
+        dictionary.define({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
         const graph = new Graph(dictionary);
         expect(graph.get('/test')).toEqual(Result.complete('a@b.com'));
     });
 
     it('should convert DollarNode to StringNode', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({ path: '/a', derived: { typeName: 'Dollar', value: 1.23 } });
-        dictionary.addDefinition({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
+        dictionary.define({ path: '/a', derived: { typeName: 'Dollar', value: 1.23 } });
+        dictionary.define({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
         const graph = new Graph(dictionary);
         expect(graph.get('/test')).toEqual(Result.complete('1.23'));
     });
 
     it('should convert EinNode to StringNode', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({ path: '/a', derived: { typeName: 'Ein', value: '12-3456789' } });
-        dictionary.addDefinition({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
+        dictionary.define({ path: '/a', derived: { typeName: 'Ein', value: '12-3456789' } });
+        dictionary.define({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
         const graph = new Graph(dictionary);
         expect(graph.get('/test')).toEqual(Result.complete('12-3456789'));
     });
 
     it('should convert TinNode to StringNode', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({ path: '/a', derived: { typeName: 'Tin', value: '123-45-6789' } });
-        dictionary.addDefinition({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
+        dictionary.define({ path: '/a', derived: { typeName: 'Tin', value: '123-45-6789' } });
+        dictionary.define({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
         const graph = new Graph(dictionary);
         expect(graph.get('/test')).toEqual(Result.complete('123-45-6789'));
     });

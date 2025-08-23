@@ -5,18 +5,18 @@ import { Result } from '../types';
 describe('Minimum', () => {
   it('finds the minimum of integers', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/intTest',
       derived: {
         typeName: 'Minimum',
         children: [['/collection/*/int']],
       },
     });
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/collection',
       writable: { typeName: 'Collection' },
     });
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/collection/*/int',
       writable: { typeName: 'Int' },
     });

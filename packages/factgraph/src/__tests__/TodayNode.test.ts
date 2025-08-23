@@ -18,7 +18,7 @@ describe('TodayNode', () => {
     vi.setSystemTime(date);
 
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
         path: '/test',
         derived: { typeName: 'Today' }
     });

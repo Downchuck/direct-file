@@ -6,12 +6,10 @@ import { InMemoryPersister } from '../../persisters';
 
 // This is a workaround for the fact that the test environment is broken
 // and we can't import the compnodes directly.
-import '../../compnodes/Find';
-import '../../compnodes/Dependency';
 
 describe('Find', () => {
   const dictionary = new FactDictionary();
-  dictionary.addDefinition({
+  dictionary.define({
     path: '/test',
     derived: {
       typeName: 'Find',
@@ -29,21 +27,21 @@ describe('Find', () => {
     },
   });
 
-  dictionary.addDefinition({
+  dictionary.define({
     path: '/collection',
     writable: {
       typeName: 'Collection',
     },
   });
 
-  dictionary.addDefinition({
+  dictionary.define({
     path: '/collection/*/bool',
     writable: {
       typeName: 'Boolean',
     },
   });
 
-  dictionary.addDefinition({
+  dictionary.define({
     path: '/collection/*/string',
     writable: {
       typeName: 'String',
@@ -80,7 +78,7 @@ describe('Find', () => {
   it("throws an error if the collection doesn't exist", () => {
     const localDictionary = new FactDictionary();
     expect(() => {
-      localDictionary.addDefinition({
+      localDictionary.define({
         path: '/anotherTest',
         derived: {
           typeName: 'Find',
@@ -96,7 +94,7 @@ describe('Find', () => {
   it('throws an error if asked to find on non-Boolean nodes', () => {
     const localDictionary = new FactDictionary();
     expect(() => {
-      localDictionary.addDefinition({
+      localDictionary.define({
         path: '/stringTest',
         derived: {
           typeName: 'Find',

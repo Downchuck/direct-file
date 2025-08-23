@@ -5,7 +5,7 @@ import { Result } from '../types';
 describe('ZipCodeNode', () => {
   it('can be created as a writable node', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
         path: '/test',
         writable: { typeName: 'ZipCode' }
     });
@@ -15,7 +15,7 @@ describe('ZipCodeNode', () => {
 
   it('can be set and retrieved', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
         path: '/test',
         writable: { typeName: 'ZipCode' }
     });

@@ -8,7 +8,7 @@ import { compNodeRegistry } from '../compnodes/registry';
 
 describe('RootNode', () => {
   const factDictionary = new FactDictionary();
-  factDictionary.addDefinition({
+  factDictionary.define({
     path: '/myFact',
     derived: {
       typeName: 'String',
@@ -16,7 +16,6 @@ describe('RootNode', () => {
     },
   });
   const factual = new Factual(factDictionary);
-  compNodeRegistry.register(StringNodeFactory);
 
 
   it('can be created', () => {

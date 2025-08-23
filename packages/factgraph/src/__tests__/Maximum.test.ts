@@ -6,18 +6,18 @@ import { Dollar } from '../types/Dollar';
 describe('Maximum', () => {
     it.skip('finds the maximum of integers', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/intTest',
             derived: {
                 typeName: 'Maximum',
                 children: [['/collection/*/int']],
             },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*/int',
             writable: { typeName: 'Int' },
         });
@@ -30,18 +30,18 @@ describe('Maximum', () => {
 
     it.skip('finds the maximum of dollars', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/dollarTest',
             derived: {
                 typeName: 'Maximum',
                 children: [['/collection/*/dollar']],
             },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*/dollar',
             writable: { typeName: 'Dollar' },
         });

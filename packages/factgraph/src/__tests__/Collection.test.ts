@@ -5,18 +5,18 @@ import { Result } from '../types';
 describe('Collection tests', () => {
   it('can get the size of a collection', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/myCollection',
       writable: { typeName: 'Collection' },
     });
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/myCollection/size',
       derived: {
         typeName: 'CollectionSize',
         children: [['/myCollection']],
       },
     });
-    dictionary.addDefinition({
+    dictionary.define({
         path: '/myCollection/*',
         writable: { typeName: 'String' },
     });

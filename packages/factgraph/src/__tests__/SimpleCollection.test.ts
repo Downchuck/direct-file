@@ -6,7 +6,7 @@ import { InMemoryPersister } from '../persisters';
 
 describe('Simple Collection tests', () => {
   const dictionary = new FactDictionary();
-  dictionary.addDefinition({
+  dictionary.define({
     path: '/mySimpleCollection',
     writable: {
       typeName: 'Collection',

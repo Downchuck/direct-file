@@ -6,7 +6,7 @@ import { BankAccount } from '../types/BankAccount';
 describe('BankAccountNode', () => {
     it('can be created as a writable node', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             writable: { typeName: 'BankAccount' }
         });
@@ -16,7 +16,7 @@ describe('BankAccountNode', () => {
 
     it('can be set and retrieved', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             writable: { typeName: 'BankAccount' }
         });

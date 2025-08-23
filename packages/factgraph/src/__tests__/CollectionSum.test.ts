@@ -7,15 +7,15 @@ import { Rational } from '../types/Rational';
 describe('CollectionSum', () => {
     it('sums a collection of integers', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*',
             writable: { typeName: 'Int' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSum',
@@ -29,15 +29,15 @@ describe('CollectionSum', () => {
 
     it('sums a collection of dollars', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*',
             writable: { typeName: 'Dollar' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSum',
@@ -51,15 +51,15 @@ describe('CollectionSum', () => {
 
     it('sums a collection of rationals', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             writable: { typeName: 'Collection' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection/*',
             writable: { typeName: 'Rational' },
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSum',
@@ -73,11 +73,11 @@ describe('CollectionSum', () => {
 
     it('returns incomplete if the collection is incomplete', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/collection',
             // not writable, so incomplete
         });
-        dictionary.addDefinition({
+        dictionary.define({
             path: '/test',
             derived: {
                 typeName: 'CollectionSum',
