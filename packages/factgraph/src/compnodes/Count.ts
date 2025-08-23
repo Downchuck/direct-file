@@ -8,7 +8,7 @@ import { BooleanNode } from './BooleanNode';
 import { DerivedNode } from '../types/Node';
 import { Expression } from '../Expression';
 import { Graph } from '../Graph';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 export class CountOperator implements Operator<boolean, number> {
   apply(thunks: MaybeVector<Thunk<Result<boolean>>>): Result<number> {

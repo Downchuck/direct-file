@@ -26,7 +26,7 @@ import { Result } from '../types/Result';
 import { Thunk } from '../Thunk';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 function createMultiplyReduceOperator<A>(
   plus: (x: A, y: A) => A

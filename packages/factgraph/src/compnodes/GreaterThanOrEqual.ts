@@ -18,7 +18,7 @@ import { BinaryExpression } from '../expressions/BinaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class GreaterThanOrEqualBinaryOperator<L, R>
   implements BinaryOperator<boolean, L, R>

@@ -3,7 +3,7 @@ import { CompNode, CompNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
 import { StringNode } from './StringNode';
 import { BooleanNode } from './BooleanNode';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 export class EnumOptionsNode extends CompNode {
   constructor(public readonly expr: Expression<string[]>) {

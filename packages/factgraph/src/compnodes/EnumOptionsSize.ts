@@ -3,7 +3,7 @@ import { Graph } from '../Graph';
 import { UnaryOperator } from '../operators';
 import { EnumOptionsNode } from './EnumOptionsNode';
 import { IntNode } from './IntNode';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 import { UnaryExpression } from '../expressions/UnaryExpression';
 import {
   applyUnary,

@@ -11,7 +11,7 @@ import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { ReduceExpression } from '../expressions/ReduceExpression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 import { Thunk } from '../Thunk';
 
 class PasteOperator implements ReduceOperator<string> {

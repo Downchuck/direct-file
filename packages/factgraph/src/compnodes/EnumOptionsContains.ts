@@ -9,7 +9,7 @@ import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { BinaryExpression } from '../expressions/BinaryExpression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class EnumOptionsContainsOperator implements BinaryOperator<boolean, string[], string> {
   operation(options: string[], value: string): boolean {

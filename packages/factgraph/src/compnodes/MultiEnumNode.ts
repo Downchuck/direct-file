@@ -3,7 +3,7 @@ import { Expression } from '../Expression';
 import { MultiEnum } from '../types/MultiEnum';
 import { Graph } from '../Graph';
 import { Result } from '../types';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 import { StringNode } from './StringNode';
 import { ReduceOperator } from '../operators/ReduceOperator';
 import {

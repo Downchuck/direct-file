@@ -4,7 +4,7 @@ import { FactDictionary } from '../../FactDictionary';
 import { Collection } from '../../types/Collection';
 import { Result } from '../../types';
 import { Graph } from '../../Graph';
-import { compNodeRegistry } from '../../compnodes/registry';
+import { compNodeRegistry } from '../../compnodes/register-factories';
 import { Path } from '../../Path';
 import { InMemoryPersister } from '../../persisters';
 

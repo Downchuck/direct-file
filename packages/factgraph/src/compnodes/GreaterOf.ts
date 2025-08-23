@@ -14,7 +14,7 @@ import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
 import { DayNode } from './DayNode';
 import { Explanation, opWithInclusiveChildren } from '../Explanation';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class GreaterOfOperator<T> implements ReduceOperator<T> {
   constructor(private valueExtractor: (item: T) => number) {}

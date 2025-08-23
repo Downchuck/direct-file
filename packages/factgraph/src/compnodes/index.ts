@@ -1,3 +1,5 @@
+import './register-factories';
+
 export * from './all-factories';
 
 export * from './CompNode';

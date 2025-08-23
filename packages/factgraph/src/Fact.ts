@@ -1,5 +1,4 @@
-import { CompNode } from './compnodes/CompNode';
-import { compNodeRegistry } from './compnodes/registry';
+import { compNodeRegistry } from './compnodes/register-factories';
 import { Factual } from './Factual';
 import { Path, PathItem } from './Path';
 import { Graph } from './Graph';

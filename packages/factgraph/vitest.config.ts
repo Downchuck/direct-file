@@ -9,6 +9,7 @@ export default mergeConfig(
       globals: true,
       environment: 'node',
       testTimeout: 300000,
+      setupFiles: ['./src/__tests__/test-setup.ts'],
     },
   })
 );

@@ -4,7 +4,7 @@ import { FactDictionary } from '../FactDictionary';
 import { Result } from '../types';
 import { PathItem } from '../PathItem';
 import { StringNode, StringNodeFactory } from '../compnodes/StringNode';
-import { compNodeRegistry } from '../compnodes/registry';
+import { compNodeRegistry } from '../compnodes/register-factories';
 
 describe('RootNode', () => {
   const factDictionary = new FactDictionary();

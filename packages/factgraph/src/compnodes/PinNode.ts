@@ -11,7 +11,7 @@ import {
 import { Factual } from '../Factual';
 import { Explanation } from '../Explanation';
 import { UnaryExpression } from '../expressions/UnaryExpression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 // The Pin type is just a string
 export type Pin = string;

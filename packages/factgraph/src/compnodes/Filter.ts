@@ -15,7 +15,7 @@ import { Expression } from '../Expression';
 import { Path } from '../Path';
 import { Collection } from '../types/Collection';
 import { CollectionItem } from '../types/CollectionItem';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class FilterOperator implements CollectOperator<Collection<any>, boolean> {
   apply(

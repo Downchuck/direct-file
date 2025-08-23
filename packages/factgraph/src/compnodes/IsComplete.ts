@@ -7,7 +7,7 @@ import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { UnaryExpression } from '../expressions/UnaryExpression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class IsCompleteOperator implements UnaryOperator<boolean, any> {
   operation(x: any): boolean {
