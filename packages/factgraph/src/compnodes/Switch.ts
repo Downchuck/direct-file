@@ -1,40 +1,29 @@
-import { CompNode, CompNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { BooleanNode } from './BooleanNode';
 import { Graph } from '../Graph';
-import { compNodeRegistry } from './registry';
+import { SwitchExpression } from '../expressions/Expression';
+import { Expression } from '../Expression';
 
-export const SwitchFactory: CompNodeFactory = {
+export const SwitchFactory: DerivedNodeFactory = {
   typeName: 'Switch',
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph
-  ): CompNode {
-    const cases = e.children
-      .filter((c: any) => c.typeName === 'Case')
-      .map((c: any) => {
-        const when = compNodeRegistry.fromDerivedConfig(
-          c.children.find((c: any) => c.typeName === 'When').children[0],
-          graph
-        ) as BooleanNode;
-        const then = compNodeRegistry.fromDerivedConfig(
-          c.children.find((c: any) => c.typeName === 'Then').children[0],
-          graph
-        );
-        return [when, then];
-      });
-
-    return this.create(cases);
-  },
-
-  create(cases: [CompNode, CompNode][]): CompNode {
-    if (cases.length === 0) {
-      throw new Error('Switch must have at least one child node');
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
+    if (children.length === 0 || children.length % 2 !== 0) {
+      throw new Error('Switch requires an even number of children (when/then pairs)');
     }
 
-    const [firstCase, ...restCases] = cases;
-    const [firstWhen, firstThen] = firstCase;
+    const cases: [Expression<boolean>, Expression<any>][] = [];
+    for (let i = 0; i < children.length; i += 2) {
+      const whenNode = children[i];
+      const thenNode = children[i + 1];
+      if (!(whenNode instanceof BooleanNode)) {
+        throw new Error('Switch "when" case must be a BooleanNode');
+      }
+      cases.push([whenNode.expression, thenNode.expression]);
+    }
 
-    return firstThen.switch(cases);
+    // The type of the returned node should be the same as the first "then" node.
+    const ReturnNodeType = children[1].constructor;
+    // @ts-ignore
+    return new ReturnNodeType(new SwitchExpression(cases));
   },
 };

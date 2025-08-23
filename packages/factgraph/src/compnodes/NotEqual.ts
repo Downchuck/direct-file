@@ -11,7 +11,7 @@ import { BinaryExpression } from '../expressions/BinaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class NotEqualBinaryOperator implements BinaryOperator<boolean, any, any> {
   operation(lhs: any, rhs: any): boolean {

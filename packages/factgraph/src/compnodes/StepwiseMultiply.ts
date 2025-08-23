@@ -3,31 +3,35 @@ import { DollarNode } from './DollarNode';
 import { RationalNode } from './RationalNode';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import { BinaryOperator } from '../operators';
+import { BinaryOperator, applyBinary, explainBinary } from '../operators/BinaryOperator';
 import { BinaryExpression } from '../expressions/BinaryExpression';
-import { applyBinary } from '../operators/BinaryOperatorHelpers';
 import { Result } from '../types';
-import { getChildNode } from '../util/getChildNode';
 import { Graph } from '../Graph';
+import { Factual } from '../Factual';
+import { Explanation } from '../Explanation';
+import { Expression } from '../Expression';
 
-const StepwiseMultiplyOperator: BinaryOperator<Dollar, Dollar, Rational> = {
-  name: 'StepwiseMultiply',
-  isCommutative: false,
-  operation: (dollar: Dollar, rational: Rational) => {
+const stepwiseMultiplyOp = (dollar: Dollar, rational: Rational) => {
     const cents = dollar.toNumber() * 100;
-    const resultCents = (cents / rational.denominator) * rational.numerator;
-    return Dollar.fromNumber(resultCents / 100);
-  },
-  apply: (lhs: Result<Dollar>, rhs: Result<Rational>) =>
-    applyBinary({ operation: StepwiseMultiplyOperator.operation }, lhs, rhs),
-  explain: (l, r, f) => new (f.Explanation)(),
+    const resultCents = (cents / rational.d) * rational.n;
+    return Dollar.from(resultCents / 100);
 };
+
+class StepwiseMultiplyOperator implements BinaryOperator<Dollar, Dollar, Rational> {
+    operation = stepwiseMultiplyOp;
+    apply = (lhs: Result<Dollar>, rhs: Result<Rational>) => applyBinary(this, lhs, rhs);
+    explain = (lhs: Expression<Dollar>, rhs: Expression<Rational>, factual: Factual) => explainBinary(lhs, rhs, factual);
+}
+
+const stepwiseMultiplyOperator = new StepwiseMultiplyOperator();
 
 export const StepwiseMultiplyFactory: DerivedNodeFactory = {
   typeName: 'StepwiseMultiply',
-  fromDerivedConfig(e: any, graph: Graph): CompNode {
-    const multiplicand = getChildNode(e.Multiplicand, graph);
-    const rate = getChildNode(e.Rate, graph);
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
+    if (children.length !== 2) {
+        throw new Error(`StepwiseMultiply expects 2 children, but got ${children.length}`);
+    }
+    const [multiplicand, rate] = children;
 
     if (!(multiplicand instanceof DollarNode)) {
       throw new Error('StepwiseMultiply `Multiplicand` must be a DollarNode');
@@ -36,8 +40,6 @@ export const StepwiseMultiplyFactory: DerivedNodeFactory = {
       throw new Error('StepwiseMultiply `Rate` must be a RationalNode');
     }
 
-    return new DollarNode(
-      new BinaryExpression(multiplicand.expr, rate.expr, StepwiseMultiplyOperator)
-    );
+    return new DollarNode(new BinaryExpression(stepwiseMultiplyOperator));
   },
 };

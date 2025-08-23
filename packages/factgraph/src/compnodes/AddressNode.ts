@@ -6,62 +6,39 @@ import { Result } from '../types';
 import { PathItem } from '../PathItem';
 import { StringNode } from './StringNode';
 import { BooleanNode } from './BooleanNode';
+import { Factual } from '../Factual';
+import { ExtractExpression } from '../expressions/ExtractExpression';
 
-export class AddressNode extends CompNode {
-  public readonly expr: Expression<Address>;
-
-  constructor(expr: Expression<Address>) {
-    super();
-    this.expr = expr;
+export class AddressNode extends CompNode<Address> {
+  constructor(expression: Expression<Address>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<Address>): CompNode {
-    return new AddressNode(expr);
+  public override set(factual: Factual, value: Address): CompNode<Address> {
+    return new AddressNode(Expression.literal(value));
   }
 
   override extract(key: PathItem, factual: Factual): CompNode | undefined {
-    if (key.type === 'child' && key.key === 'streetAddress') {
-      return new StringNode(
-        this.expr.map((a: Result<Address>) =>
-          a.map((addr) => addr.streetAddress)
-        )
-      );
+    if (key.key === 'streetAddress') {
+      return new StringNode(new ExtractExpression(this.expression, r => r.map(a => a.streetAddress)));
     }
-    if (key.type === 'child' && key.key === 'city') {
-      return new StringNode(
-        this.expr.map((a: Result<Address>) => a.map((addr) => addr.city))
-      );
+    if (key.key === 'city') {
+        return new StringNode(new ExtractExpression(this.expression, r => r.map(a => a.city)));
     }
-    if (key.type === 'child' && key.key === 'postalCode') {
-      return new StringNode(
-        this.expr.map((a: Result<Address>) => a.map((addr) => addr.postalCode))
-      );
+    if (key.key === 'postalCode') {
+        return new StringNode(new ExtractExpression(this.expression, r => r.map(a => a.postalCode)));
     }
-    if (key.type === 'child' && key.key === 'stateOrProvence') {
-      return new StringNode(
-        this.expr.map((a: Result<Address>) =>
-          a.map((addr) => addr.stateOrProvence)
-        )
-      );
+    if (key.key === 'stateOrProvence') {
+        return new StringNode(new ExtractExpression(this.expression, r => r.map(a => a.stateOrProvence)));
     }
-    if (key.type === 'child' && key.key === 'streetAddressLine2') {
-      return new StringNode(
-        this.expr.map((a: Result<Address>) =>
-          a.map((addr) => addr.streetAddressLine2)
-        )
-      );
+    if (key.key === 'streetAddressLine2') {
+        return new StringNode(new ExtractExpression(this.expression, r => r.map(a => a.streetAddressLine2)));
     }
-    if (key.type === 'child' && key.key === 'country') {
-      return new StringNode(
-        this.expr.map((a: Result<Address>) => a.map((addr) => addr.country))
-      );
+    if (key.key === 'country') {
+        return new StringNode(new ExtractExpression(this.expression, r => r.map(a => a.country)));
     }
-    if (key.type === 'child' && key.key === 'foreignAddress') {
-      return new BooleanNode(
-        this.expr.map((a: Result<Address>) =>
-          a.map((addr) => addr.isForeignAddress())
-        )
-      );
+    if (key.key === 'foreignAddress') {
+        return new BooleanNode(new ExtractExpression(this.expression, r => r.map(a => a.isForeignAddress())));
     }
     return undefined;
   }
@@ -70,22 +47,16 @@ export class AddressNode extends CompNode {
 export const AddressNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Address',
 
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new AddressNode(Expression.writable(Result.incomplete()));
+  fromWritableConfig(e: any, graph: Graph): CompNode {
+    return new AddressNode(Expression.literal(new Address('', '', '', '', '', '')));
   },
 
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
     const value = e.value || '';
     const address = Address.fromString(value);
     if (address) {
-      return new AddressNode(Expression.literal(Result.complete(address)));
+      return new AddressNode(Expression.literal(address));
     }
-    return new AddressNode(Expression.literal(Result.incomplete()));
+    return new AddressNode(Expression.literal(new Address('', '', '', '', '', '')));
   },
 };

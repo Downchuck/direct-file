@@ -4,12 +4,11 @@ import { FactDictionary } from '../FactDictionary';
 import { Result } from '../types';
 import { PathItem } from '../PathItem';
 import { StringNode, StringNodeFactory } from '../compnodes/StringNode';
-import { compNodeRegistry } from '../compnodes/registry';
-import '../compnodes/register-factories';
+import { compNodeRegistry } from '../compnodes/register-factories';
 
 describe('RootNode', () => {
   const factDictionary = new FactDictionary();
-  factDictionary.addDefinition({
+  factDictionary.define({
     path: '/myFact',
     derived: {
       typeName: 'String',
@@ -17,7 +16,6 @@ describe('RootNode', () => {
     },
   });
   const factual = new Factual(factDictionary);
-  compNodeRegistry.register(StringNodeFactory);
 
 
   it('can be created', () => {

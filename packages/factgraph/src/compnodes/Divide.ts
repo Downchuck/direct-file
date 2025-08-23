@@ -22,7 +22,7 @@ import { ReduceExpression } from '../expressions/ReduceExpression';
 import { Result } from '../types';
 import { Thunk } from '../Thunk';
 import { Explanation } from '../Explanation';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class DivideReduceOperator<A> implements ReduceOperator<A> {
   constructor(private readonly div: (x: A, y: A) => A) {}

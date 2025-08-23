@@ -1,4 +1,45 @@
-import { compNodeRegistry } from './registry';
+import { DerivedFact, WritableFact } from '../Fact';
+import { Graph } from '../Graph';
+import { CompNode } from './CompNode';
+
+// Define the registry class and instance here to break the circular dependency
+class CompNodeRegistry {
+    private factories = new Map<string, any>();
+
+    register(factory: any) {
+        this.factories.set(factory.typeName, factory);
+    }
+
+    fromDerivedConfig(config: DerivedFact, graph: Graph, children: CompNode[]): CompNode {
+        const factory = this.factories.get(config.typeName);
+        if (!factory) {
+            throw new Error(`Unknown comp node type: ${config.typeName}`);
+        }
+        return factory.fromDerivedConfig(config, graph, children);
+    }
+
+    fromWritableConfig(config: WritableFact, graph: Graph): CompNode {
+        const factory = this.factories.get(config.typeName);
+        if (!factory) {
+            throw new Error(`Unknown comp node type: ${config.typeName}`);
+        }
+        return factory.fromWritableConfig(config, graph);
+    }
+
+    fromConfig(config: any, graph: Graph): CompNode {
+        if (config.derived) {
+            return this.fromDerivedConfig(config.derived, graph, []);
+        }
+        if (config.writable) {
+            return this.fromWritableConfig(config.writable, graph);
+        }
+        throw new Error('Invalid config');
+    }
+}
+
+export const compNodeRegistry = new CompNodeRegistry();
+
+
 import { AddFactory } from './Add';
 import { AddressNodeFactory } from './AddressNode';
 import { AllFactory } from './All';

@@ -17,7 +17,7 @@ import { Explanation, opWithInclusiveChildren } from '../Explanation';
 import { Expression } from '../Expression';
 import { MaybeVector } from '../types/MaybeVector';
 import { Thunk } from '../Thunk';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 export class MinimumOperator<A> implements AggregateOperator<A, A> {
   constructor(private readonly lt: (x: A, y: A) => boolean) {}

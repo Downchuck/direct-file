@@ -1,18 +1,28 @@
-import { BankAccountNode } from '../compnodes/BankAccountNode';
-import { Expression } from '../Expression';
-import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
+import { Graph } from '../Graph';
 import { Result } from '../types';
 import { BankAccount } from '../types/BankAccount';
 
 describe('BankAccountNode', () => {
-  const factual = new Factual(new FactDictionary());
+    it('can be created as a writable node', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({
+            path: '/test',
+            writable: { typeName: 'BankAccount' }
+        });
+        const graph = new Graph(dictionary);
+        expect(graph.get('/test').isComplete).toBe(false);
+    });
 
-  it('can be created with a valid bank account', () => {
-    const bankAccount = new BankAccount('123456789', '987654321', 'CHECKING');
-    const node = new BankAccountNode(
-      Expression.literal(Result.complete(bankAccount))
-    );
-    expect(node.get(factual)).toEqual(Result.complete(bankAccount));
-  });
+    it('can be set and retrieved', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({
+            path: '/test',
+            writable: { typeName: 'BankAccount' }
+        });
+        const graph = new Graph(dictionary);
+        const bankAccount = new BankAccount('123456789', '987654321', 'CHECKING');
+        graph.set('/test', bankAccount);
+        expect(graph.get('/test')).toEqual(Result.complete(bankAccount));
+    });
 });

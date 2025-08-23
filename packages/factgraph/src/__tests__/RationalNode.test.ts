@@ -10,9 +10,7 @@ describe('RationalNode', () => {
 
   it('can be created with a valid rational', () => {
     const rational = new Rational(1, 2);
-    const node = new RationalNode(
-      Expression.literal(Result.complete(rational))
-    );
+    const node = new RationalNode(Expression.literal(rational));
     expect(node.get(factual)).toEqual(Result.complete(rational));
   });
 });

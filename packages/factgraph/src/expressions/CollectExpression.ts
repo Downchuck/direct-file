@@ -1,22 +1,21 @@
 import { Expression } from '../Expression';
-import { Path } from '../Path';
 import { Factual } from '../Factual';
-import { CollectOperator } from '../operators/CollectOperator';
+import { MaybeVector, Result } from '../types';
+import { Explanation } from '../Explanation';
 
-export class CollectExpression<A, B> extends Expression<B> {
-    constructor(
-        public readonly path: Path,
-        public readonly childExpr: (item: Factual) => Expression<A>,
-        public readonly op: CollectOperator<B, A>
-    ) {
-        super();
-    }
+export class CollectExpression<T> extends Expression<T[]> {
+  constructor(private readonly dependency: Expression<T>) {
+    super();
+  }
 
-    get(factual: any): any {
-        throw new Error("Method not implemented.");
-    }
+  public override get(factual: Factual, ...children: Expression<any>[]): Result<T[]> {
+    const vector = this.dependency.getVector(factual, ...children);
+    const values = vector.map(result => result.value as T);
+    return Result.fromVector(new MaybeVector(values.values, vector.isComplete));
+  }
 
-    explain(factual: any): any {
-        throw new Error("Method not implemented.");
-    }
+  public override explain(factual: Factual, ...children: Expression<any>[]): Explanation {
+    // This is a simplification. A real implementation would be more detailed.
+    return this.dependency.explain(factual, ...children);
+  }
 }

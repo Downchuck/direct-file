@@ -1,5 +1,4 @@
 import { PathItem } from './PathItem';
-import { Graph } from './Graph';
 
 export class Path {
   private constructor(
@@ -85,14 +84,68 @@ export class Path {
     return new Path(newItems, this.absolute);
   }
 
-  public populateWildcards(graph: Graph): Path[] {
-    // TODO: Implement this
-    throw new Error('Not implemented');
-  }
-
   public toString(): string {
     const prefix = this.absolute ? Path.Delimiter : '';
     const path = this.items.map((item) => item.toString()).join(Path.Delimiter);
     return `${prefix}${path}`;
+  }
+
+  public equals(other: Path): boolean {
+    if (this.absolute !== other.absolute || this.items.length !== other.items.length) {
+      return false;
+    }
+    for (let i = 0; i < this.items.length; i++) {
+      if (!this.items[i].equals(other.items[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public endsWith(item: PathItem): boolean {
+    if (this.items.length === 0) {
+      return false;
+    }
+    return this.items[this.items.length - 1].equals(item);
+  }
+
+  public relativeTo(base: Path): Path {
+    if (!this.absolute || !base.absolute) {
+      throw new Error('Can only find relative path for two absolute paths.');
+    }
+
+    if (base.items.length > this.items.length) {
+      throw new Error(
+        `Base path ${base.toString()} cannot be longer than ${this.toString()}`
+      );
+    }
+
+    for (let i = 0; i < base.items.length; i++) {
+      if (!base.items[i].equals(this.items[i])) {
+        throw new Error(
+          `Path ${this.toString()} does not start with ${base.toString()}`
+        );
+      }
+    }
+
+    const newItems = this.items.slice(base.items.length);
+    return new Path(newItems, false); // A relative path
+  }
+
+  public matches(other: Path): boolean {
+    if (this.items.length !== other.items.length) {
+      return false;
+    }
+    for (let i = 0; i < this.items.length; i++) {
+      const thisItem = this.items[i];
+      const otherItem = other.items[i];
+      if (thisItem.isWildcard) {
+        continue;
+      }
+      if (!thisItem.equals(otherItem)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

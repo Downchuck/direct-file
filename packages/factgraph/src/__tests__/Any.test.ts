@@ -1,25 +1,23 @@
-import { Any } from '../compnodes/Any';
-import { BooleanNode } from '../compnodes/BooleanNode';
-import { Result } from '../types';
-import { Factual } from '../Factual';
-import { Expression } from '../Expression';
 import { FactDictionary } from '../FactDictionary';
-
-const True = () =>
-  new BooleanNode(Expression.literal(Result.complete(true)));
-const False = () =>
-  new BooleanNode(Expression.literal(Result.complete(false)));
+import { Graph } from '../Graph';
+import { Result } from '../types';
 
 describe('Any', () => {
-  const factual = new Factual(new FactDictionary());
+    it('returns true if any input is true', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({ path: '/a', derived: { typeName: 'False' } });
+        dictionary.define({ path: '/b', derived: { typeName: 'True' } });
+        dictionary.define({ path: '/test', derived: { typeName: 'Any', children: [['/a'], ['/b']] } });
+        const graph = new Graph(dictionary);
+        expect(graph.get('/test')).toEqual(Result.complete(true));
+    });
 
-  it('returns true if any input is true', () => {
-    const node = Any([False(), False(), True()]);
-    expect(node.get(factual)).toEqual(Result.complete(true));
-  });
-
-  it('returns false if all inputs are false', () => {
-    const node = Any([False(), False(), False()]);
-    expect(node.get(factual)).toEqual(Result.complete(false));
-  });
+    it('returns false if all inputs are false', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({ path: '/a', derived: { typeName: 'False' } });
+        dictionary.define({ path: '/b', derived: { typeName: 'False' } });
+        dictionary.define({ path: '/test', derived: { typeName: 'Any', children: [['/a'], ['/b']] } });
+        const graph = new Graph(dictionary);
+        expect(graph.get('/test')).toEqual(Result.complete(false));
+    });
 });

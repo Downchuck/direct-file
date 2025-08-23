@@ -1,54 +1,69 @@
-import { CollectionNode } from '../compnodes/CollectionNode';
-import { IntNode } from '../compnodes/IntNode';
-import { Expression } from '../Expression';
-import { Collection } from '../types/Collection';
-import { Result } from '../types/Result';
-import { v4 as uuidv4 } from 'uuid';
-import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
-import { CollectionSizeFactory } from '../compnodes/CollectionSize';
+import { Graph } from '../Graph';
+import { Result } from '../types';
 
 describe('CollectionSize', () => {
-  const factual = new Factual(new FactDictionary());
+    it('calculates the size of a collection', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({
+            path: '/collection',
+            writable: { typeName: 'Collection' },
+        });
+        dictionary.define({
+            path: '/collection/*',
+            writable: { typeName: 'String' },
+        });
+        dictionary.define({
+            path: '/test',
+            derived: {
+                typeName: 'CollectionSize',
+                children: [['/collection']],
+            },
+        });
 
-  it('calculates the size of a collection', () => {
-    const items = [uuidv4(), uuidv4(), uuidv4()];
-    const collection = new Collection(items);
-    const collectionNode = new CollectionNode(
-      Expression.literal(Result.complete(collection)),
-      undefined
-    );
+        const graph = new Graph(dictionary);
+        graph.set('/collection', ['a', 'b', 'c']);
+        expect(graph.get('/test')).toEqual(Result.complete(3));
+    });
 
-    const sizeNode = CollectionSizeFactory.create!([collectionNode]) as IntNode;
-    const result = sizeNode.get(factual);
+    it('returns 0 for an empty collection', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({
+            path: '/collection',
+            writable: { typeName: 'Collection' },
+        });
+        dictionary.define({
+            path: '/collection/*',
+            writable: { typeName: 'String' },
+        });
+        dictionary.define({
+            path: '/test',
+            derived: {
+                typeName: 'CollectionSize',
+                children: [['/collection']],
+            },
+        });
 
-    expect(result.isComplete).toBe(true);
-    expect(result.get).toBe(3);
-  });
+        const graph = new Graph(dictionary);
+        graph.set('/collection', []);
+        expect(graph.get('/test')).toEqual(Result.complete(0));
+    });
 
-  it('returns 0 for an empty collection', () => {
-    const collection = new Collection([]);
-    const collectionNode = new CollectionNode(
-      Expression.literal(Result.complete(collection)),
-      undefined
-    );
+    it('returns incomplete for an incomplete collection', () => {
+        const dictionary = new FactDictionary();
+        dictionary.define({
+            path: '/collection',
+            // This is not a writable fact, so it will be incomplete
+        });
+        dictionary.define({
+            path: '/test',
+            derived: {
+                typeName: 'CollectionSize',
+                children: [['/collection']],
+            },
+        });
 
-    const sizeNode = CollectionSizeFactory.create!([collectionNode]) as IntNode;
-    const result = sizeNode.get(factual);
-
-    expect(result.isComplete).toBe(true);
-    expect(result.get).toBe(0);
-  });
-
-  it('returns incomplete for an incomplete collection', () => {
-    const collectionNode = new CollectionNode(
-      Expression.literal(Result.incomplete()),
-      undefined
-    );
-
-    const sizeNode = CollectionSizeFactory.create!([collectionNode]) as IntNode;
-    const result = sizeNode.get(factual);
-
-    expect(result.isComplete).toBe(false);
-  });
+        const graph = new Graph(dictionary);
+        expect(graph.get('/test').isComplete).toBe(false);
+    });
 });

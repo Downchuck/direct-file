@@ -1,24 +1,26 @@
-import '../compnodes/register-factories';
-import { compNodeRegistry } from '../compnodes/registry';
-import { Factual } from '../Factual';
 import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
-import { Result } from '../types/Result';
-import { ZipCodeNodeFactory } from '../compnodes/ZipCodeNode';
+import { Result } from '../types';
 
 describe('ZipCodeNode', () => {
-  const factual = new Factual(new FactDictionary());
-  const graph = new Graph(factual);
+  it('can be created as a writable node', () => {
+    const dictionary = new FactDictionary();
+    dictionary.define({
+        path: '/test',
+        writable: { typeName: 'ZipCode' }
+    });
+    const graph = new Graph(dictionary);
+    expect(graph.get('/test').isComplete).toBe(false);
+  });
 
-  compNodeRegistry.register(ZipCodeNodeFactory);
-
-  it('can be created from a writable config', () => {
-    const node = compNodeRegistry.fromWritableConfig(
-      {
-        typeName: 'ZipCode',
-      },
-      graph
-    );
-    expect(node.get(factual)).toEqual(Result.incomplete());
+  it('can be set and retrieved', () => {
+    const dictionary = new FactDictionary();
+    dictionary.define({
+        path: '/test',
+        writable: { typeName: 'ZipCode' }
+    });
+    const graph = new Graph(dictionary);
+    graph.set('/test', '12345');
+    expect(graph.get('/test')).toEqual(Result.complete('12345'));
   });
 });

@@ -1,54 +1,50 @@
-import { Fact } from './Fact';
-import { FactDictionary } from './FactDictionary';
-import { Path } from './Path';
 import { Graph } from './Graph';
-import { FactualMeta } from './Fact';
-import { InMemoryPersister } from './persisters';
-import { compNodeRegistry } from './compnodes/registry';
-import { WritableType } from './types';
-import { CompNode } from './compnodes/CompNode';
+import { Path } from './Path';
+import { MaybeVector, Result } from './types';
+import { Explanation } from './Explanation';
+import { Fact } from './Fact';
 
 export class Factual {
-  private readonly graph: Graph;
-  constructor(public readonly factDictionary: FactDictionary) {
-    this.graph = new Graph(factDictionary, new InMemoryPersister());
+  constructor(
+    public readonly graph: Graph,
+    private readonly scope: Path = Path.root,
+  ) {}
+
+  public get<T>(path: Path | string): Result<T> {
+    return this.graph.get(this.resolve(path));
   }
 
-  public getFact(path: string): Fact {
-    const p = Path.fromString(path);
-    const definition = this.factDictionary.getDefinition(p);
-    if (!definition) {
-      throw new Error(`Fact not found: ${path}`);
+  public getVect<T>(path: Path | string): MaybeVector<Result<T>> {
+    return this.graph.getVect(this.resolve(path));
+  }
+
+  public getFact(path: Path | string): Fact {
+    const p = this.resolve(path);
+    const facts = this.graph.root.apply(p);
+    if (facts.values.length !== 1) {
+      throw new Error(`Path must resolve to a single value: ${p.toString()}`);
     }
-    let value: CompNode;
-    if (definition.writable) {
-      value = compNodeRegistry.fromWritableConfig(
-        definition.writable,
-        this.graph
-      );
-    } else {
-      value = compNodeRegistry.fromDerivedConfig(
-        definition.derived,
-        this.graph
-      );
+    const factResult = facts.values[0];
+    return factResult;
+  }
+
+  public getFacts(path: Path | string): MaybeVector<Fact> {
+    return this.graph.root.apply(this.resolve(path));
+  }
+
+  public explain(path: Path | string): Explanation {
+    return this.graph.explain(this.resolve(path));
+  }
+
+  public withScope(scope: Path): Factual {
+    return new Factual(this.graph, scope);
+  }
+
+  private resolve(path: Path | string): Path {
+    const p = path instanceof Path ? path : Path.fromString(path);
+    if (p.absolute) {
+      return p;
     }
-
-    return new Fact(value, p, [], this.graph, undefined, {} as FactualMeta);
-  }
-
-  public save(): void {
-    this.graph.save();
-  }
-
-  public set(path: string, value: WritableType): void {
-    this.graph.set(path, value);
-  }
-
-  public get(path: string) {
-    return this.graph.get(path);
-  }
-
-  public getVect(path: Path) {
-    return this.graph.getVect(path, this);
+    return this.scope.concat(p);
   }
 }

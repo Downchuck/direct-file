@@ -1,40 +1,21 @@
 import { Expression } from '../Expression';
 import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
-import { Dollar } from '../types/Dollar';
-import { Result } from '../types/Result';
+import { Factual } from '../Factual';
+import { Dollar } from '../types';
 
-export class DollarNode extends CompNode {
-  public readonly expr: Expression<Dollar>;
-
-  constructor(expr: Expression<Dollar>) {
-    super();
-    this.expr = expr;
+export class DollarNode extends CompNode<Dollar> {
+  constructor(expression: Expression<Dollar>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<Dollar>): CompNode {
-    return new DollarNode(expr);
+  public override set(factual: Factual, value: Dollar): CompNode<Dollar> {
+    return new DollarNode(Expression.literal(value));
   }
 }
 
 export const DollarNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Dollar',
-
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new DollarNode(Expression.writable(Result.incomplete()));
-  },
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    // TODO: getOptionValue
-    const value = e.value || '0';
-    return new DollarNode(
-      Expression.literal(Result.complete(Dollar.fromString(value)))
-    );
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new DollarNode(Expression.literal(Dollar.from(0))),
+  fromDerivedConfig: (e: any, graph: Graph) => new DollarNode(Expression.literal(Dollar.from(e.value))),
 };

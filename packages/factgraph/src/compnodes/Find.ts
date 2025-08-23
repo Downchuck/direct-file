@@ -14,7 +14,7 @@ import { Explanation, ConstantExplanation } from '../Explanation';
 import { Expression } from '../Expression';
 import { Path } from '../Path';
 import { CollectionItem } from '../types/CollectionItem';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class FindOperator implements CollectOperator<CollectionItem<any>, boolean> {
   apply(

@@ -1,30 +1,20 @@
 import { Expression } from '../Expression';
-import { CompNode, CompNodeFactory } from './CompNode';
-import { Result } from '../types';
-import { WritableNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
+import { Factual } from '../Factual';
 
-export class BooleanNode extends CompNode {
-  constructor(public readonly expr: Expression<boolean>) {
-    super();
+export class BooleanNode extends CompNode<boolean> {
+  constructor(expression: Expression<boolean>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<boolean>): CompNode {
-    return new BooleanNode(expr);
+  public override set(factual: Factual, value: boolean): CompNode<boolean> {
+    return new BooleanNode(Expression.literal(value));
   }
 }
 
-export const BooleanNodeFactory: CompNodeFactory & WritableNodeFactory = {
+export const BooleanNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Boolean',
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph
-  ): CompNode {
-    return new BooleanNode(Expression.literal(Result.complete(e.value)));
-  },
-
-  fromWritableConfig(): CompNode {
-    return new BooleanNode(Expression.writable(Result.incomplete()));
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new BooleanNode(Expression.literal(false)),
+  fromDerivedConfig: (e: any, graph: Graph) => new BooleanNode(Expression.literal(e.value ?? false)),
 };

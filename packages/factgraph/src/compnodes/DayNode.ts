@@ -4,37 +4,29 @@ import { Graph } from '../Graph';
 import { Day } from '../types/Day';
 import { PathItem } from '../PathItem';
 import { IntNode } from './IntNode';
-import { Result } from '../types/Result';
+import { Factual } from '../Factual';
+import { UnaryExpression } from '../expressions/UnaryExpression';
+import { UnaryOperator } from '../operators/UnaryOperator';
 import { ExtractExpression } from '../expressions/ExtractExpression';
 
-export class DayNode extends CompNode {
-  public readonly expr: Expression<Day>;
-
-  constructor(expr: Expression<Day>) {
-    super();
-    this.expr = expr;
+export class DayNode extends CompNode<Day> {
+  constructor(expression: Expression<Day>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<Day>): CompNode {
-    return new DayNode(expr);
+  public override set(factual: Factual, value: Day): CompNode<Day> {
+    return new DayNode(Expression.literal(value));
   }
 
-  public extract(key: PathItem): CompNode | undefined {
-    if (!key.isParent && !key.isWildcard && !key.isUnknown) {
-      switch (key.value) {
-        case 'year':
-          return new IntNode(
-            new ExtractExpression(this.expr, (r) => r.map((d) => d.year))
-          );
-        case 'month':
-          return new IntNode(
-            new ExtractExpression(this.expr, (r) => r.map((d) => d.month))
-          );
-        case 'day':
-          return new IntNode(
-            new ExtractExpression(this.expr, (r) => r.map((d) => d.day))
-          );
-      }
+  public override extract(key: PathItem, factual: Factual): CompNode | undefined {
+    if (key.key === 'year') {
+      return new IntNode(new ExtractExpression(this.expression, r => r.map(d => d.year)));
+    }
+    if (key.key === 'month') {
+      return new IntNode(new ExtractExpression(this.expression, r => r.map(d => d.month)));
+    }
+    if (key.key === 'day') {
+      return new IntNode(new ExtractExpression(this.expression, r => r.map(d => d.day)));
     }
     return undefined;
   }
@@ -42,20 +34,6 @@ export class DayNode extends CompNode {
 
 export const DayNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Day',
-
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new DayNode(Expression.writable(Result.incomplete()));
-  },
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    // TODO: getOptionValue
-    const value = e.value || '2000-01-01';
-    return new DayNode(Expression.literal(Result.complete(new Day(value))));
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new DayNode(Expression.literal(Day.fromDate(new Date()))),
+  fromDerivedConfig: (e: any, graph: Graph) => new DayNode(Expression.literal(Day.fromString(e.value))),
 };

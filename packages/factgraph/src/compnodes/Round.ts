@@ -12,7 +12,7 @@ import { UnaryExpression } from '../expressions/UnaryExpression';
 import { Result } from '../types';
 import { Explanation } from '../Explanation';
 import { Expression } from '../Expression';
-import { compNodeRegistry } from './registry';
+import { compNodeRegistry } from './register-factories';
 
 class RoundOperator implements UnaryOperator<Dollar, Dollar> {
   operation(x: Dollar): Dollar {

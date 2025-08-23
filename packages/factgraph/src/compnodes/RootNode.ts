@@ -1,34 +1,23 @@
-import { CompNode, CompNodeFactory } from './CompNode';
+import { CompNode, DerivedNodeFactory } from './CompNode';
 import { Expression } from '../Expression';
 import { Graph } from '../Graph';
-import { Result } from '../types';
-
 import { PathItem } from '../PathItem';
 import { Factual } from '../Factual';
 
-export class RootNode extends CompNode {
+export class RootNode extends CompNode<null> {
   constructor() {
-    super();
-    this.expr = Expression.literal(Result.complete(null));
+    super(Expression.literal(null));
   }
 
-  protected fromExpression(expr: Expression<any>): CompNode {
-    return new RootNode();
-  }
-
-  override extract(key: PathItem, factual: Factual): CompNode | undefined {
+  public override extract(key: PathItem, factual: Factual): CompNode | undefined {
     const fact = factual.getFact(key.toString());
     return fact?.value;
   }
 }
 
-export const RootNodeFactory: CompNodeFactory = {
+export const RootNodeFactory: DerivedNodeFactory = {
   typeName: 'Root',
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
+  fromDerivedConfig(e: any, graph: Graph, children: CompNode[]): CompNode {
     return new RootNode();
   },
 };

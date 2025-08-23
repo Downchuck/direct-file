@@ -1,66 +1,22 @@
-import { Expression, SwitchExpression } from '../Expression';
+import { CompNode, WritableNodeFactory } from './CompNode';
+import { Expression } from '../Expression';
 import { Path } from '../Path';
-import { Collection } from '../types/Collection';
-import { CompNode } from './CompNode';
-import { BooleanNode } from './BooleanNode';
-import { PathItem } from '../PathItem';
-import { CollectionItemNode } from './CollectionItemNode';
-import { CollectionItem } from '../types/CollectionItem';
-import { WritableNodeFactory } from './CompNode';
-import { Graph } from '../Graph';
-import { Result } from '../types';
 import { DependencyExpression } from '../expressions/DependencyExpression';
+import { PathItem } from '../PathItem';
+import { Graph } from '../Graph';
+import { StringNode } from './StringNode';
+import { FactDefinition } from '../FactDictionary';
+import { CollectExpression } from '../expressions/CollectExpression';
+import { Factual } from '../Factual';
 
-export class CollectionNode extends CompNode {
-  public readonly expr: Expression<Collection>;
-  public readonly alias?: Path;
-
-  constructor(expr: Expression<Collection>, alias?: Path) {
-    super();
-    this.expr = expr;
-    this.alias = alias;
+export class CollectionNode<T> extends CompNode<T[]> {
+  constructor(public readonly itemNode: CompNode<T>) {
+    super(new CollectExpression(new DependencyExpression(Path.fromString('*'))));
   }
 
-  public override switch(cases: [BooleanNode, CompNode][]): CompNode {
-    const aliasesMatch = cases.every(
-      ([, node]) => (node as CollectionNode).alias?.toString() === this.alias?.toString()
-    );
-
-    if (!aliasesMatch) {
-      throw new Error(
-        'collections in a <Switch> must reference the same collection'
-      );
-    }
-
-    const switchCases = cases.map(
-      ([boolNode, collNode]) =>
-        [boolNode.expr, (collNode as CollectionNode).expr] as [
-          Expression<boolean>,
-          Expression<Collection>
-        ]
-    );
-
-    return new CollectionNode(new SwitchExpression(switchCases), this.alias);
-  }
-
-  public override dependency(path: Path): CompNode {
-    const newAlias = this.alias ?? path;
-    return new CollectionNode(new DependencyExpression(path), newAlias);
-  }
-
-  protected fromExpression(expr: Expression<Collection>): CompNode {
-    throw new Error('cannot create a Collection from an expression');
-  }
-
-  public override extract(key: PathItem): CompNode | undefined {
-    if (key.type === 'collection-member') {
-      return new CollectionItemNode(
-        Expression.literal(Result.complete(new CollectionItem(key.key))),
-        undefined
-      );
-    }
-    if (key.type === 'unknown') {
-      return new CollectionItemNode(Expression.literal(Result.incomplete()), undefined);
+  public override extract(key: PathItem, factual: Factual): CompNode | undefined {
+    if (key.type === 'collection-member' || key.type === 'unknown') {
+      return this.itemNode;
     }
     return undefined;
   }
@@ -69,13 +25,17 @@ export class CollectionNode extends CompNode {
 export const CollectionNodeFactory: WritableNodeFactory = {
   typeName: 'Collection',
 
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new CollectionNode(
-      Expression.writable(Result.complete(new Collection([]))),
-      undefined
-    );
+  fromWritableConfig(config: FactDefinition, graph: Graph): CompNode {
+    const itemPath = config.path.append(new PathItem('*', 'wildcard'));
+    const itemDef = graph.dictionary.getDefinition(itemPath);
+
+    if (!itemDef || !itemDef.writable) {
+      // This case can happen for an empty collection that's just been created.
+      // We'll default to StringNode, but this may need to be handled more gracefully.
+      return new CollectionNode(new StringNode(Expression.literal('')));
+    }
+
+    const itemNode = graph.compNodeRegistry.fromWritableConfig(itemDef.writable, graph);
+    return new CollectionNode(itemNode as CompNode<any>);
   },
 };

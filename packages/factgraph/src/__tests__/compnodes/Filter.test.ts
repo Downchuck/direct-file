@@ -4,23 +4,22 @@ import { FactDictionary } from '../../FactDictionary';
 import { Collection } from '../../types/Collection';
 import { Result } from '../../types';
 import { Graph } from '../../Graph';
-import { compNodeRegistry } from '../../compnodes/registry';
-import '../../compnodes/register-factories';
+import { compNodeRegistry } from '../../compnodes/register-factories';
 import { Path } from '../../Path';
 import { InMemoryPersister } from '../../persisters';
 
 describe('Filter', () => {
   it('filters collections on the value of the Boolean node', () => {
     const factDictionary = new FactDictionary();
-    factDictionary.addDefinition({
+    factDictionary.define({
       path: '/collection',
       writable: { typeName: 'Collection' },
     });
-    factDictionary.addDefinition({
+    factDictionary.define({
       path: '/collection/*/bool',
       writable: { typeName: 'Boolean' },
     });
-    factDictionary.addDefinition({
+    factDictionary.define({
       path: '/filtered',
       derived: {
         typeName: 'Filter',

@@ -8,7 +8,7 @@ describe('IntNode', () => {
   const factual = new Factual(new FactDictionary());
 
   it('can be created with a valid integer', () => {
-    const node = new IntNode(Expression.literal(Result.complete(1)));
+    const node = new IntNode(Expression.literal(1));
     expect(node.get(factual)).toEqual(Result.complete(1));
   });
 });

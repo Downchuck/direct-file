@@ -1,37 +1,20 @@
 import { Expression } from '../Expression';
 import { CompNode, DerivedNodeFactory, WritableNodeFactory } from './CompNode';
 import { Graph } from '../Graph';
-import { Result } from '../types/Result';
+import { Factual } from '../Factual';
 
-export class IntNode extends CompNode {
-  public readonly expr: Expression<number>;
-
-  constructor(expr: Expression<number>) {
-    super();
-    this.expr = expr;
+export class IntNode extends CompNode<number> {
+  constructor(expression: Expression<number>) {
+    super(expression);
   }
 
-  protected fromExpression(expr: Expression<number>): CompNode {
-    return new IntNode(expr);
+  public override set(factual: Factual, value: number): CompNode<number> {
+    return new IntNode(Expression.literal(value));
   }
 }
 
 export const IntNodeFactory: DerivedNodeFactory & WritableNodeFactory = {
   typeName: 'Int',
-
-  fromWritableConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    return new IntNode(Expression.writable(Result.incomplete()));
-  },
-
-  fromDerivedConfig(
-    e: any,
-    graph: Graph,
-  ): CompNode {
-    // TODO: getOptionValue
-    const value = parseInt(e.value, 10);
-    return new IntNode(Expression.literal(Result.complete(value)));
-  },
+  fromWritableConfig: (e: any, graph: Graph) => new IntNode(Expression.literal(0)),
+  fromDerivedConfig: (e: any, graph: Graph) => new IntNode(Expression.literal(e.value ?? 0)),
 };
