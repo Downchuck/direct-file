@@ -1,7 +1,6 @@
 import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
-import '../compnodes/register-factories';
 
 describe('Count', () => {
     it.skip('counts the number of true values in a collection', () => {

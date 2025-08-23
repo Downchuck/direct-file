@@ -1,7 +1,6 @@
 import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
-import '../compnodes/register-factories';
 
 describe('ZipCodeNode', () => {
   it('can be created as a writable node', () => {

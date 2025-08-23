@@ -3,7 +3,6 @@ import { Graph } from '../Graph';
 import { Result } from '../types/Result';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import '../compnodes/register-factories';
 
 describe('StepwiseMultiply', () => {
   it('multiplies a dollar value by a rational value', () => {

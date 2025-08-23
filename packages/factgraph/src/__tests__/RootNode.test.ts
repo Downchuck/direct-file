@@ -5,7 +5,6 @@ import { Result } from '../types';
 import { PathItem } from '../PathItem';
 import { StringNode, StringNodeFactory } from '../compnodes/StringNode';
 import { compNodeRegistry } from '../compnodes/registry';
-import '../compnodes/register-factories';
 
 describe('RootNode', () => {
   const factDictionary = new FactDictionary();

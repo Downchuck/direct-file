@@ -1,4 +1,3 @@
-import '../../compnodes/register-factories';
 import { FactDictionary } from '../../FactDictionary';
 import { Graph } from '../../Graph';
 import { Collection } from '../../types/Collection';

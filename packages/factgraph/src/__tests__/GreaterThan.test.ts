@@ -4,7 +4,6 @@ import { Result } from '../types';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
 import { Day } from '../types/Day';
-import '../compnodes/register-factories';
 
 describe('GreaterThan', () => {
   it('compares two integers and returns true', () => {

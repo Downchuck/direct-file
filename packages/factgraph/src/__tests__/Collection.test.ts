@@ -1,7 +1,6 @@
 import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
-import '../compnodes/register-factories';
 
 describe('Collection tests', () => {
   it('can get the size of a collection', () => {

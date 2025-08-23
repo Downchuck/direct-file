@@ -1,4 +1,4 @@
-export * from './registry';
+export * from './all-factories';
 
 export * from './CompNode';
 export * from './Add';

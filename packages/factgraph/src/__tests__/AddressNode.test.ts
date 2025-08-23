@@ -2,12 +2,11 @@ import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Address } from '../types/Address';
-import '../compnodes/register-factories';
 
 describe('AddressNode', () => {
   it('parses a derived value from a string', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/test',
       derived: {
         typeName: 'Address',
@@ -21,11 +20,11 @@ describe('AddressNode', () => {
 
   it('can be used inside a switch statement', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({ path: '/case1', derived: { typeName: 'Boolean', value: false } });
-    dictionary.addDefinition({ path: '/then1', derived: { typeName: 'Address', value: '736 Jackson Place NW\nWashington, DC 20503' } });
-    dictionary.addDefinition({ path: '/case2', derived: { typeName: 'Boolean', value: true } });
-    dictionary.addDefinition({ path: '/then2', derived: { typeName: 'Address', value: '718 Jackson Place NW\nWashington, DC 20503' } });
-    dictionary.addDefinition({
+    dictionary.define({ path: '/case1', derived: { typeName: 'Boolean', value: false } });
+    dictionary.define({ path: '/then1', derived: { typeName: 'Address', value: '736 Jackson Place NW\nWashington, DC 20503' } });
+    dictionary.define({ path: '/case2', derived: { typeName: 'Boolean', value: true } });
+    dictionary.define({ path: '/then2', derived: { typeName: 'Address', value: '718 Jackson Place NW\nWashington, DC 20503' } });
+    dictionary.define({
         path: '/test',
         derived: {
             typeName: 'Switch',
@@ -39,7 +38,7 @@ describe('AddressNode', () => {
 
   it('can read and write a value', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
       path: '/test',
       writable: { typeName: 'Address' },
     });
@@ -54,7 +53,7 @@ describe('AddressNode', () => {
 
   it('can extract the street address', () => {
     const dictionary = new FactDictionary();
-    dictionary.addDefinition({
+    dictionary.define({
         path: '/test',
         writable: { typeName: 'Address' },
     });

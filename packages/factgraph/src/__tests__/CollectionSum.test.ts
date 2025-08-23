@@ -3,7 +3,6 @@ import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Dollar } from '../types/Dollar';
 import { Rational } from '../types/Rational';
-import '../compnodes/register-factories';
 
 describe('CollectionSum', () => {
     it('sums a collection of integers', () => {

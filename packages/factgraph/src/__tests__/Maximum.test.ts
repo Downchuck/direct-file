@@ -2,7 +2,6 @@ import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
 import { Dollar } from '../types/Dollar';
-import '../compnodes/register-factories';
 
 describe('Maximum', () => {
     it.skip('finds the maximum of integers', () => {

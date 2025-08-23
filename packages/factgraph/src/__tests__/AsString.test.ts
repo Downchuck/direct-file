@@ -1,7 +1,6 @@
 import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
-import '../compnodes/register-factories';
 import { Dollar } from '../types/Dollar';
 import { Ein } from '../types/Ein';
 import { Tin } from '../types/Tin';
@@ -10,8 +9,8 @@ import { EmailAddress } from '../types/EmailAddress';
 describe('AsString', () => {
     it('should convert EnumNode to StringNode', () => {
         const dictionary = new FactDictionary();
-        dictionary.addDefinition({ path: '/a', derived: { typeName: 'Enum', value: 'a', options: ['a', 'b'] } });
-        dictionary.addDefinition({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
+        dictionary.define({ path: '/a', derived: { typeName: 'Enum', value: 'a', options: ['a', 'b'] } });
+        dictionary.define({ path: '/test', derived: { typeName: 'AsString', children: [['/a']] } });
         const graph = new Graph(dictionary);
         expect(graph.get('/test')).toEqual(Result.complete('a'));
     });

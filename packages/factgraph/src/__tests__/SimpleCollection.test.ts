@@ -3,7 +3,6 @@ import { FactDictionary } from '../FactDictionary';
 import { Collection } from '../types/Collection';
 import { Result } from '../types';
 import { InMemoryPersister } from '../persisters';
-import '../compnodes/register-factories';
 
 describe('Simple Collection tests', () => {
   const dictionary = new FactDictionary();

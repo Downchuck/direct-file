@@ -2,7 +2,6 @@ import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types';
 import { BankAccount } from '../types/BankAccount';
-import '../compnodes/register-factories';
 
 describe('BankAccountNode', () => {
     it('can be created as a writable node', () => {

@@ -2,7 +2,6 @@ import { FactDictionary } from '../FactDictionary';
 import { Graph } from '../Graph';
 import { Result } from '../types/Result';
 import { Day } from '../types/Day';
-import '../compnodes/register-factories';
 import { vi } from 'vitest';
 
 describe('TodayNode', () => {
